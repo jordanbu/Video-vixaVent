@@ -1,0 +1,25 @@
+.vx-mobile-upload-dialog { width:min(544px,calc(100vw - 32px)); overflow:hidden; border:0.5px solid var(--vx-border); border-radius:6px; background:var(--vx-panel-alt); color:var(--vx-text); box-shadow:0 6px 8px rgba(var(--vx-shadow-rgb),0.52); }
+.vx-mobile-upload-dialog header { display:flex; align-items:center; justify-content:space-between; gap:13px; padding:13px 14px; border-bottom:0.5px solid var(--vx-border); }
+.vx-mobile-upload-dialog header div { display:flex; min-width:0; flex-direction:column; gap:3px; }
+.vx-mobile-upload-dialog header strong { font-size:15px; }
+.vx-mobile-upload-dialog header span,.vx-mobile-upload-dialog footer span { color:var(--vx-text-dim); font-size:11px; }
+.vx-mobile-upload-dialog button { border:0.5px solid var(--vx-border); border-radius:5px; background:var(--vx-hover); color:var(--vx-text); cursor:pointer; }
+.vx-mobile-upload-dialog header button { display:grid; width:28px; height:28px; flex:0 0 28px; place-items:center; padding:0; }
+.vx-mobile-upload-body { display:grid; grid-template-columns:200px minmax(0,1fr); gap:18px; padding:18px; }
+.vx-mobile-upload-qr { display:grid; width:192px; height:192px; place-items:center; overflow:hidden; border-radius:4px; background:#fff; color:#333; font-size:12px; }
+.vx-mobile-upload-qr img { display:block; width:192px; height:192px; }
+.vx-mobile-upload-instructions { display:flex; min-width:0; flex-direction:column; gap:10px; }
+.vx-mobile-upload-instructions ol { display:grid; gap:8px; margin:0; padding-left:20px; color:var(--vx-text-muted); font-size:12px; line-height:1.45; }
+.vx-mobile-upload-instructions label { display:flex; align-items:center; gap:8px; color:var(--vx-text-muted); font-size:11px; }
+.vx-mobile-upload-instructions select { min-width:0; flex:1; border:0.5px solid var(--vx-border); border-radius:4px; background:var(--vx-inset); color:var(--vx-text); padding:5px; }
+.vx-mobile-upload-link { display:flex; min-width:0; align-items:stretch; }
+.vx-mobile-upload-link code { min-width:0; flex:1; overflow:hidden; border:0.5px solid var(--vx-border); border-right:0; border-radius:5px 0 0 5px; background:var(--vx-inset); color:var(--vx-text-muted); padding:8px; text-overflow:ellipsis; white-space:nowrap; }
+.vx-mobile-upload-link button { border-radius:0 5px 5px 0; padding:0 12px; }
+.vx-mobile-upload-instructions p { margin:0; color:var(--vx-text-dim); font-size:11px; }
+.vx-mobile-upload-count { display:flex; align-items:center; gap:7px; margin-top:auto; color:var(--vx-text); font-size:12px; }
+.vx-mobile-upload-live { width:7px; height:7px; border-radius:50%; background:var(--vx-success); box-shadow:0 0 0 3px rgba(var(--vx-ink-rgb),0.08); }
+.vx-mobile-upload-loading,.vx-mobile-upload-error { min-height:176px; display:grid; place-items:center; padding:18px; color:var(--vx-text-muted); font-size:12px; text-align:center; }
+.vx-mobile-upload-error { color:var(--vx-danger); }
+.vx-mobile-upload-dialog footer { display:flex; align-items:center; justify-content:space-between; gap:11px; padding:10px 14px; border-top:0.5px solid var(--vx-border); }
+.vx-mobile-upload-dialog footer button { flex:0 0 auto; padding:6px 14px; background:var(--vx-accent); color:var(--vx-on-accent); }
+@media (max-width:620px) { .vx-mobile-upload-body { grid-template-columns:1fr; } .vx-mobile-upload-qr { justify-self:center; } .vx-mobile-upload-dialog footer { align-items:flex-end; } }

@@ -1,0 +1,18 @@
+interface:
+  display_name: "Vixaventora"
+  short_description: "Connect and edit local Vixaventora video projects"
+  brand_color: "#7C3AED"
+  icon_small: "./assets/vixaventora-icon.png"
+  icon_large: "./assets/vixaventora-icon.png"
+  default_prompt: "Use $vixaventora to connect to Vixaventora and inspect the selected video project."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "vixaventora"
+      description: "Vixaventora local editor MCP server"
+      transport: "streamable_http"
+      url: "http://localhost:5199/api/external-mcp/mcp"
+
+policy:
+  allow_implicit_invocation: true

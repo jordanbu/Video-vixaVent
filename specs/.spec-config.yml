@@ -1,0 +1,3 @@
+# Spec workflow configuration (see CLAUDE.md > Spec plans)
+AutoCreateBranch: false
+BranchPrefix: spec-

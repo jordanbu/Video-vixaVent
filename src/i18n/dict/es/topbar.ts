@@ -1,0 +1,20 @@
+// ES dictionary (topbar): key = Chinese original text, value = Spanish.
+export default {
+  "双击重命名": "Doble clic para cambiar el nombre",
+  "历史版本": "Historial de versiones",
+  "导出中…": "Exportando…",
+  "导出": "Exportar",
+  "切换界面语言": "Cambiar el idioma de la interfaz",
+  "返回工程列表": "Volver a los proyectos",
+  "编辑快捷键": "Editar atajos de teclado",
+  "撤销": "Deshacer",
+  "重做": "Rehacer",
+  "设计风格(品牌)": "Estilo de diseño (marca)",
+  "切换面板布局": "Cambiar la disposición de los paneles",
+  "导出 MP4": "Exportar MP4",
+  "账户": "Cuenta",
+  "窗口控制": "Controles de la ventana",
+  "关闭窗口": "Cerrar ventana",
+  "最小化窗口": "Minimizar ventana",
+  "缩放窗口": "Ampliar ventana",
+} as Record<string, string>;

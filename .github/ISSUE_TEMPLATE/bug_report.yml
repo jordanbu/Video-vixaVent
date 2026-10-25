@@ -1,0 +1,109 @@
+name: 🐛 Reporte de error
+description: Cierres inesperados, errores o comportamiento raro
+title: "[Error] Descripción corta"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Antes de reportar, busca en los issues existentes** para no duplicar.
+        Los campos con * son obligatorios. Puedes arrastrar capturas al campo de texto.
+
+  - type: dropdown
+    id: version
+    attributes:
+      label: Versión *
+      description: |
+        Elige la versión EXACTA — no escribas "la última".
+        - Escritorio: Ajustes muestra la versión actual, por ejemplo v0.1.0
+        - Web: la versión aparece en Ajustes
+        - Desde el código (main): agrega el commit (git log -1 --format=%h)
+      options:
+        - v0.1.0 (última versión)
+        - Código de main (agrega el hash del commit)
+        - No estoy seguro
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Plataforma *
+      options:
+        - macOS (Apple Silicon)
+        - macOS (Intel)
+        - Windows
+        - Linux
+        - Web (navegador)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área afectada *
+      options:
+        - Edición en la línea de tiempo
+        - Edición por chat con el agente
+        - Exportación (MP4 / audio / FCPXML / SRT)
+        - Actualización / instalador (escritorio)
+        - Transcripción
+        - Subtítulos
+        - Importación de media / panel de media
+        - Generación con IA (imagen/video/voz/música/efectos)
+        - Vista previa / reproducción
+        - Otra
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe el error *
+      placeholder: |
+        Por ejemplo: después de la corrección de color con IA, el video exportado se traba al reproducirlo.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducirlo *
+      placeholder: |
+        1. Importar "muestra.mp4"
+        2. Pedirle al agente que corrija el color
+        3. Exportar MP4 (1080p)
+        4. La reproducción se traba cerca del segundo 15
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Qué esperabas que pasara *
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Qué pasó *
+    validations:
+      required: true
+
+  - type: textarea
+    id: media
+    attributes:
+      label: Datos de la media
+      description: Formato, resolución, fotogramas por segundo y códec de la media involucrada (¿VFR? ¿HEIC?)
+      placeholder: |
+        MP4, 3840x2160, 29.97fps (30000/1001), H.264
+        (Lo ideal es pegar aquí la salida de `ffprobe <archivo>`)
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Capturas / registros / mensajes de error
+      placeholder: |
+        Arrastra aquí las capturas. Web: copia el error de la consola de DevTools (F12).
+        Escritorio: pega el registro de inicio de la terminal.

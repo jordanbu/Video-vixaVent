@@ -1,0 +1,42 @@
+name: ✨ Pedido de función
+description: Propón una función nueva o una mejora
+title: "[Función] Descripción corta"
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: Antes de pedirla, busca en los issues existentes para no duplicar.
+
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Situación y problema *
+      description: ¿Qué estás intentando hacer y qué falta hoy?
+      placeholder: |
+        Por ejemplo: al limpiar un video a cámara, quiero comprimir con un clic las pausas
+        a menos de 0,3 s después de borrar las muletillas.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expectation
+    attributes:
+      label: Comportamiento esperado *
+      placeholder: ¿Cómo debería funcionar?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reference
+    attributes:
+      label: Referencia (opcional)
+      description: ¿Cómo lo resuelven CapCut, Premiere u otras herramientas? Enlace o descripción
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Criterios de aceptación (opcional)
+      description: ¿Qué significa que esté terminado? Lista puntos verificables
+      placeholder: |
+        - [ ] Comprimir pausas con un clic después de borrar palabras
+        - [ ] Se puede deshacer

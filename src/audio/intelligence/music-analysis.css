@@ -1,0 +1,217 @@
+.vx-music-analysis-trigger {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  bottom: 0;
+  z-index: 3;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--vx-panel);
+  color: var(--vx-text-muted);
+  cursor: pointer;
+  font-size: 9px;
+  line-height: 1;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.vx-music-analysis-trigger:hover { background: var(--vx-hover); color: var(--vx-text); }
+.vx-music-analysis-trigger:focus-visible { outline: 1px solid var(--vx-accent); outline-offset: 1px; }
+.vx-music-analysis-trigger[data-state="ready"] { color: var(--vx-accent); }
+.vx-music-analysis-trigger[data-state="error"] { color: var(--vx-danger); }
+.vx-music-analysis-trigger[data-state="unavailable"] { color: var(--vx-text-dim); }
+.vx-music-analysis-dot {
+  width: 5px;
+  height: 5px;
+  flex: 0 0 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.vx-music-analysis-trigger[data-state="running"] .vx-music-analysis-dot {
+  animation: vx-music-analysis-pulse 1s ease-in-out infinite alternate;
+}
+.vx-media-grid.grid .vx-asset-card { height: 104px; }
+.vx-asset-card:has(.vx-music-analysis-trigger) .vx-asset-name { padding-right: 4px; }
+.vx-media-grid.list .vx-music-analysis-trigger {
+  left: auto;
+  top: 5px;
+  right: 58px;
+  bottom: auto;
+  max-width: 104px;
+}
+.vx-media-grid.list .vx-asset-card:has(.vx-music-analysis-trigger) .vx-asset-name {
+  margin-right: 168px;
+  padding-right: 0;
+}
+.vx-music-analysis-popover {
+  position: fixed;
+  z-index: 1000;
+  width: min(360px, calc(100vw - 16px));
+  max-height: min(520px, calc(100vh - 16px));
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 12px;
+  border: 0.5px solid var(--vx-border);
+  border-radius: 7px;
+  background: var(--vx-panel-alt);
+  box-shadow: 0 12px 34px rgba(var(--vx-shadow-rgb), 0.56);
+  color: var(--vx-text);
+}
+.vx-music-analysis-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 11px;
+}
+.vx-music-analysis-title { min-width: 0; flex: 1; }
+.vx-music-analysis-title strong,
+.vx-music-analysis-title span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vx-music-analysis-title strong { color: var(--vx-text-strong); font-size: 12px; line-height: 1.35; }
+.vx-music-analysis-title span { margin-top: 2px; color: var(--vx-text-dim); font-size: 10px; line-height: 1.35; }
+.vx-music-analysis-close {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--vx-text-muted);
+  cursor: pointer;
+}
+.vx-music-analysis-close:hover { background: var(--vx-hover); color: var(--vx-text); }
+.vx-music-analysis-close:focus-visible,
+.vx-music-analysis-action:focus-visible,
+.vx-music-analysis-pref-toggle:focus-visible { outline: 1px solid var(--vx-accent); outline-offset: 1px; }
+.vx-music-analysis-state {
+  margin: 0 0 10px;
+  color: var(--vx-text-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+.vx-music-analysis-state.error { color: var(--vx-danger); }
+.vx-music-analysis-progress {
+  width: 100%;
+  height: 4px;
+  display: block;
+  margin-top: 7px;
+  border: 0;
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--vx-inset);
+  accent-color: var(--vx-accent);
+}
+.vx-music-analysis-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.vx-music-analysis-metric {
+  min-width: 0;
+  padding: 7px;
+  border: 0.5px solid var(--vx-border);
+  border-radius: 5px;
+  background: var(--vx-panel);
+}
+.vx-music-analysis-metric span,
+.vx-music-analysis-metric strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vx-music-analysis-metric span { color: var(--vx-text-dim); font-size: 9.5px; }
+.vx-music-analysis-metric strong { margin-top: 4px; color: var(--vx-text-strong); font-size: 13px; font-variant-numeric: tabular-nums; }
+.vx-music-analysis-rhythm {
+  margin-bottom: 10px;
+  border: 0.5px solid var(--vx-border);
+  border-radius: 5px;
+  background: var(--vx-panel);
+}
+.vx-music-analysis-rhythm summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px;
+  color: var(--vx-text-muted);
+  cursor: pointer;
+  font-size: 10px;
+}
+.vx-music-analysis-rhythm summary small { color: var(--vx-text-dim); font-size: 9px; font-variant-numeric: tabular-nums; }
+.vx-music-analysis-rhythm summary:focus-visible { outline: 1px solid var(--vx-accent); outline-offset: 1px; }
+.vx-music-analysis-timing-row { padding: 0 7px 7px; }
+.vx-music-analysis-timing-row b { color: var(--vx-text); font-size: 9.5px; font-weight: 500; }
+.vx-music-analysis-timing-row p { margin: 3px 0 0; color: var(--vx-text-muted); font-size: 9px; line-height: 1.45; font-variant-numeric: tabular-nums; }
+.vx-music-analysis-timing-row small { display: block; margin-top: 3px; color: var(--vx-text-dim); font-size: 9px; }
+.vx-music-analysis-section-title { margin: 10px 0 6px; color: var(--vx-text-muted); font-size: 10px; font-weight: 600; }
+.vx-music-analysis-tags { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 10px; margin: 0; }
+.vx-music-analysis-tags div { min-width: 0; display: flex; align-items: baseline; gap: 5px; }
+.vx-music-analysis-tags dt { flex: 0 0 auto; color: var(--vx-text-dim); font-size: 9.5px; }
+.vx-music-analysis-tags dd { min-width: 0; display: flex; align-items: baseline; gap: 4px; overflow: hidden; margin: 0; color: var(--vx-text); font-size: 10.5px; white-space: nowrap; }
+.vx-music-analysis-tags dd span { overflow: hidden; text-overflow: ellipsis; }
+.vx-music-analysis-tags dd small { color: var(--vx-text-dim); font-size: 9px; font-variant-numeric: tabular-nums; }
+.vx-music-analysis-sections { max-height: 126px; overflow: auto; margin: 0; padding: 0; list-style: none; }
+.vx-music-analysis-sections li {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr) 72px;
+  align-items: center;
+  gap: 7px;
+  min-height: 24px;
+  color: var(--vx-text-muted);
+  font-size: 10px;
+}
+.vx-music-analysis-sections time,
+.vx-music-analysis-sections b { font-variant-numeric: tabular-nums; }
+.vx-music-analysis-sections b { overflow: hidden; color: var(--vx-text); font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.vx-music-analysis-section-scores { display: grid; gap: 1px; color: var(--vx-text-dim); font-size: 8.5px; text-align: right; font-variant-numeric: tabular-nums; }
+.vx-music-analysis-actions { display: flex; justify-content: flex-end; margin-top: 12px; padding-top: 10px; border-top: 0.5px solid var(--vx-border); }
+.vx-music-analysis-action {
+  min-height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--vx-accent);
+  color: var(--vx-on-accent);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+}
+.vx-music-analysis-action:disabled { cursor: default; opacity: 0.5; }
+.vx-music-analysis-pref { margin-top: 4px; padding-top: 5px; border-top: 0.5px solid var(--vx-border); }
+.vx-media-popover .vx-music-analysis-pref-toggle {
+  min-width: 188px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.vx-music-analysis-switch {
+  width: 26px;
+  height: 14px;
+  flex: 0 0 26px;
+  padding: 2px;
+  border-radius: 7px;
+  background: var(--vx-inset);
+}
+.vx-music-analysis-switch::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  display: block;
+  border-radius: 50%;
+  background: var(--vx-text-dim);
+  transition: transform 160ms cubic-bezier(.25, 1, .5, 1), background 160ms ease;
+}
+.vx-music-analysis-pref-toggle[aria-checked="true"] .vx-music-analysis-switch { background: var(--vx-accent-soft); }
+.vx-music-analysis-pref-toggle[aria-checked="true"] .vx-music-analysis-switch::after { transform: translateX(12px); background: var(--vx-accent); }
+.vx-music-analysis-pref-note { max-width: 210px; margin: 1px 9px 5px; color: var(--vx-text-dim); font-size: 9.5px; line-height: 1.4; }
+@keyframes vx-music-analysis-pulse { from { opacity: .35; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .vx-music-analysis-trigger[data-state="running"] .vx-music-analysis-dot { animation: none; }
+  .vx-music-analysis-switch::after { transition: none; }
+}
