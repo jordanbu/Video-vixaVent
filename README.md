@@ -85,15 +85,16 @@ La forma más simple de conectar Claude Code: en el editor abre **Agentes extern
 (el ícono de enchufe arriba a la derecha) y haz clic en **Conectar** junto a Claude Code.
 Eso registra el servidor con su token en `~/.claude.json`; reinicia Claude Code después.
 
-A mano, con el token que muestra ese mismo panel:
+Si usas varias cuentas de Claude (`CLAUDE_CONFIG_DIR`), ese archivo no es el que lee tu
+Claude Code: regístralo desde la terminal con el token que muestra el mismo panel, y queda
+disponible en todas tus carpetas:
 
 ```bash
-claude mcp add --transport http vixaventora http://localhost:5199/api/external-mcp/mcp \
+claude mcp add --transport http --scope user vixaventora http://localhost:5199/api/external-mcp/mcp \
   --header "Authorization: Bearer <token>"
 ```
 
-Dentro de este repositorio, el `.mcp.json` de la raíz ya registra el servidor y toma el token
-de la variable `VIXAVENTORA_MCP_TOKEN`: expórtala en tu terminal antes de abrir Claude Code.
+Comprueba la conexión con `claude mcp get vixaventora` (debe decir `✔ Connected`).
 
 Con el editor abierto, pídele el trabajo en lenguaje natural:
 

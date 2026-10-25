@@ -24,7 +24,7 @@ const seedItem = (id: string, tpl: Tpl, startFrame: number, props: Record<string
 const SEED_A = pick('Finance Explainer');
 // The example project opens in Spanish, the app's default language.
 const SEED_A_TEXT = {
-  line1Text: 'Por qué los presupuestos fallan tan rápido',
+  line1Text: 'Por qué fallan los presupuestos',
   line2Text: 'El método de los sobres, explicado',
   line3Text: 'Cómo empezar esta misma semana',
 };

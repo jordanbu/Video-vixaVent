@@ -32,8 +32,8 @@ const CHILD_ENV_NAMES = [
 
 // Deliberately NOT plain "vixaventora": Claude Code caches MCP auth failures by
 // SERVER NAME, not by URL, in ~/.claude/mcp-needs-auth-cache.json. Users commonly
-// register their own "vixaventora" server (the repo ships one in .mcp.json, and
-// `claude mcp add vixaventora ...` is the documented setup). If any of those ever
+// register their own "vixaventora" server (`claude mcp add vixaventora ...` is
+// the documented setup). If any of those ever
 // fails to authorize once, the CLI caches "vixaventora needs auth" and then routes
 // EVERY server of that name — including this turn's private, correctly
 // bearer-authenticated --mcp-config — into the OAuth path, exposing only

@@ -34,8 +34,9 @@ Primera versión de Vixaventora.
 
 ### Conexión con Claude
 
-- El `.mcp.json` del repo envía el token (`VIXAVENTORA_MCP_TOKEN`); el README explica cómo
-  conectar Claude Code desde el botón **Conectar** de "Agentes externos (MCP)".
+- Claude Code se conecta con `claude mcp add --scope user` o con el botón **Conectar** de
+  "Agentes externos (MCP)". El repo ya no trae `.mcp.json`: definía otro servidor con el
+  mismo nombre que, sin token, tapaba la conexión del usuario.
 
 ### Verificación
 

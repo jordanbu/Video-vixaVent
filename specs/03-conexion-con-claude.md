@@ -15,7 +15,7 @@ Hay tres caminos, y los tres terminan en las mismas herramientas y comandos de
 |---|---|---|---|
 | Agente del editor con API key | Chat dentro del editor | Ajustes → Modelo del agente → Anthropic (API key) | Funciona en local |
 | Agente del editor con suscripción | Chat dentro del editor | Página "Anthropic · Claude Code" de Ajustes; usa el CLI de Claude Code ya logueado (`claude auth login`) | Funciona en local |
-| Claude Code / Claude Desktop externo | Terminal o app de Claude | MCP Streamable HTTP en `http://localhost:5199/api/external-mcp/mcp` con token Bearer (botón **Conectar** en “Agentes externos (MCP)”, o `.mcp.json` + `VIXAVENTORA_MCP_TOKEN`) | Funciona en local |
+| Claude Code / Claude Desktop externo | Terminal o app de Claude | MCP Streamable HTTP en `http://localhost:5199/api/external-mcp/mcp` con token Bearer: `claude mcp add --scope user …` o botón **Conectar** en “Agentes externos (MCP)” | Funciona en local |
 | claude.ai (web) | claude.ai | Conector remoto MCP | Pendiente: necesita el editor publicado por HTTPS |
 
 Archivos clave: `server/external-agent/` (servidor MCP y sesiones de edición),
@@ -36,17 +36,22 @@ Archivos clave: `server/external-agent/` (servidor MCP y sesiones de edición),
 | Decisión | Alternativa descartada | Por qué |
 |---|---|---|
 | Usar el MCP y el agente integrado que ya existen | Escribir una integración nueva con la API de Claude | Ya cubren el caso, con borradores y aprobación incluidos |
+| Quitar el `.mcp.json` del repo | Mantenerlo con `${VIXAVENTORA_MCP_TOKEN}` | Definía otro servidor `vixaventora` que, dentro del repo, tenía prioridad sobre el registro del usuario y fallaba sin la variable (403) |
+| Registrar con `claude mcp add --scope user` | Solo el botón **Conectar** | El botón escribe `~/.claude.json`; con varias cuentas (`CLAUDE_CONFIG_DIR`) Claude Code lee otra carpeta |
 
 ## Verificación
 
 Resultados del 2026-10-25, contra `npm run dev:isolated` en `localhost:5199`:
 
-- Sin token → `403 {"error":"invalid request origin"}` (el `.mcp.json` original no traía token; se corrigió).
+- Sin token → `403 {"error":"invalid request origin"}`.
 - Con token: `initialize` → `200`, `serverInfo.name = vixaventora`, sesión creada.
 - `tools/list` → 44 herramientas (`list_projects`, `begin_edit_session`, `review_edit_session`, …).
 - `prompts/list` → 6 prompts con descripción en español.
 - `tools/call list_projects` → devuelve el proyecto de ejemplo con su `editorUrl`.
 - El selector de modelo del editor detecta Claude Code instalado y ofrece sus modelos (Claude Code · claude-sonnet-5-5, opus, haiku).
+- `claude mcp add --scope user vixaventora …` → `claude mcp get vixaventora`: `✔ Connected`.
+- Prueba real: `claude -p` en español pidió cambiar los tres textos del primer clip del proyecto; Claude usó `target_project` → `begin_edit_session` (auto) → edición → `review_edit_session`, y `get_edit_session` devolvió `applied` (1 de 1 operaciones). La captura del editor muestra los textos nuevos.
+- Prueba desde el chat del editor con el modelo Claude Code: el pedido llegó al CLI, que respondió "You've hit your individual spend limit" (límite de gasto de la cuenta de trabajo). El camino funciona; falta cupo en esa cuenta.
 
 ## Pendiente
 

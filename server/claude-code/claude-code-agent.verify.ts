@@ -228,7 +228,7 @@ if (!has('--mcp-config')) process.exit(64);
 // Regression guard: the MCP server this turn spawns must NOT be named plain
 // "vixaventora". Claude Code caches auth failures by server NAME in
 // ~/.claude/mcp-needs-auth-cache.json, so sharing the name with a user- or
-// project-scoped "vixaventora" entry (the repo's own .mcp.json is one) lets a
+// project-scoped "vixaventora" entry (the documented `claude mcp add` setup) lets a
 // single unrelated auth failure route this bearer-authenticated config into the
 // OAuth path, hiding every editor tool behind authenticate/complete_authentication.
 const mcpConfigPath = valueAfter('--mcp-config');

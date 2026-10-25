@@ -29,7 +29,6 @@ Notes:
 | `tsconfig.json` / `tsconfig.app.json` / `tsconfig.node.json` | `tsc -b` project references, and tsconfig `include`/exclude paths resolve relative to the config location; dozens of `tsx --tsconfig` invocations reference them |
 | `.env.example` | dotenv convention, plus the `.gitignore` negation `!.env.example` anchors it here |
 | `.nvmrc` | Node version-manager convention (root lookup) |
-| `.mcp.json` | MCP clients (Claude Code etc.) discover it at the repo root; README documents this path |
 | `index.html` | Vite entry convention (project root) |
 | `README.md` / `CHANGELOG.md` / `LICENSE` / `CLAUDE.md` | Repository landing page, release notes, license conventions and agent instructions |
 | `specs/` | Spec plans, one file per topic (see `CLAUDE.md`) |

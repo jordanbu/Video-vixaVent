@@ -101,7 +101,7 @@ export async function requestClaudeCodeModels(
   ]);
   const child = spawn(command.executable, command.args, {
     env: childEnvironment(),
-    // Not the app checkout: nothing there (CLAUDE.md, .mcp.json) is needed.
+    // Not the app checkout: nothing there (CLAUDE.md, project MCP config) is needed.
     cwd: tmpdir(),
     windowsHide: true,
     windowsVerbatimArguments: command.windowsVerbatimArguments,
