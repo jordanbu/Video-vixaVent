@@ -106,13 +106,15 @@ export class EditorConnectionRegistry {
       throw new ExternalEditorCallError('stale', 'Editor registration capability is stale.');
     }
     // A different browser window may take over the active connection for the
-    // same project. Single-window desktop users never open one project in two
-    // windows, but a reloaded/fresh window (a new random editor id) must be able
+    // same project: a reloaded/fresh window (a new random editor id) must be able
     // to (re)connect without a persistent "already has an active editor"
-    // rejection. The old entry is replaced below by this.editors.set, and the
-    // persisted ownership claim (validated at validateOwnershipClaim) still
-    // fences stale takeovers. Offline/multi-writer safety comes from the
-    // serialized project-store mutations and the ownership epoch checks.
+    // rejection. Whether it MAY take over is decided before this call by
+    // claimBrowserProjectOwnership (a displaced tab is refused there, so two
+    // tabs no longer trade the project back and forth). The old entry is
+    // replaced below by this.editors.set, and the persisted ownership claim
+    // (validated at validateOwnershipClaim) still fences stale takeovers.
+    // Offline/multi-writer safety comes from the serialized project-store
+    // mutations and the ownership epoch checks.
     validateOwnershipClaim(ownership, { projectId, editorInstanceId, baseRevision });
     const ownershipEpoch = ownership?.epoch;
     if (previous && bindingChanged(previous, editorInstanceId, baseRevision, ownershipEpoch)) {

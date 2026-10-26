@@ -22,7 +22,10 @@ import {
   commitUploadReceipt,
   mintImportUpload,
 } from '../external-agent/import-token.ts';
-import type { claimBrowserProjectOwnership } from '../external-agent/project-edit-ownership.ts';
+import type {
+  BrowserOwnershipClaimIntent,
+  claimBrowserProjectOwnership,
+} from '../external-agent/project-edit-ownership.ts';
 
 const REGISTRATION_CAPABILITY_HEADER = 'x-vixaventora-editor-registration';
 
@@ -106,6 +109,7 @@ function registrationInput(body: Record<string, unknown>): {
   editorId: string;
   baseRevision: string;
   tools: ExternalToolSchema[];
+  intent: BrowserOwnershipClaimIntent;
 } {
   if (
     typeof body.projectId !== 'string'
@@ -115,12 +119,19 @@ function registrationInput(body: Record<string, unknown>): {
     || !body.editorId.trim()
     || !body.baseRevision.trim()
     || !validTools(body.tools)
+    || (body.heldEpoch !== undefined
+      && (typeof body.heldEpoch !== 'number' || !Number.isSafeInteger(body.heldEpoch) || body.heldEpoch < 1))
+    || (body.takeover !== undefined && typeof body.takeover !== 'boolean')
   ) throw new Error('invalid editor registration');
   return {
     projectId: body.projectId.trim(),
     editorId: body.editorId.trim(),
     baseRevision: body.baseRevision.trim(),
     tools: body.tools,
+    intent: {
+      ...(body.heldEpoch === undefined ? {} : { heldEpoch: body.heldEpoch }),
+      ...(body.takeover === true ? { takeover: true } : {}),
+    },
   };
 }
 
@@ -131,27 +142,30 @@ async function registerBridgeEditor(
 ): Promise<void> {
   const input = registrationInput(await readBridgeJson(req));
   const capability = registrationCapability(req, false);
-  // A matching registration capability marks a legitimate renewal from the
-  // currently connected runtime. A reload or different window with a
-  // missing/mismatched capability is no longer blocked —
-  // that window simply takes over (single-window desktop has no cross-window
-  // exclusivity). Stale-revision protection below still prevents clobbering.
-  const renewing = capability !== null && operations.editorRegistrationMatches(
-    input.projectId,
-    input.editorId,
-    capability,
-  );
+  // A new or reloaded tab (no heldEpoch) takes the project over from another
+  // browser editor; a tab that was displaced only gets it back with takeover
+  // (the user's click) or once the other editor is gone. Capability-based
+  // anti-spoof lives in registerEditor and the poll/call routes, and the
+  // stale-revision check below still prevents clobbering.
   const claimed = await operations.claimBrowserOwnership(
     input.projectId,
     input.editorId,
     input.baseRevision,
-    renewing,
+    input.intent,
   );
   if (claimed.status === 'stale') {
     sendBridgeJson(res, 409, {
       error: 'project changed after the browser loaded it',
       currentRevision: claimed.currentRevision,
       reloadRequired: true,
+    });
+    return;
+  }
+  if (claimed.status === 'displaced') {
+    sendBridgeJson(res, 409, {
+      error: 'project is open in another browser editor',
+      displaced: true,
+      ...(claimed.reloadRequired ? { reloadRequired: true } : {}),
     });
     return;
   }

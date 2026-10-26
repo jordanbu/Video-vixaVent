@@ -30,6 +30,7 @@ import {
   unregisterEditorBridge,
 } from './external-bridge-registration';
 import { handleExternalBridgeAttemptError } from './external-bridge-attempt-error';
+import { BridgeOwnershipState, type BridgeOwnershipNotice } from './external-bridge-ownership';
 import { useT } from '../i18n/locale';
 import {
   parseExternalCall,
@@ -69,13 +70,12 @@ export interface ExternalProposalController {
   /** Pending real-project tool confirmation from an external session. */
   pendingGuard: ExternalGuardRequest | null;
   confirmGuard: (id: string, allow: boolean) => void;
+  /** Set while another tab or browser edits this project (spec 07). */
+  ownershipNotice: BridgeOwnershipNotice;
+  /** Move editing (and the agent's changes) back to this tab. */
+  takeOwnership: () => void;
 }
 
-function retryDelay(): Promise<void> {
-  const { promise, resolve } = Promise.withResolvers<void>();
-  setTimeout(resolve, 1_000);
-  return promise;
-}
 const errorMessage = (error: unknown) => error instanceof Error ? error.message : String(error);
 
 function failedOutcome(
@@ -226,6 +226,7 @@ async function runBridgeAttempt(
   projectId: string, editorInstanceId: string,
   runtime: ExternalBridgeRuntime, signal: AbortSignal,
   onError: (message: string | null) => void,
+  tabs: BridgeOwnershipState,
 ): Promise<void> {
   const cancellations = new ExternalCallCancellationRegistry();
   const controller = new AbortController();
@@ -238,8 +239,10 @@ async function runBridgeAttempt(
       projectId, editorInstanceId, runtime.binding().baseRevision,
       controller.signal,
       browserProjectOwnership(projectId)?.registrationCapability,
+      tabs.intent(),
     );
     installBrowserProjectOwnership(ownership);
+    tabs.registered(ownership.epoch);
     onError(null);
     await pollRegisteredBridge(
       projectId,
@@ -250,6 +253,12 @@ async function runBridgeAttempt(
       controller.signal,
     );
   } catch (error) {
+    if (error instanceof EditorBridgeRequestError && error.refusal) {
+      // Another tab owns the project (or this tab must reload): show the notice,
+      // never a "connection failed" error, and do not take the project back.
+      tabs.refused(error.refusal);
+      if (tabs.current()) onError(null);
+    }
     handleExternalBridgeAttemptError(error, signal, onError);
   } finally {
     controller.abort();
@@ -268,11 +277,12 @@ async function runBridge(
   runtime: ExternalBridgeRuntime,
   signal: AbortSignal,
   onError: (message: string | null) => void,
+  tabs: BridgeOwnershipState,
 ): Promise<void> {
   const { editorInstanceId } = runtime.binding();
   while (!signal.aborted) {
-    await runBridgeAttempt(projectId, editorInstanceId, runtime, signal, onError);
-    if (!signal.aborted) await retryDelay();
+    await runBridgeAttempt(projectId, editorInstanceId, runtime, signal, onError, tabs);
+    if (!signal.aborted) await tabs.retryDelay(signal);
   }
 }
 
@@ -365,7 +375,10 @@ function useExternalPolling(
   projectId: string,
   controller: ExternalRuntimeController,
   setError: StateSetter<string | null>,
-): void {
+) {
+  const [ownershipNotice, setOwnershipNotice] = useState<BridgeOwnershipNotice>(null);
+  const tabsRef = useRef<BridgeOwnershipState | null>(null);
+  const takeOwnership = useCallback(() => tabsRef.current?.requestTakeover(), []);
   useEffect(() => {
     const slot = controller.runtimeRef.current;
     const readiness = controller.readiness;
@@ -383,14 +396,19 @@ function useExternalPolling(
         browserProjectOwnership(projectId)?.registrationCapability,
       );
     };
+    const tabs = new BridgeOwnershipState(setOwnershipNotice);
+    tabsRef.current = tabs;
     window.addEventListener('pagehide', close);
-    void runBridge(projectId, slot.runtime, abortController.signal, setError);
+    void runBridge(projectId, slot.runtime, abortController.signal, setError, tabs);
     return () => {
       window.removeEventListener('pagehide', close);
       abortController.abort();
       close();
+      if (tabsRef.current === tabs) tabsRef.current = null;
+      setOwnershipNotice(null);
     };
   }, [controller.readiness, controller.runtimeRef, projectId, setError]);
+  return { ownershipNotice, takeOwnership };
 }
 
 function useExternalActions(
@@ -454,7 +472,7 @@ export function useExternalAgentBridge(ctx: AgentContext, projectId: string): Ex
   const [error, setError] = useState<string | null>(null);
   const t = useT();
   const runtime = useExternalRuntime(ctx, projectId, setSnapshot, setError);
-  useExternalPolling(projectId, runtime, setError);
+  const tabs = useExternalPolling(projectId, runtime, setError);
   const actions = useExternalActions(runtime.runtimeRef, setError);
   const guard = useExternalGuard(runtime, projectId, setError, t);
   return {
@@ -463,5 +481,6 @@ export function useExternalAgentBridge(ctx: AgentContext, projectId: string): Ex
     error,
     ...actions,
     ...guard,
+    ...tabs,
   };
 }

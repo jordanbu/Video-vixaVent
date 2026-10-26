@@ -4,6 +4,7 @@ import { once } from 'node:events';
 import { createServer, type IncomingMessage } from 'node:http';
 import { externalMcpAuthorized, trustedEditorRequest } from '../editor-auth.ts';
 import { mintUploadReceipt } from '../external-agent/import-token.ts';
+import type { BrowserOwnershipClaimIntent } from '../external-agent/project-edit-ownership.ts';
 import {
   handleExternalAgentBridge,
   type BridgeOperations,
@@ -23,16 +24,20 @@ const calls: Record<keyof BridgeOperations, number> = {
 };
 
 let staleBrowserRevision = false;
+let displacedBrowser = false;
+let lastClaimIntent: BrowserOwnershipClaimIntent | undefined;
 const registrationCapability = 'r'.repeat(43);
 const operations = {
   claimBrowserOwnership: async (
     projectId: string,
     ownerId: string,
     baseRevision: string,
-    _allowExistingBrowserOwner?: boolean,
+    intent?: BrowserOwnershipClaimIntent,
   ) => {
     calls.claimBrowserOwnership += 1;
+    lastClaimIntent = intent;
     if (staleBrowserRevision) return { status: 'stale' as const, currentRevision: 'authoritative-revision' };
+    if (displacedBrowser) return { status: 'displaced' as const, reloadRequired: false };
     return {
       status: 'claimed' as const,
       claim: { projectId, ownerKind: 'browser' as const, ownerId, epoch: 1, baseRevision },
@@ -338,11 +343,44 @@ try {
   });
   assert.equal(calls.registerEditor, registerCount,
     'a stale browser revision must not be installed in the broker');
+  // A tab displaced by another browser editor gets its own 409 signal, distinct
+  // from a stale revision, and nothing is installed in the broker.
+  const displacedBody = { projectId: 'project-a', editorId: 'editor-a', baseRevision: 'rev-a', tools: [] };
+  displacedBrowser = true;
+  const displacedRegistration = await requestBridge('/register', {
+    ...registerRequest,
+    body: JSON.stringify({ ...displacedBody, heldEpoch: 4 }),
+  });
+  displacedBrowser = false;
+  assert.equal(displacedRegistration.status, 409);
+  assert.deepEqual(await displacedRegistration.json(), {
+    error: 'project is open in another browser editor',
+    displaced: true,
+  });
+  assert.deepEqual(lastClaimIntent, { heldEpoch: 4 }, 'the held epoch reaches the ownership claim');
+  assert.equal(calls.registerEditor, registerCount,
+    'a displaced tab must not be installed in the broker');
+  const takeoverRegistration = await requestBridge('/register', {
+    ...registerRequest,
+    body: JSON.stringify({ ...displacedBody, heldEpoch: 4, takeover: true }),
+  });
+  assert.equal(takeoverRegistration.status, 200);
+  assert.deepEqual(lastClaimIntent, { heldEpoch: 4, takeover: true },
+    'an explicit take-back reaches the ownership claim');
+  assert.equal(calls.registerEditor, registerCount + 1);
+  for (const invalid of [{ heldEpoch: 0 }, { heldEpoch: 1.5 }, { heldEpoch: '3' }, { takeover: 'yes' }]) {
+    const response = await requestBridge('/register', {
+      ...registerRequest,
+      body: JSON.stringify({ ...displacedBody, ...invalid }),
+    });
+    assert.equal(response.status, 500, `invalid registration intent ${JSON.stringify(invalid)} is rejected`);
+  }
+  assert.equal(calls.registerEditor, registerCount + 1);
   const registrationResponse = await requestBridge('/register', registerRequest);
   assert.equal(registrationResponse.status, 200);
   const registrationValue = await registrationResponse.json() as Record<string, unknown>;
   assert.equal(registrationValue.registrationCapability, registrationCapability);
-  assert.equal(calls.registerEditor, registerCount + 1);
+  assert.equal(calls.registerEditor, registerCount + 2);
   const wrongCapabilityHeaders = {
     'X-Vixaventora-Editor-Registration': 'w'.repeat(43),
   };

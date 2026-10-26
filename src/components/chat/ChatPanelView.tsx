@@ -7,6 +7,7 @@ import { ChatComposer } from './ChatComposer';
 import { ChatMessage } from './ChatMessage';
 import { ChatRunStatus } from './ChatRunStatus.tsx';
 import { ExternalProposalCard } from './ExternalProposalCard';
+import { ProjectElsewhereNotice } from './ProjectElsewhereNotice';
 import { ProposalCard } from './ProposalCard';
 import { ToolGroupRow } from './ToolGroupRow';
 import { groupMessages } from './message-groups';
@@ -268,7 +269,10 @@ function ExpandedPanel({ controller }: { controller: ChatPanelController }) {
 }
 
 export function ChatPanelView({ controller }: { controller: ChatPanelController }) {
-  return controller.props.collapsed
-    ? <CollapsedPanel controller={controller} />
-    : <ExpandedPanel controller={controller} />;
+  return <>
+    <ProjectElsewhereNotice external={controller.externalProposal} />
+    {controller.props.collapsed
+      ? <CollapsedPanel controller={controller} />
+      : <ExpandedPanel controller={controller} />}
+  </>;
 }

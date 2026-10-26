@@ -1,18 +1,36 @@
 import { externalToolSchemas } from './external-tool-schemas';
 import type { ExternalEditSessionTerminalStatus } from './external-edit-session';
 import type { BrowserProjectOwnership } from '../persist/projectStoreTransport';
+import type { BridgeOwnershipIntent, BridgeRegistrationRefusal } from './external-bridge-ownership';
 
 const EDITOR_REGISTRATION_CAPABILITY_HEADER = 'X-Vixaventora-Editor-Registration';
 
 export class EditorBridgeRequestError extends Error {
   readonly operation: string;
   readonly status: number;
+  /** Why a registration was refused, when the server said so. */
+  readonly refusal?: BridgeRegistrationRefusal;
 
-  constructor(operation: string, status: number) {
+  constructor(operation: string, status: number, refusal?: BridgeRegistrationRefusal) {
     super(`${operation} failed: HTTP ${status}`);
     this.name = 'EditorBridgeRequestError';
     this.operation = operation;
     this.status = status;
+    if (refusal) this.refusal = refusal;
+  }
+}
+
+async function registrationRefusal(response: Response): Promise<BridgeRegistrationRefusal | undefined> {
+  if (response.status !== 409) return undefined;
+  try {
+    const body: unknown = await response.json();
+    if (!body || typeof body !== 'object') return undefined;
+    const displaced = (body as { displaced?: unknown }).displaced === true;
+    const reloadRequired = (body as { reloadRequired?: unknown }).reloadRequired === true;
+    return displaced || reloadRequired ? { displaced, reloadRequired } : undefined;
+  } catch {
+    // A non-JSON 409 keeps the plain status-only error.
+    return undefined;
   }
 }
 
@@ -67,6 +85,7 @@ export async function registerEditorBridge(
   baseRevision: string,
   signal: AbortSignal,
   registrationCapability?: string,
+  intent: BridgeOwnershipIntent = {},
 ): Promise<BrowserProjectOwnership> {
   const response = await fetch('/api/external-agent/register', {
     method: 'POST',
@@ -76,10 +95,13 @@ export async function registerEditorBridge(
       editorId: editorInstanceId,
       baseRevision,
       tools: externalToolSchemas(),
+      ...intent,
     }),
     signal,
   });
-  if (!response.ok) throw new EditorBridgeRequestError('registration', response.status);
+  if (!response.ok) {
+    throw new EditorBridgeRequestError('registration', response.status, await registrationRefusal(response));
+  }
   const value: unknown = await response.json();
   if (!value || typeof value !== 'object') throw new Error('invalid editor registration response');
   const registration = value as Partial<{

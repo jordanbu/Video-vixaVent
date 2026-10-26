@@ -274,11 +274,13 @@ try {
   );
   assert.equal(reconnect.status, 'claimed',
     'a same-window reconnect must recover its own persisted ownership');
+  assert.equal(reconnect.status, 'claimed');
+  if (reconnect.status !== 'claimed') throw new Error('same-window reconnect failed');
   const renewed = await claimBrowserProjectOwnership(
     projectId,
     'browser-takeover-owner',
     serializedCommit.revision!,
-    true,
+    { heldEpoch: reconnect.claim.epoch },
   );
   assert.equal(renewed.status, 'claimed',
     'the live renderer can renew its persisted ownership');
