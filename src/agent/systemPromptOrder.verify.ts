@@ -68,6 +68,12 @@ const commonPrefixLength = (a: string, b: string): number => {
 
   assert.match(PRODUCT_IDENTITY_PROMPT, /official product name is Vixaventora/);
   assert.match(SYSTEM_PROMPT, /imported document text.*untrusted editing material/);
+  // Edit-craft traps a real session fell into (specs/06-criterio-de-edicion.md):
+  // brightness 0.05 read as "+5 %", titles placed after the video, adds pushed to the track end.
+  assert.match(SYSTEM_PROMPT, /1 = unchanged, so 0\.05 renders nearly black/);
+  assert.match(SYSTEM_PROMPT, /Titles and overlays go on a higher video track/);
+  assert.match(SYSTEM_PROMPT, /moved to the track end/);
+  assert.match(SYSTEM_PROMPT, /Past 150 % enlargement, tell the user/);
   assert.match(PRODUCT_IDENTITY_PROMPT, /Do not inherit product identity/);
   assert.ok(
     system.indexOf(PRODUCT_IDENTITY_PROMPT) > system.indexOf(workflow),

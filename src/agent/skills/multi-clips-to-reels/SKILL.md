@@ -1,6 +1,6 @@
 ---
 name: multi-clips-to-reels
-description: Turn multiple product shots, event footage, travel clips, gameplay moments, UGC/product footage, B-roll, or mixed media into social-ready reels, highlights, recaps, or montage-style short videos from existing project media.
+description: Turn multiple product shots, event footage, travel clips, gameplay moments, UGC/product footage, B-roll, or mixed media into social-ready reels, highlights, recaps, or montage-style short videos from existing project media. Also use it to make one short phone clip look professional by cutting it into several shots.
 ---
 
 # Multi Clips to Reels
@@ -26,8 +26,8 @@ This is a Vixaventora-native workflow. Use the current project, source assets, a
 9. Build a compact sequence plan before heavy editing. For each output include selected assets/ranges, opening hook, shot order, role of each shot, rhythm, target duration, platform treatment, and risks.
 10. If the user gave enough constraints and asked to create directly, proceed after stating the plan. If the material is varied or the requested count is high, create or preview the first strongest reel before batching the rest.
 11. Edit around a viewer-facing arc: hook, context, escalation or proof, payoff. For a pure highlight reel, the payoff can be the strongest final moment or a satisfying recap beat.
-12. Package for the target platform: aspect ratio/crop, title text, styled captions, music/beat sync, light motion graphics, transitions, speed ramps, or zooms only when they improve rhythm or clarity.
-13. QA before reporting done: strongest shot first, clear sequence purpose, distinct outputs, no unsupported claims, platform fit, requested count/duration, timeline names, and export readiness.
+12. Package for the target platform: aspect ratio/crop, title text, styled captions, music/beat sync, light motion graphics, transitions, speed ramps, or zooms only when they improve rhythm or clarity. Follow [references/packaging-craft.md](references/packaging-craft.md) for motion, transitions, text, sound layers, framing, color, and source quality.
+13. QA before reporting done: strongest shot first, clear sequence purpose, distinct outputs, no unsupported claims, platform fit, requested count/duration, timeline names, and export readiness. Run the checklist in [references/packaging-craft.md](references/packaging-craft.md).
 
 ## Plan Format
 
