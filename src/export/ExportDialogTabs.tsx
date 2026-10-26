@@ -1,5 +1,6 @@
 import type { ProjectDoc, TimelineState } from '../editor/types';
 import { trackAlias } from '../editor/types';
+import { assessTimelineQuality } from '../editor/qualityAlerts';
 import { Icon } from '../components/icons';
 import { useT } from '../i18n/locale';
 import { jianyingDraftPayload } from './jianyingDraftRequest';
@@ -8,7 +9,7 @@ import {
   MIN_VIDEO_BITRATE_MBPS,
 } from './bitrate';
 import { ExportBitrateControl } from './ExportBitrateControl';
-import { ExportQaCard, InfoCard, Row, Segmented } from './ExportDialogParts';
+import { ExportQaCard, ExportSourceQualityCard, InfoCard, Row, Segmented } from './ExportDialogParts';
 import {
   EXPORT_FPS,
   EXPORT_RESOLUTION_OPTIONS,
@@ -24,7 +25,7 @@ import {
   saveJianYingDraftPreference,
   type JianYingDraftStore,
 } from './jianyingDraftPreference';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 /** The local server this page exports through runs on the same machine, so the
  * browser's OS is the one whose draft store the export writes to. */
@@ -124,12 +125,20 @@ function QaSettings({ enabled, busy, qa, onToggle }: QaSettingsProps) {
   );
 }
 
-interface VideoTabProps extends VideoSettingsProps, QaSettingsProps {}
+interface VideoTabProps extends VideoSettingsProps, QaSettingsProps {
+  state: TimelineState;
+}
 
-function VideoTab({ video, busy, qualityMode, setQualityMode, enabled, qa, onToggle }: VideoTabProps) {
+function VideoTab({ state, video, busy, qualityMode, setQualityMode, enabled, qa, onToggle }: VideoTabProps) {
+  // Recomputed for the chosen resolution: the same clip can be fine at 1080p and enlarged at 4K.
+  const quality = useMemo(
+    () => assessTimelineQuality(state, { exportResolution: video.resolution }),
+    [state, video.resolution],
+  );
   return (
     <>
       <VideoSettings video={video} busy={busy} qualityMode={qualityMode} setQualityMode={setQualityMode} />
+      <ExportSourceQualityCard issues={quality} resolution={resolutionLabel(video.resolution)} />
       <QaSettings enabled={enabled} busy={busy} qa={qa} onToggle={onToggle} />
     </>
   );

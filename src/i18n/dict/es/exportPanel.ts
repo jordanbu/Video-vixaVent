@@ -188,4 +188,9 @@ export default {
   "正在生成草稿…": "Creando borrador…",
   "自定义路径": "Ruta personalizada",
   "草稿库路径": "Ruta del almacén de borradores",
+  "素材画质提醒": "Calidad de las fuentes",
+  "1 个片段会被放大（最高 {pct}%）": "1 clip se va a ver ampliado (al {pct} %)",
+  "{n} 个片段会被放大（最高 {pct}%）": "{n} clips se van a ver ampliados (hasta el {pct} %)",
+  "以 {resolution} 导出不会提升画质：最大的素材是 {source}": "Exportar en {resolution} no agrega calidad: la fuente más grande es {source}",
+  "仅作提示，不影响导出。": "Es solo un aviso: no impide exportar.",
 } as Record<string, string>;

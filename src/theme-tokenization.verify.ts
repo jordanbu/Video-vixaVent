@@ -16,6 +16,9 @@ const CONTENT_COLOR_SELECTORS = new Set([
   '.vx-clip-badge.zoom',
   '.vx-clip-badge.iso',
   '.vx-clip-badge.tr',
+  // Quality alert chips keep their warning/alert colors on every skin.
+  '.vx-clip-badge.quality',
+  '.vx-clip-badge.quality.alert',
   '.vx-transition-marker',
   '.vx-transition-marker:hover',
   '.vx-capedit-colordot',

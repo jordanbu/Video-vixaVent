@@ -199,4 +199,9 @@ export default {
   '正在生成草稿…': 'Creating draft…',
   '自定义路径': 'Custom path',
   '草稿库路径': 'Draft store path',
+  '素材画质提醒': 'Source quality',
+  '1 个片段会被放大（最高 {pct}%）': '1 clip will look upscaled (up to {pct}%)',
+  '{n} 个片段会被放大（最高 {pct}%）': '{n} clips will look upscaled (up to {pct}%)',
+  '以 {resolution} 导出不会提升画质：最大的素材是 {source}': 'Exporting at {resolution} adds no quality: the largest source is {source}',
+  '仅作提示，不影响导出。': 'Just a heads-up; it does not block the export.',
 } as Record<string, string>;

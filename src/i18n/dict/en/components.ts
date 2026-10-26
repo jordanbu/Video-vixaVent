@@ -394,4 +394,5 @@ export default {
   '边框阴影': 'Border shadow',
   '边框颜色': 'Border color',
   '预览画布片段变换': 'Preview canvas clip transform',
+  '放大到 {pct}%，可能会模糊。请降低缩放或比例，或换用更高分辨率的素材。': 'Upscaled to {pct}%: may look blurry. Lower the zoom or scale, or use a higher-resolution source.',
 } as Record<string, string>;

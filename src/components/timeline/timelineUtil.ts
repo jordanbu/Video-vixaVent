@@ -3,6 +3,7 @@
 // Ensure that geometry and copy have only one true source. All copied verbatim from the top of Timeline.tsx.
 import { theme } from '../../theme';
 import type { TimelineItem, TimelineState, TrackId, TransitionItem } from '../../editor/types';
+import { clipQualityIssue, type QualityIssue } from '../../editor/qualityAlerts';
 import {
   TIMELINE_DEFAULT_TRACK_HEIGHT,
   TIMELINE_RULER_HEIGHT,
@@ -50,6 +51,8 @@ export interface TimelineIndexes {
   transitionByIncomingId: ReadonlyMap<string, TransitionItem>;
   itemWindowsByTrack: ReadonlyMap<TrackId, TimelineTrackItemIndex>;
   itemOrderById: ReadonlyMap<string, number>;
+  /** Clips enlarged past their source pixels against the canvas (badge on the clip). */
+  qualityIssueById: ReadonlyMap<string, QualityIssue>;
 }
 
 export function timelineFrameWindow(
@@ -93,12 +96,15 @@ export function buildTimelineIndexes(state: TimelineState): TimelineIndexes {
   const itemsByTrack = new Map<TrackId, TimelineItem[]>();
   const itemById = new Map<string, TimelineItem>();
   const itemOrderById = new Map<string, number>();
+  const qualityIssueById = new Map<string, QualityIssue>();
   state.items.forEach((item, order) => {
     const items = itemsByTrack.get(item.track);
     if (items) items.push(item);
     else itemsByTrack.set(item.track, [item]);
     if (!itemById.has(item.id)) itemById.set(item.id, item);
     if (!itemOrderById.has(item.id)) itemOrderById.set(item.id, order);
+    const quality = clipQualityIssue(item, state);
+    if (quality) qualityIssueById.set(item.id, quality);
   });
   const transitionsByTrack = new Map<TrackId, TransitionItem[]>();
   const transitionByIncomingId = new Map<string, TransitionItem>();
@@ -112,7 +118,9 @@ export function buildTimelineIndexes(state: TimelineState): TimelineIndexes {
   }
   const itemWindowsByTrack = new Map<TrackId, TimelineTrackItemIndex>();
   itemsByTrack.forEach((items, trackId) => itemWindowsByTrack.set(trackId, trackItemWindowIndex(items)));
-  return { itemsByTrack, itemById, transitionsByTrack, transitionByIncomingId, itemWindowsByTrack, itemOrderById };
+  return {
+    itemsByTrack, itemById, transitionsByTrack, transitionByIncomingId, itemWindowsByTrack, itemOrderById, qualityIssueById,
+  };
 }
 
 function lowerBound(values: readonly number[], target: number): number {

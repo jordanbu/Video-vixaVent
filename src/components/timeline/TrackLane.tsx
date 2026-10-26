@@ -14,6 +14,7 @@ import { getKeyframePropertyDefinition } from '../../editor/keyframeRegistry';
 import { canRateStretchItem, rateStretchGeometry } from '../../editor/rateStretch';
 import { sourceWindowForTimelineRange } from '../../editor/sourceLimit';
 import { planSlip } from '../../editor/slip';
+import { qualityPercent, type QualityIssue } from '../../editor/qualityAlerts';
 import type { EditorCommands } from '../../editor/store';
 import { hasLibraryDrag, parseLibraryDrag, type LibraryDragPayload } from '../../library/drag';
 import { ALL_FX, FX_EFFECTS, LUT_EFFECTS } from '../../gl/fx/effects';
@@ -35,16 +36,22 @@ import {
 } from '../../captions/captionGroupMove';
 import { droppedFiles, hasExternalFiles } from '../../media/externalFileDrop';
 
-/** corner chips so applied fx / lut / zoom / denoise / transition are visible on the clip */
+/** corner chips so quality alerts and applied fx / lut / zoom / denoise / transition are visible on the clip */
 function ClipEffectBadges({
   item,
   inTransition,
+  quality,
 }: {
   item: TimelineItem;
   inTransition: TransitionItem | null;
+  quality?: QualityIssue;
 }) {
   const t = useT();
   const chips: { key: string; label: string; title: string; className: string }[] = [];
+  if (quality) {
+    const pct = qualityPercent(quality.factor);
+    chips.push({ key: 'quality', label: `⚠ ${pct}%`, title: t('放大到 {pct}%，可能会模糊', { pct }), className: `quality ${quality.severity}` });
+  }
   const effects = item.effects ?? [];
   const fxNames = effects
     .filter((e) => e.assetId in FX_EFFECTS)
@@ -406,7 +413,8 @@ export function TrackLane({
               );
             })()}
             <span className="vx-clip-duration" data-vx-live-duration={dur}>{fmt(dur, state.fps)}</span>
-            <ClipEffectBadges item={it} inTransition={indexes.transitionByIncomingId.get(it.id) ?? null} />
+            <ClipEffectBadges item={it} inTransition={indexes.transitionByIncomingId.get(it.id) ?? null}
+              quality={indexes.qualityIssueById.get(it.id)} />
             {/* pen mode: keyframe rubber band on the selected clip (vertical = value; audio = volume 0..2, rest = transparency 0..1)*/}
             {editMode === 'pen' && selected && (() => {
               const prop = it.kind === 'audio' ? 'volume' as const : 'opacity' as const;

@@ -263,4 +263,5 @@ export default {
   '转场菜单': 'Transition menu',
   '{n} 秒': '{n}s',
   '删除转场': 'Remove transition',
+  '放大到 {pct}%，可能会模糊': 'Upscaled to {pct}%: may look blurry',
 } as Record<string, string>;

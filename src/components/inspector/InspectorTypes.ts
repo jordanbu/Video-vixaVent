@@ -4,6 +4,7 @@ import type { Tpl } from '../../types';
 import type { SelectedPreviewStatus } from '../../gl/previewAdapter';
 import type { SlipPlan, SlipResult } from '../../editor/slip';
 import type {
+  AspectFit,
   ClipEffect,
   ClipFilters,
   ClipTransform,
@@ -48,6 +49,8 @@ export interface InspectorPanelProps {
   fps: number;
   canvasWidth: number;
   canvasHeight: number;
+  /** Timeline fit, for the inspector's quality line (contain when absent). */
+  canvasFit?: AspectFit;
   collapsed: boolean;
   onCollapsedChange: (collapsed: boolean) => void;
   onItemPropChange: (key: string, value: unknown) => void;

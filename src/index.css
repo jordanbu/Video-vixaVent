@@ -1149,6 +1149,9 @@ button, input, select { font: inherit; }
 .vx-clip-badge.zoom { background:#1f5f8bee; border-color:#6ab0e0; }
 .vx-clip-badge.iso { background:#1a6b4aee; border-color:#5dcaa0; }
 .vx-clip-badge.tr { background:#3a3f52ee; border-color:#8a9ad0; }
+/* quality alert (src/editor/qualityAlerts.ts): the only hoverable chip, so its tooltip shows over the clip */
+.vx-clip-badge.quality { pointer-events:auto; cursor:help; background:#7a5a12ee; border-color:#e0b84a; }
+.vx-clip-badge.quality.alert { background:#8f2f28ee; border-color:#e98980; }
 
 /* transition diamond at cut points */
 .vx-transition-marker {

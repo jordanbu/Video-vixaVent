@@ -327,4 +327,5 @@ export default {
   "边框阴影": "Sombra del borde",
   "边框颜色": "Color del borde",
   "预览画布片段变换": "Transformación del clip en el lienzo de vista previa",
+  "放大到 {pct}%，可能会模糊。请降低缩放或比例，或换用更高分辨率的素材。": "Se amplía al {pct} %: puede verse borroso. Baja el zoom o la escala, o usa una fuente de mayor resolución.",
 } as Record<string, string>;

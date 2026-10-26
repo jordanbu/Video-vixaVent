@@ -248,4 +248,5 @@ export default {
   "转场菜单": "Menú de la transición",
   "{n} 秒": "{n} s",
   "删除转场": "Quitar transición",
+  "放大到 {pct}%，可能会模糊": "Se amplía al {pct} %: puede verse borroso",
 } as Record<string, string>;

@@ -4,6 +4,7 @@ import type { TimelineItem } from '../../editor/types';
 import { backgroundFillStrengthOf } from '../../editor/backgroundFill';
 import { KEYFRAME_PROPS, getKeyframePropertyDefinition } from '../../editor/keyframeRegistry';
 import { inspectorMixedValue } from '../../editor/inspectorBatch';
+import { clipQualityIssue } from '../../editor/qualityAlerts';
 import { useT } from '../../i18n/locale';
 import { hasFlexCrop, type FlexCropEdge } from '../../editor/flexCrop';
 import { PropSchemaField } from './PropSchemaField';
@@ -12,6 +13,7 @@ import { FadeControl, IsolateVoiceControl, SpeedControl, TextControl, Transition
 import { BackgroundFillControl, EffectsControl, FilterControl, SectionLabel } from './InspectorVisualControls';
 import type { InspectorPanelProps } from './InspectorTypes';
 import { InspectorSlipControl } from './InspectorSlipControl';
+import { SourceQualityStatus } from './SourceQualityStatus';
 import { groupInspectorPropSchema } from './inspectorPropSchemaLayout';
 
 export type InspectorTab = 'basic' | 'video' | 'audio' | 'animation';
@@ -67,6 +69,10 @@ export function InspectorContent(props: InspectorContentProps) {
     if (!activeAvailable) onTabChange('basic');
   }, [activeAvailable, onTabChange]);
   const visibleTab = available[activeTab] ? activeTab : 'basic';
+  // One clip at a time: with several selected, the primary clip's line would read as the whole selection's.
+  const quality = selection.length === 1
+    ? clipQualityIssue(item, { width: panel.canvasWidth, height: panel.canvasHeight, fit: panel.canvasFit })
+    : null;
   return (
     <>
       <InspectorTabBar id={tabGroupId} activeTab={visibleTab} available={available} onChange={onTabChange} />
@@ -78,6 +84,7 @@ export function InspectorContent(props: InspectorContentProps) {
       >
         <div className="vx-insp-groups">
           <InspectorHint item={item} count={panel.selectedItems.length} />
+          <SourceQualityStatus issue={quality} />
           <InspectorTabContent {...props} activeTab={visibleTab} />
         </div>
       </div>

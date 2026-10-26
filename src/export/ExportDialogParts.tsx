@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useT } from '../i18n/locale';
 import { Icon, type IconName } from '../components/icons';
+import { qualityPercent, type QualityIssue } from '../editor/qualityAlerts';
 import type { ExportQaIssue } from './quality';
 import type { ExportQaUiState } from './useExportWorkflow';
 
@@ -85,6 +86,42 @@ export function ExportQaCard({ qa }: { qa: ExportQaUiState }) {
           <img src={qa.evidenceUrl} alt={t('剪辑点前后画面对照')} />
         </details>
       )}
+    </div>
+  );
+}
+
+/**
+ * Before exporting: how many clips will look enlarged at the chosen resolution,
+ * and whether that resolution is above every source. Informs only — the export
+ * button never depends on it.
+ */
+export function ExportSourceQualityCard({ issues, resolution }: { issues: readonly QualityIssue[]; resolution: string }) {
+  const t = useT();
+  const upscaled = issues.filter((issue) => issue.code === 'upscaled_clip');
+  const aboveSources = issues.find((issue) => issue.code === 'export_above_sources');
+  if (!upscaled.length && !aboveSources) return null;
+  const pct = qualityPercent(Math.max(...upscaled.map((issue) => issue.factor)));
+  return (
+    <div className="vx-export-qa-card issues" role="status">
+      <strong>{t('素材画质提醒')}</strong>
+      <ul>
+        {upscaled.length > 0 && (
+          <li className={upscaled.some((issue) => issue.severity === 'alert') ? 'error' : undefined}>
+            {upscaled.length === 1
+              ? t('1 个片段会被放大（最高 {pct}%）', { pct })
+              : t('{n} 个片段会被放大（最高 {pct}%）', { n: upscaled.length, pct })}
+          </li>
+        )}
+        {aboveSources && (
+          <li className={aboveSources.severity === 'alert' ? 'error' : undefined}>
+            {t('以 {resolution} 导出不会提升画质：最大的素材是 {source}', {
+              resolution,
+              source: `${aboveSources.sourceShortSide}p`,
+            })}
+          </li>
+        )}
+      </ul>
+      <p>{t('仅作提示，不影响导出。')}</p>
     </div>
   );
 }
