@@ -108,6 +108,7 @@ En el diálogo de exportación, se recalcula con la resolución elegida.
 | La insignia de calidad es la única que recibe el puntero (`pointer-events: auto`) | Dejarla como las demás | El contenedor de insignias ignora el puntero, así que su tooltip nunca aparecía; los clics igual llegan al clip |
 | La tarjeta del diálogo usa el estilo de `vx-export-qa-card` | Un estilo nuevo | Se ve igual que el QA de exportación que está justo debajo; no suma CSS |
 | Insignia e inspector ignoran si la pista está oculta; el resumen de exportación no | Saltar pistas ocultas en todos lados | El clip sigue estando ampliado si se vuelve a mostrar la pista; el resumen habla del archivo que se va a exportar |
+| **Corregido el 2026-10-26:** `submit_export` del agente (`applyExportGeometry`, `src/generate/media-export.ts`) mide la resolución por el lado corto, igual que el diálogo y estas alertas | Mantener su escala por altura | Con la altura, "720p" en vertical daba 406×720: menos que una fuente de 480×864, y distinto de lo que calculan el diálogo y las alertas |
 
 ## Verificación
 
@@ -151,6 +152,9 @@ Resultados del 2026-10-26, con Node 24.22.1:
     calidad: la fuente más grande es 1080p"; en 720p la tarjeta desaparece. Con la tarjeta a la vista
     (1080p), el botón "Exportar video" sigue habilitado; el código del botón no lee las
     alertas.
+- Exportación del agente en vertical (2026-10-26): antes del arreglo, `submit_export` en
+  720p entregó `width 406 × height 720`. `media-export.geometry.verify.ts` ahora exige
+  720×1280 en 720p y 1080×1920 en 1080p para un lienzo de 1080×1920.
 
 ## Pendiente
 

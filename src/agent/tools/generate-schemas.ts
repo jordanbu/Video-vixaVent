@@ -238,7 +238,7 @@ export const GENERATE_TOOL_SCHEMAS: AgentToolSchema[] = [
         resolution: {
           type: 'string',
           enum: ['480p', '720p', '1080p'],
-          description: 'Video max-height ladder (default timeline size). Scales width to keep aspect.',
+          description: 'Video only. Scale by the short side, keeping aspect (720p portrait = 720×1280); omit to use the timeline size.',
         },
         videoBitrate: {
           type: 'integer',

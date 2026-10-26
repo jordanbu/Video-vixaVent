@@ -1,4 +1,5 @@
 import { materializeTimelineExport } from '../export/materializeBlobMedia';
+import { EXPORT_RESOLUTIONS } from '../export/mediaSettings';
 import type { ProjectDoc, TimelineState } from '../editor/types';
 
 export interface SubmitMediaExportArgs {
@@ -11,7 +12,7 @@ export interface SubmitMediaExportArgs {
   endSeconds?: number;
   /** Output fps override. Frame counts stay fixed while real-time duration scales. */
   fps?: number;
-  /** Target max-height ladder: 480p | 720p | 1080p. */
+  /** Short-side ladder: 480p | 720p | 1080p (720p portrait = 720×1280). */
   resolution?: '480p' | '720p' | '1080p';
   /** Exact video bitrate in bits per second. */
   videoBitrate?: number;
@@ -33,24 +34,20 @@ export interface MediaExportResult {
   height?: number;
 }
 
-const RES_HEIGHT: Record<NonNullable<SubmitMediaExportArgs['resolution']>, number> = {
-  '480p': 480,
-  '720p': 720,
-  '1080p': 1080,
-};
-
-/** Scale canvas to fit resolution ladder while preserving aspect ratio. */
+/**
+ * Scale the canvas so its short side matches the preset, keeping the aspect ratio:
+ * 720p is 1280×720 landscape and 720×1280 portrait, the same rule as the export
+ * dialog and the quality alerts (EXPORT_RESOLUTIONS).
+ */
 export function applyExportGeometry(
   state: TimelineState,
   opts: { fps?: number; resolution?: SubmitMediaExportArgs['resolution'] },
 ): TimelineState {
   let next: TimelineState = { ...state };
-  if (opts.resolution && RES_HEIGHT[opts.resolution]) {
-    const targetH = RES_HEIGHT[opts.resolution];
-    const aspect = state.width / Math.max(1, state.height);
-    const height = targetH;
-    const width = Math.max(2, Math.round(height * aspect / 2) * 2); // even
-    next = { ...next, width, height };
+  if (opts.resolution && EXPORT_RESOLUTIONS[opts.resolution]) {
+    const scale = EXPORT_RESOLUTIONS[opts.resolution] / Math.max(1, Math.min(state.width, state.height));
+    const even = (side: number) => Math.max(2, Math.round((side * scale) / 2) * 2);
+    next = { ...next, width: even(state.width), height: even(state.height) };
   }
   if (typeof opts.fps === 'number' && [24, 25, 30, 50, 60].includes(opts.fps)) {
     next = { ...next, fps: opts.fps };
