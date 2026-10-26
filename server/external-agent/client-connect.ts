@@ -36,6 +36,9 @@ export type ConnectCommandRunner = (command: ConnectCommand) => Promise<{ code: 
 export interface ClientConnectOptions {
   /** Base directory that stands in for the user home. Defaults to os.homedir(). */
   baseDir?: string;
+  /** Folder Claude Code keeps `.claude.json` in. Defaults to CLAUDE_CONFIG_DIR, the
+   *  account the editor was launched with, when no baseDir stands in for the home. */
+  claudeConfigDir?: string;
   /** Codex CLI override (tests inject a stub here). Defaults to auto-detection. */
   codexBin?: string;
   /** Platform whose CLI lookup and token storage apply. Defaults to process.platform. */
@@ -139,8 +142,8 @@ async function connectJsonClients(
  *  build that keep the same settings file under `.qoder` or `.qoder-cn`, and
  *  only the installed one is meaningful, so an absent sibling is skipped; when
  *  neither exists yet the documented `.qoder` path is created. */
-async function jsonClientFiles(client: JsonClient, baseDir: string): Promise<string[]> {
-  if (client === 'claude') return [path.join(baseDir, '.claude.json')];
+async function jsonClientFiles(client: JsonClient, baseDir: string, claudeConfigDir?: string): Promise<string[]> {
+  if (client === 'claude') return [path.join(claudeConfigDir ?? baseDir, '.claude.json')];
   if (client === 'cursor') return [path.join(baseDir, '.cursor', 'mcp.json')];
   if (client === 'antigravity') return [path.join(baseDir, '.gemini', 'antigravity', 'mcp_config.json')];
   const homes: string[] = [];
@@ -269,7 +272,10 @@ export async function connectExternalClient(
   }
   const baseDir = options.baseDir ?? homedir();
   if (selected === 'codex') return connectCodex(endpoint, token, baseDir, options);
-  const files = await jsonClientFiles(selected, baseDir);
+  // A substitute home (tests) must not pick up the real account's folder.
+  const envClaudeDir = options.baseDir ? undefined : process.env.CLAUDE_CONFIG_DIR;
+  const claudeConfigDir = options.claudeConfigDir ?? (envClaudeDir ? path.resolve(envClaudeDir) : undefined);
+  const files = await jsonClientFiles(selected, baseDir, claudeConfigDir);
   const entry = selected === 'antigravity'
     ? { httpUrl: endpoint, headers: { Authorization: `Bearer ${token}` } }
     : httpEntry(endpoint, token);

@@ -76,6 +76,28 @@ async function main(): Promise<void> {
     assert.equal(claudeConfig.mcpServers.vixaventora.type, 'http');
     assert.equal(claudeConfig.mcpServers.vixaventora.url, ENDPOINT);
 
+    // 5b. Claude with several accounts: the entry goes to the folder of the account the
+    // editor was launched with (CLAUDE_CONFIG_DIR), which is the file that CLI reads.
+    const accountDir = path.join(home, '.claude-work');
+    const claudeAccount = await connectExternalClient('claude', ENDPOINT, TOKEN, { baseDir: home, claudeConfigDir: accountDir });
+    assert.equal(claudeAccount.ok, true);
+    if (claudeAccount.ok) assert.deepEqual(claudeAccount.paths, ['~/.claude-work/.claude.json']);
+    const accountConfig = JSON.parse(await readFile(path.join(accountDir, '.claude.json'), 'utf8'));
+    assert.equal(accountConfig.mcpServers.vixaventora.url, ENDPOINT);
+    // A substitute home ignores the real CLAUDE_CONFIG_DIR, so this check never writes a real account.
+    const savedConfigDir = process.env.CLAUDE_CONFIG_DIR;
+    process.env.CLAUDE_CONFIG_DIR = path.join(home, 'real-account');
+    try {
+      const isolated = await connectExternalClient('claude', ENDPOINT, TOKEN, { baseDir: home });
+      assert.equal(isolated.ok, true);
+      if (isolated.ok) assert.deepEqual(isolated.paths, ['~/.claude.json']);
+      await assert.rejects(stat(path.join(home, 'real-account', '.claude.json')),
+        'with baseDir set, CLAUDE_CONFIG_DIR is not used');
+    } finally {
+      if (savedConfigDir === undefined) delete process.env.CLAUDE_CONFIG_DIR;
+      else process.env.CLAUDE_CONFIG_DIR = savedConfigDir;
+    }
+
     // 6. Qoder: neither build home exists yet, so the documented ~/.qoder wins.
     const qoderFirst = await connectExternalClient('qoder', ENDPOINT, TOKEN, { baseDir: home });
     assert.equal(qoderFirst.ok, true);

@@ -12,7 +12,7 @@ import {
   parseClaudeCodeModels,
   requestClaudeCodeModels,
 } from './models.ts';
-import { runClaudeCodeTurn, translateClaudeCodeLine } from './turn-runner.ts';
+import { childEnvironment, runClaudeCodeTurn, translateClaudeCodeLine } from './turn-runner.ts';
 
 // -- version parsing / support gate -----------------------------------------
 assert.equal(isSupportedClaudeCodeVersion(MINIMUM_CLAUDE_CODE_VERSION), true);
@@ -37,6 +37,28 @@ assert.match(windowsShim.args[3], /\^"model=name\^&danger\^""$/);
 
 const posixCommand = claudeCodeCommand('/usr/local/bin/claude', ['--version'], 'linux');
 assert.deepEqual(posixCommand, { executable: '/usr/local/bin/claude', args: ['--version'] });
+
+// -- child environment: allowlisted, and CLAUDE_CONFIG_DIR picks the account --
+{
+  const saved = { config: process.env.CLAUDE_CONFIG_DIR, key: process.env.ANTHROPIC_API_KEY };
+  try {
+    process.env.CLAUDE_CONFIG_DIR = '/Users/someone/.claude-work';
+    process.env.ANTHROPIC_API_KEY = 'sk-not-forwarded';
+    const withConfig = childEnvironment();
+    assert.equal(withConfig.CLAUDE_CONFIG_DIR, '/Users/someone/.claude-work',
+      'the editor forwards CLAUDE_CONFIG_DIR so the CLI uses the account it was launched with');
+    assert.equal('ANTHROPIC_API_KEY' in withConfig, false, 'variables outside the allowlist stay out of the CLI');
+
+    delete process.env.CLAUDE_CONFIG_DIR;
+    assert.equal('CLAUDE_CONFIG_DIR' in childEnvironment(), false,
+      'unset, the CLI keeps its default config folder');
+  } finally {
+    if (saved.config === undefined) delete process.env.CLAUDE_CONFIG_DIR;
+    else process.env.CLAUDE_CONFIG_DIR = saved.config;
+    if (saved.key === undefined) delete process.env.ANTHROPIC_API_KEY;
+    else process.env.ANTHROPIC_API_KEY = saved.key;
+  }
+}
 
 // -- translateClaudeCodeLine: pure event-translation coverage ---------------
 {
@@ -228,7 +250,7 @@ if (!has('--mcp-config')) process.exit(64);
 // Regression guard: the MCP server this turn spawns must NOT be named plain
 // "vixaventora". Claude Code caches auth failures by server NAME in
 // ~/.claude/mcp-needs-auth-cache.json, so sharing the name with a user- or
-// project-scoped "vixaventora" entry (the documented `claude mcp add` setup) lets a
+// project-scoped "vixaventora" entry (the documented "claude mcp add" setup) lets a
 // single unrelated auth failure route this bearer-authenticated config into the
 // OAuth path, hiding every editor tool behind authenticate/complete_authentication.
 const mcpConfigPath = valueAfter('--mcp-config');

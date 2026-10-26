@@ -28,6 +28,9 @@ const CHILD_ENV_NAMES = [
   'http_proxy', 'https_proxy', 'all_proxy', 'no_proxy',
   'SSL_CERT_FILE', 'SSL_CERT_DIR', 'NODE_EXTRA_CA_CERTS', 'NODE_USE_ENV_PROXY',
   'NO_COLOR', 'FORCE_COLOR',
+  // Selects the CLI's config folder, and with it the logged-in account. Users
+  // with several accounts launch the editor with it set; unset keeps the default.
+  'CLAUDE_CONFIG_DIR',
 ] as const;
 
 // Deliberately NOT plain "vixaventora": Claude Code caches MCP auth failures by
