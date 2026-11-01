@@ -374,4 +374,7 @@ export default {
   "音效生成": "Generación de efectos de sonido",
   "模式标签·Agent": "Agente",
   "模式标签·问答": "Preguntas",
+  // Local-execution consent (src/agent/local-execution-consent.ts).
+  "智能体想在这台电脑上运行技能「{skill}」的命令：\n\n{command}\n\n只有信任这个技能时才允许。要允许吗？": "El agente quiere ejecutar en esta computadora este comando de la skill «{skill}»:\n\n{command}\n\nPermítelo solo si confías en esa skill. ¿Lo permites?",
+  "智能体想从 GitHub 安装技能：{repo}\n\n安装后，它的脚本可以在这台电脑上运行。只有信任来源时才允许。要允许吗？": "El agente quiere instalar una skill desde GitHub: {repo}\n\nUna vez instalada, sus scripts pueden ejecutarse en esta computadora. Permítelo solo si confías en el origen. ¿Lo permites?",
 } as Record<string, string>;

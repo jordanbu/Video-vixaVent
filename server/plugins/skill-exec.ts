@@ -72,6 +72,28 @@ export function interpreterGuardError(dir: string, binary: string, args: string[
   return null;
 }
 
+// cp, mkdir and chmod may only touch paths inside the skill directory: before this,
+// `cp x ~/.zshrc` or `chmod 777 /etc/…` passed because only interpreters had a path
+// check. Every operand is checked, plus the value of a `--flag=value`. chmod's mode
+// ("755", "u+x") resolves inside the directory as a relative path, so it needs no
+// special case; `-x`-style modes start with "-" and are skipped like flags.
+const PATH_BINARIES = new Set(['cp', 'mkdir', 'chmod']);
+
+const insideDir = (dir: string, path: string): boolean => {
+  const resolved = resolve(dir, path);
+  return resolved === dir || resolved.startsWith(dir + sep);
+};
+
+/** Reject cp/mkdir/chmod operands that resolve outside the skill directory. */
+export function pathArgsGuardError(dir: string, binary: string, args: string[]): string | null {
+  if (!PATH_BINARIES.has(binary)) return null;
+  for (const arg of args) {
+    const path = arg.startsWith('-') ? (arg.includes('=') ? arg.slice(arg.indexOf('=') + 1) : null) : arg;
+    if (path !== null && !insideDir(dir, path)) return `path escapes the skill directory: ${arg}`;
+  }
+  return null;
+}
+
 const MAX_TIMEOUT_MS = 120_000;
 const MAX_OUTPUT_BYTES = 512 * 1024;
 
@@ -138,7 +160,7 @@ async function runInSkillDir(slug: string, body: ExecRequest): Promise<unknown> 
   const rest = body.command.slice(binary.length).trim();
   const args = rest ? rest.split(/\s+/) : [];
   args.push(...body.args);
-  const guardError = interpreterGuardError(dir, binary, args);
+  const guardError = interpreterGuardError(dir, binary, args) ?? pathArgsGuardError(dir, binary, args);
   if (guardError) return { error: guardError };
   const timeout = Math.min(Math.max(body.timeout ?? 60_000, 1_000), MAX_TIMEOUT_MS);
   try {

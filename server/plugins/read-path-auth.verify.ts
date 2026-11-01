@@ -95,6 +95,22 @@ function requestShape(
   assert.equal(interpreterGuardError(dir, 'npm', ['run', 'build']), null,
     'npm/npx are not treated as inline interpreters');
   console.log('skill-exec interpreter guard: OK');
+
+  // cp/mkdir/chmod operands stay inside the skill directory (specs/08).
+  const { pathArgsGuardError } = await import('./skill-exec.ts');
+  assert.ok(pathArgsGuardError(dir, 'cp', ['payload', '/Users/someone/.zshrc']), 'cp to an absolute path outside rejected');
+  assert.ok(pathArgsGuardError(dir, 'cp', ['-r', '../../..', 'here']), 'cp from outside rejected');
+  assert.ok(pathArgsGuardError(dir, 'cp', ['-t', '/etc', 'x']), 'cp -t outside rejected');
+  assert.ok(pathArgsGuardError(dir, 'cp', ['--target-directory=/etc', 'x']), 'cp --target-directory= outside rejected');
+  assert.ok(pathArgsGuardError(dir, 'chmod', ['777', '/etc/hosts']), 'chmod outside rejected');
+  assert.ok(pathArgsGuardError(dir, 'chmod', ['-x', '../other-skill/run.sh']), 'chmod -x outside rejected');
+  assert.ok(pathArgsGuardError(dir, 'mkdir', ['-p', '/tmp/escape']), 'mkdir outside rejected');
+  assert.equal(pathArgsGuardError(dir, 'cp', ['-r', 'assets', 'out/assets']), null, 'in-dir cp allowed');
+  assert.equal(pathArgsGuardError(dir, 'chmod', ['+x', 'scripts/render.sh']), null, 'in-dir chmod +x allowed');
+  assert.equal(pathArgsGuardError(dir, 'chmod', ['755', 'run.sh']), null, 'numeric mode is not a path escape');
+  assert.equal(pathArgsGuardError(dir, 'mkdir', ['-p', 'out/frames']), null, 'in-dir mkdir allowed');
+  assert.equal(pathArgsGuardError(dir, 'ffmpeg', ['-i', '/abs/in.mp4', 'out.mp4']), null, 'other binaries unaffected');
+  console.log('skill-exec path guard: OK');
 }
 
 console.log('\nread-path-auth.verify: ALL PASSED');

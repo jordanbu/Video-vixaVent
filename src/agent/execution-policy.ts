@@ -11,7 +11,8 @@ export type ToolEffect =
   | 'persistent_local'
   | 'irreversible_external';
 export type ToolRecoveryPolicy = 'pure' | 'idempotent' | 'resume' | 'outcome_unknown';
-/** Execution classification for recovery and offline authorization; no approval gate. */
+/** Execution classification for recovery and offline authorization. Not an approval gate: local code
+ * execution asks the user in local-execution-consent.ts (specs/08). */
 export interface ToolExecutionPolicy {
   readonly effect: ToolEffect;
   readonly recovery: ToolRecoveryPolicy;

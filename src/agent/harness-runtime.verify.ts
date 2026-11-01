@@ -20,6 +20,7 @@ import {
 } from './runtime-ledger';
 import { ExternalSessionRunLedger } from './external-run-ledger';
 import { executeVixaventoraTool, type CodexToolExecution } from './codex/runtime';
+import { setLocalExecutionConfirmer } from './local-execution-consent';
 import type { AgentToolSchema } from './tool-schema';
 import { computeAgentRequestShapeFingerprint } from './runtime';
 import type { Proposal } from './proposal';
@@ -215,13 +216,30 @@ async function verifyDurableBoundary(): Promise<void> {
 }
 
 async function verifyDirectExecutionBoundary(): Promise<void> {
-  // No approval gate: persistent-local tools execute straight through.
+  // Tools that run code on this machine need the user's yes for each call (specs/08).
   let executions = 0;
-  await executeInstallSkill([], async () => {
-    executions += 1;
-    return { ok: true };
-  });
-  assert.equal(executions, 1, 'install_skill executes without a confirmation card');
+  const run = async () => { executions += 1; return { ok: true }; };
+
+  const previous = setLocalExecutionConfirmer(() => true);
+  const allowedLog: string[] = [];
+  const allowed = await executeInstallSkill(allowedLog, run);
+  assert.equal(allowed.success, true);
+  assert.equal(executions, 1, 'install_skill runs once the user allows it');
+  assert.deepEqual(allowedLog, ['requested', 'started', 'outcome:success']);
+
+  setLocalExecutionConfirmer(() => false);
+  const declinedLog: string[] = [];
+  const declined = await executeInstallSkill(declinedLog, run);
+  assert.equal(declined.success, false);
+  assert.equal(executions, 1, 'a declined install_skill never executes');
+  assert.deepEqual(declinedLog, ['requested', 'outcome:denied'],
+    'a declined call is recorded as denied and never started');
+  assert.match(String((declined.result as { error?: string }).error), /did not allow/);
+
+  // With no UI to ask (this process has no window) the default answer is no.
+  setLocalExecutionConfirmer(previous);
+  await executeInstallSkill([], run);
+  assert.equal(executions, 1, 'without a confirmation UI nothing runs');
 }
 
 async function verifyAbortFence(): Promise<void> {

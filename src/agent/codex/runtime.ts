@@ -46,6 +46,7 @@ import {
   type CodexToolExecution,
   type StreamState,
 } from './stream-events';
+import { confirmLocalExecution, LOCAL_EXECUTION_DECLINED } from '../local-execution-consent';
 export type { CodexRuntimeOptions, CodexToolExecution } from './stream-events';
 export { runCodexSummary } from './summary';
 
@@ -209,6 +210,13 @@ export async function executeVixaventoraTool(
   };
   try {
     await prepareToolBoundary(schema, args, execution, state);
+    throwIfToolAborted(execution.signal, state);
+    // Code that runs on this machine needs the user's yes for this call (specs/08).
+    if (!(await confirmLocalExecution(schema.name, state.invocationArgs))) {
+      throw new ToolBoundaryError(LOCAL_EXECUTION_DECLINED, {
+        kind: 'denied', code: 'user_declined', summary: 'The user declined local execution.',
+      });
+    }
     throwIfToolAborted(execution.signal, state);
     await execution.runRecorder?.recordToolStarted({
       toolCallId: state.toolCallId, toolName: schema.name,
