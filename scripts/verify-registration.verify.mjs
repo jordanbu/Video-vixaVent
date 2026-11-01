@@ -58,4 +58,18 @@ assert.deepEqual(
   `package.json scripts run verify files git does not track (check .gitignore):\n  ${untracked.join('\n  ')}`,
 );
 
+// Same for every other repo file a script names. /scripts/ used to be ignored
+// except for verifies, so run-tests.mjs, dev-profile.mjs, check-i18n.mjs and six
+// more existed only on one machine: a fresh clone could not run dev, test or build.
+const allTracked = new Set(execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' }).split('\n'));
+const scriptPath = /(?:^|[\s=])(?:\.\/)?((?:scripts|server|src|desktop|shared|cli|remotion|config)\/[^\s'"&|;]+\.(?:mjs|cjs|js|mts|ts|tsx|json))(?=[\s'"]|$)/g;
+const namedFiles = [...new Set([...allCommands.matchAll(scriptPath)].map((m) => m[1]))];
+assert.ok(namedFiles.includes('scripts/run-tests.mjs'), 'the path scan must see the test runner');
+const untrackedFiles = namedFiles.filter((file) => !allTracked.has(file));
+assert.deepEqual(
+  untrackedFiles,
+  [],
+  `package.json scripts run files git does not track (check .gitignore):\n  ${untrackedFiles.join('\n  ')}`,
+);
+
 console.log(`verify-registration.verify: all ${tracked.length} tracked verify files are registered`);
