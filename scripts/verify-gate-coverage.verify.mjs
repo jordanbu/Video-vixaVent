@@ -81,7 +81,14 @@ const workflow = yaml.load(readFileSync(join(root, '.github/workflows/ci.yml'), 
 assert.ok(Object.hasOwn(workflow.on, 'pull_request'), 'verification must run on pull requests');
 const frameSync = workflow.jobs['frame-sync'];
 assert.match(frameSync['runs-on'], /^macos-/);
-assert.equal(frameSync.if, undefined, 'the render gate cannot be optional on PRs');
+// The macOS job may skip plain pushes to main (macOS minutes bill at 10x on a
+// private repo; the Linux Verify job gates every push), but never PRs or tags.
+const SKIP_PLAIN_PUSHES = "github.event_name != 'push' || startsWith(github.ref, 'refs/tags/')";
+assert.ok(
+  frameSync.if === undefined || frameSync.if === SKIP_PLAIN_PUSHES,
+  `the render gate cannot be optional on PRs or tags (if: ${frameSync.if})`,
+);
+assert.ok(workflow.on.push?.branches?.includes('main'), 'the Verify job must run on every push to main');
 assert.equal(frameSync['continue-on-error'], undefined);
 assert.ok(frameSync.steps.some((step) => /^actions\/checkout@/.test(step.uses ?? '')));
 assert.ok(frameSync.steps.some((step) => step.run === 'npm ci --loglevel=error'));
