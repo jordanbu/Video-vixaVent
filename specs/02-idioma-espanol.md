@@ -83,15 +83,17 @@ Resultados del 2026-11-01 (borrado de chino, italiano y ruso), con Node 24.22.1:
 
 - `npx tsc -b` → sin errores (el tipo `Locale = 'es' | 'en'` marcó las únicas ramas
   sobrantes: tres verify).
-- `node scripts/check-i18n.mjs` → `154 个 UI 文件，2546 个英文词条，3967 个西班牙语词条`.
+- `node scripts/check-i18n.mjs` → `154 个 UI 文件，2546 个英文词条，3967 个西班牙语词条`
+  (con los textos que se agregaron después en el mismo día —nombre de versión y aviso de
+  ejecución local (specs/08)— queda en `2549 / 3970`).
 - `src/i18n/locale.verify.ts` → una elección guardada `zh`, `it` o `ru` vuelve a español.
   `server/plugins/import-url-errors.verify.ts` y `server/plugins/mobile-upload.verify.ts` →
   lo mismo en el servidor y en la página del celular.
 - `src/shortcuts/versionName.verify.ts` → `Versión 1/11, 10:35 · Version 11/1, 10:35 AM`
   (antes el atajo de guardar versión nombraba `版本 11/1 10:35` en cualquier idioma).
 - `npm run lint` → 0 errores. `npm test` → 196/197; falla
-  `server/plugins/sound-sonilo-job.verify.ts`, que busca ffmpeg en el PATH y ya fallaba antes.
-  `npm run posttest` aparte → OK.
+  `server/plugins/sound-sonilo-job.verify.ts`, que busca ffmpeg en el PATH y ya fallaba antes
+  (se corrigió el mismo día: ahora usa `ffmpegBin()`). `npm run posttest` aparte → OK.
 - `npm run build` se corta en `sync:whisper-cli` por falta de `cmake` en esta máquina; los
   pasos restantes corridos a mano → OK (`sync-shader-sources --check`,
   `verify:server-tool-catalog`, `tsc -b`, `vite build`).

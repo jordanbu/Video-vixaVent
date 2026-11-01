@@ -5,6 +5,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from 'node:ht
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { ffmpegBin } from '../media-binaries.ts';
 
 type Middleware = (req: IncomingMessage, res: ServerResponse, next: () => void) => void;
 
@@ -12,7 +13,8 @@ const root = await mkdtemp(join(tmpdir(), 'vixa-sonilo-sound-'));
 const media = join(root, 'media', 'uploads');
 await mkdir(media, { recursive: true });
 const cut = join(media, 'cut.mp4');
-const ffmpeg = (args: string[]) => spawnSync('ffmpeg', ['-loglevel', 'error', '-y', ...args], { encoding: 'utf8' });
+// The bundled ffmpeg (ffmpeg-static), like the app: a bare 'ffmpeg' only exists where CI installs one.
+const ffmpeg = (args: string[]) => spawnSync(ffmpegBin(), ['-loglevel', 'error', '-y', ...args], { encoding: 'utf8' });
 assert.equal(ffmpeg(['-f', 'lavfi', '-i', 'color=c=black:s=16x16:d=0.2', '-c:v', 'mpeg4', cut]).status, 0);
 
 const oldEnv = { ...process.env };
