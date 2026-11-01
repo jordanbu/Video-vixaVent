@@ -8,6 +8,7 @@
 // original path; browser-local ASR requires the compact extract.
 import type { TranscriptResult } from './types';
 import { getMediaBlob } from '../persist/mediaBlobStore';
+import { DEFAULT_TRANSCRIPTION_LANGUAGE } from '../../shared/transcription-language';
 
 const ASSEMBLYAI_POLL_DEADLINE_MS = 30 * 60 * 1000;
 const BASE = '/assemblyai/v2';
@@ -116,7 +117,7 @@ async function createTranscript(audioUrl: string, opts: TranscribeOptions = {}):
     punctuate: true,
     format_text: true,
   };
-  const lang = opts.languageCode ?? 'zh';
+  const lang = opts.languageCode ?? DEFAULT_TRANSCRIPTION_LANGUAGE;
   if (lang === 'auto') {
     body.language_detection = true;
   } else {

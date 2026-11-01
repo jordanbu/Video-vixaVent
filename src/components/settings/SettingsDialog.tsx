@@ -45,6 +45,7 @@ import {
   head, iconBtn, licenseLink, navLabel, navRowStyle, overlay, panel, revealLabel,
   routeBox, sidebar, sidebarNote, treeScroll, vendorCol,
 } from './SettingsDialog.styles';
+import { DEFAULT_TRANSCRIPTION_LANGUAGE } from '../../../shared/transcription-language';
 
 // Global settings modal, three columns: left = "Classification → Capability" two-level collapsible tree (capability row = status indicator + name);
 // Center = list of providers under the current capability (generating four capabilities with a "default provider" route select at the top);
@@ -82,7 +83,7 @@ function useKeyStatus(): {
 /** Keep runtime transcription preferences in sync with server-saved settings. */
 function syncTranscriptionPreferences(models: Record<string, string>): void {
   try {
-    localStorage.setItem(TRANSCRIPTION_LANGUAGE_KEY, models.TRANSCRIPTION_LANGUAGE?.trim() || 'zh');
+    localStorage.setItem(TRANSCRIPTION_LANGUAGE_KEY, models.TRANSCRIPTION_LANGUAGE?.trim() || DEFAULT_TRANSCRIPTION_LANGUAGE);
     localStorage.setItem(
       TRANSCRIPTION_DIARIZATION_KEY,
       models.TRANSCRIPTION_DIARIZATION === '0' ? '0' : '1',

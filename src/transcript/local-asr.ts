@@ -19,6 +19,7 @@ import {
   asrEngineReady, assertBrowserAsrReady, fetchLocalAsrCatalog, fetchLocalAsrModelStatus,
   type LocalAsrModelStatus,
 } from './local-asr-readiness';
+import { DEFAULT_TRANSCRIPTION_LANGUAGE } from '../../shared/transcription-language';
 
 const TARGET_SR = ASR_INFERENCE_CONTRACT.sampleRate;
 /** WebGPU load can hang on software renderers (headless/SwiftShader); force-fail
@@ -288,7 +289,7 @@ async function tryNativeEngine(
   const native = await tryDesktopNativeAsr({
     sourcePath: await transcriptionSourceForPath(path, opts),
     config,
-    language: opts.languageCode ?? 'zh',
+    language: opts.languageCode ?? DEFAULT_TRANSCRIPTION_LANGUAGE,
     onProgress: (progress, file) => reportModelProgress(onWait, progress, file),
     onFallback: (reason) => {
       failure = reason;
@@ -334,7 +335,7 @@ export async function localTranscribePathResumable(
   client.attachProgress((progress, file) => reportModelProgress(onWait, progress, file));
   await runTranscriptionStage(t('模型加载'), () => client.ensureLoaded(config));
   await onCheckpoint({ ...checkpoint, providerStatus: 'processing' });
-  const result = await runTranscriptionStage(t('模型推理'), () => client.transcribe(samples, opts.languageCode ?? 'zh'));
+  const result = await runTranscriptionStage(t('模型推理'), () => client.transcribe(samples, opts.languageCode ?? DEFAULT_TRANSCRIPTION_LANGUAGE));
   await onCheckpoint({ ...checkpoint, providerStatus: 'completed' });
   return toTranscriptResult(result);
 }

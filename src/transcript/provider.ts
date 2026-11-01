@@ -14,6 +14,7 @@ import {
 } from './assemblyai';
 import { localTranscribePathResumable } from './local-asr';
 import { genericCloudTranscribePath } from './generic-cloud-asr';
+import { DEFAULT_TRANSCRIPTION_LANGUAGE } from '../../shared/transcription-language';
 
 export const TRANSCRIPTION_PROVIDER_KEY = 'vx.transcriptionProvider';
 export const TRANSCRIPTION_LANGUAGE_KEY = 'vx.transcriptionLanguage';
@@ -69,7 +70,7 @@ export function preferredTranscriptionLanguage(): string {
   } catch {
     // SSR / private browsing: fall through to the default.
   }
-  return 'zh';
+  return DEFAULT_TRANSCRIPTION_LANGUAGE;
 }
 
 export function preferredTranscriptionDiarization(): boolean {

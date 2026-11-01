@@ -62,6 +62,7 @@ selector y seguían costando mantenimiento en cada rama `locale === 'zh' | 'it' 
 | Borrar los diccionarios de chino, italiano y ruso (2026-11-01) | Dejarlos como respaldo sin selector | Nadie podía elegirlos y cada texto nuevo o rama por idioma seguía arrastrándolos; volver a tenerlos es un `git revert` |
 | Quedarse con español + inglés | Solo español | El inglés es el registro de claves del chequeo y el respaldo de `es`; quitarlo exigía reescribir `check-i18n.mjs` y la cadena de respaldo. Decisión del equipo |
 | Mantener las claves en chino | Pasar las claves a español al borrar el chino | Siguen siendo ~2.500 llamadas a `t('…')`; las claves no se ven en pantalla |
+| Transcripción en español por defecto (`DEFAULT_TRANSCRIPTION_LANGUAGE`, `shared/transcription-language.ts`) | Seguir con chino hasta que alguien lo cambie en Ajustes | Sin configurar, el audio en español salía transcrito como chino. Había siete respaldos a `'zh'`; ahora leen una sola constante. Una elección guardada se respeta |
 | Traducir los nombres de plantillas y campos al mostrarlos (`tData`) | Reescribir los JSON de plantillas | Los JSON son datos compartidos con el agente; traducir en pantalla no cambia lo que el agente lee |
 | Mostrar un resumen en español de cada estilo de diseño | Traducir la guía técnica completa | La guía es una instrucción para el modelo; la versión china ya usa resúmenes |
 
@@ -98,6 +99,9 @@ Resultados del 2026-11-01 (borrado de chino, italiano y ruso), con Node 24.22.1:
   pasos restantes corridos a mano → OK (`sync-shader-sources --check`,
   `verify:server-tool-catalog`, `tsc -b`, `vite build`).
 
+- `tsx src/transcript/transcription-default.verify.ts` → `unconfigured transcription is
+  Spanish; 1387 sources scanned`. Contra el commit anterior falla con `'zh' !== 'es'`.
+
 ## Pendiente
 
 - Documentación técnica para desarrolladores (`.env.example`, `FAL.md`,
@@ -109,9 +113,5 @@ Resultados del 2026-11-01 (borrado de chino, italiano y ruso), con Node 24.22.1:
   inglés; se reemplaza al editar cada plantilla.
 - La búsqueda semántica visual usa un modelo CLIP chino (`Xenova/chinese-clip-vit-base-patch16`):
   las búsquedas en español funcionan peor. Evaluar un modelo multilingüe.
-- El idioma de transcripción por defecto sigue siendo chino (`'zh'` en
-  `server/plugins/media-provider-config.ts`, `src/transcript/provider.ts`,
-  `SettingsDialog.tsx`). Para el equipo debería ser español; queda para un cambio aparte
-  porque toca la transcripción, no la interfaz.
 - El orden por nombre del panel de media compara con `'zh-CN'`
   (`src/media/mediaPoolFilter.ts`); debería usar el idioma activo.

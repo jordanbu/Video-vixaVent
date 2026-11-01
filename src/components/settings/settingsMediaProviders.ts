@@ -16,14 +16,15 @@ const COMMON_TRANSCRIPTION_FIELDS: readonly SettingsField[] = [
     name: 'TRANSCRIPTION_LANGUAGE',
     label: '转写语言',
     kind: 'select',
-    defaultLabel: '中文（zh）',
+    // Matches DEFAULT_TRANSCRIPTION_LANGUAGE (shared/transcription-language.ts).
+    defaultLabel: '西班牙语（es）',
     options: [
-      { value: 'zh', label: '中文（zh）' },
+      { value: 'es', label: '西班牙语（es）' },
       { value: 'en', label: '英语（en）' },
+      { value: 'zh', label: '中文（zh）' },
       { value: 'it', label: '意大利语（it）' },
       { value: 'ja', label: '日语（ja）' },
       { value: 'ko', label: '韩语（ko）' },
-      { value: 'es', label: '西班牙语（es）' },
       { value: 'fr', label: '法语（fr）' },
       { value: 'de', label: '德语（de）' },
       { value: 'ru', label: '俄语（ru）' },
