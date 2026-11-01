@@ -102,6 +102,10 @@ Resultados del 2026-11-01 (borrado de chino, italiano y ruso), con Node 24.22.1:
 - `tsx src/transcript/transcription-default.verify.ts` → `unconfigured transcription is
   Spanish; 1387 sources scanned`. Contra el commit anterior falla con `'zh' !== 'es'`.
 
+- `tsx src/media/mediaPoolFilter.verify.ts` → el panel de media ordena
+  `árbol · Clip 2 · clip 10 · nube · Ñandú · Ola · zeta` en español (antes comparaba con
+  `'zh-CN'` y "clip 10" iba antes que "Clip 2").
+
 ## Pendiente
 
 - Documentación técnica para desarrolladores (`.env.example`, `FAL.md`,
@@ -113,5 +117,3 @@ Resultados del 2026-11-01 (borrado de chino, italiano y ruso), con Node 24.22.1:
   inglés; se reemplaza al editar cada plantilla.
 - La búsqueda semántica visual usa un modelo CLIP chino (`Xenova/chinese-clip-vit-base-patch16`):
   las búsquedas en español funcionan peor. Evaluar un modelo multilingüe.
-- El orden por nombre del panel de media compara con `'zh-CN'`
-  (`src/media/mediaPoolFilter.ts`); debería usar el idioma activo.

@@ -1,4 +1,5 @@
 import type { MediaAsset } from '../editor/types';
+import { getLocale } from '../i18n/locale';
 import type { SemanticMatch } from './semantic-search/types';
 
 export type MediaSortKey = 'newest' | 'name' | 'duration';
@@ -27,6 +28,9 @@ export function filterMediaAssets(options: MediaFilterOptions) {
   const query = options.query.trim().toLowerCase();
   const importOrder = new Map(assets.map((asset, index) => [asset.id, index]));
   const semanticOrder = semanticAssetOrder(semanticResults);
+  // Interface language, not a fixed 'zh-CN': ñ after n, á with a. numeric puts
+  // "clip 2" before "clip 10"; base sensitivity ignores case and accents for ties.
+  const byName = new Intl.Collator(getLocale(), { numeric: true, sensitivity: 'base' });
   const visible = assets
     .filter((asset) => !query || asset.name.toLowerCase().includes(query))
     .filter((asset) => semanticResults ? semanticOrder.has(asset.id) : (query || asset.folderId === currentFolderId))
@@ -34,7 +38,7 @@ export function filterMediaAssets(options: MediaFilterOptions) {
     .filter((asset) => !favoritesOnly || asset.favorite)
     .toSorted((left, right) => semanticResults
       ? (semanticOrder.get(left.id) ?? 0) - (semanticOrder.get(right.id) ?? 0)
-      : sort === 'name' ? left.name.localeCompare(right.name, 'zh-CN')
+      : sort === 'name' ? byName.compare(left.name, right.name)
         : sort === 'duration' ? right.durationInFrames - left.durationInFrames
           : (importOrder.get(right.id) ?? 0) - (importOrder.get(left.id) ?? 0));
   return { query, visible };
