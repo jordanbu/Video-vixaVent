@@ -128,6 +128,12 @@ const canvas1080 = { width: 1920, height: 1080, fit: 'contain' as const };
   near(photoIssue?.factor, 1.8, '800×600 image contained in 1080p');
   assert.equal(clipQualityIssue({ ...photo, transform: { scale: 0.25 } }, canvas1080), null, 'a small logo is fine');
 
+  // GIFs are raster too: a 480×270 GIF filling 1080p is enlarged 4×.
+  const gif = clip({ id: 'gif', kind: 'gif', src: '/m/reaction.gif', width: 480, height: 270 });
+  const gifIssue = clipQualityIssue(gif, canvas1080);
+  assert.equal(gifIssue?.severity, 'alert');
+  near(gifIssue?.factor, 4, '480×270 GIF contained in 1080p');
+
   const ignored: TimelineItem[] = [
     clip({ id: 'a', kind: 'audio', track: 'A1', width: 320, height: 240 }),
     clip({ id: 't', kind: 'text', width: 200, height: 80, transform: { scale: 4 } }),
@@ -136,7 +142,7 @@ const canvas1080 = { width: 1920, height: 1080, fit: 'contain' as const };
     clip({ id: 'mg', kind: 'motion-graphic', width: 400, height: 300 }),
     clip({ id: 'seq', kind: 'sequence', width: 640, height: 360 }),
   ];
-  assert.deepEqual(assessTimelineQuality(timeline(ignored)), [], 'only video and image clips are evaluated');
+  assert.deepEqual(assessTimelineQuality(timeline(ignored)), [], 'only video, image and GIF clips are evaluated');
   assert.equal(clipUpscaleFactor(clip({ width: undefined, height: undefined }), canvas1080), null, 'unknown source size is not guessed');
 }
 

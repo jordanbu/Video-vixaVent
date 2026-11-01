@@ -46,9 +46,9 @@ export function qualitySeverity(factor: number): QualitySeverity | null {
   return null;
 }
 
-/** Video and still images lose sharpness when enlarged; audio, text, shapes and vector graphics do not. */
+/** Video, still images and GIFs lose sharpness when enlarged; audio, text, shapes and vector graphics do not. */
 function sourceSize(item: TimelineItem): { width: number; height: number } | null {
-  if (item.kind !== 'video' && item.kind !== 'image') return null;
+  if (item.kind !== 'video' && item.kind !== 'image' && item.kind !== 'gif') return null;
   const width = item.width ?? 0;
   const height = item.height ?? 0;
   return width > 0 && height > 0 ? { width, height } : null;

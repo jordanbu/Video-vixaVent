@@ -8,6 +8,7 @@ import {
   type AspectFit,
 } from '../../editor/types';
 import { projectTimelineItem } from './timeline-item-projection';
+import { assessTimelineQuality, qualityPercent } from '../../editor/qualityAlerts';
 
 type Args = Record<string, unknown>;
 
@@ -56,6 +57,13 @@ function readTimeline(ctx: AgentContext): unknown {
       outgoingItemId: transition.outgoingItemId,
       incomingItemId: transition.incomingItemId,
       trackId: transition.trackId,
+    })),
+    // Picture clips enlarged past 110 % of their source: the same check as the ⚠ badge on
+    // the timeline (specs/05). Without it the model had to work the factor out by hand.
+    qualityIssues: assessTimelineQuality(state).map((issue) => ({
+      itemId: issue.itemId,
+      severity: issue.severity,
+      enlargedPercent: qualityPercent(issue.factor),
     })),
   };
 }

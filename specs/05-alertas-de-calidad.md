@@ -1,6 +1,6 @@
 # 05 — Alertas de calidad
 
-> Estado: implementado (fase 1) · Última actualización: 2026-10-26
+> Estado: implementado (fase 1 + alertas para el agente) · Última actualización: 2026-11-01
 
 ## Problema
 
@@ -108,6 +108,8 @@ En el diálogo de exportación, se recalcula con la resolución elegida.
 | La insignia de calidad es la única que recibe el puntero (`pointer-events: auto`) | Dejarla como las demás | El contenedor de insignias ignora el puntero, así que su tooltip nunca aparecía; los clics igual llegan al clip |
 | La tarjeta del diálogo usa el estilo de `vx-export-qa-card` | Un estilo nuevo | Se ve igual que el QA de exportación que está justo debajo; no suma CSS |
 | Insignia e inspector ignoran si la pista está oculta; el resumen de exportación no | Saltar pistas ocultas en todos lados | El clip sigue estando ampliado si se vuelve a mostrar la pista; el resumen habla del archivo que se va a exportar |
+| `read_timeline` devuelve `qualityIssues` (`itemId`, `severity`, `enlargedPercent`) con `assessTimelineQuality` sin resolución de exportación, y la regla del prompt lo nombra (2026-11-01) | Dejar que el modelo calcule fit × escala × zoom a mano | Es la misma cuenta que la insignia; a mano, el modelo no avisó del 225 % del caso real (specs/06). También la ven los agentes externos: el ejecutor sin navegador usa la misma función |
+| Los GIF entran en `sourceSize` (2026-11-01) | Dejarlos fuera como en la fase 1 | Son ráster y se ven borrosos al ampliarse igual que una imagen; era una línea |
 | **Corregido el 2026-10-26:** `submit_export` del agente (`applyExportGeometry`, `src/generate/media-export.ts`) mide la resolución por el lado corto, igual que el diálogo y estas alertas | Mantener su escala por altura | Con la altura, "720p" en vertical daba 406×720: menos que una fuente de 480×864, y distinto de lo que calculan el diálogo y las alertas |
 
 ## Verificación
@@ -155,6 +157,11 @@ Resultados del 2026-10-26, con Node 24.22.1:
 - Exportación del agente en vertical (2026-10-26): antes del arreglo, `submit_export` en
   720p entregó `width 406 × height 720`. `media-export.geometry.verify.ts` ahora exige
   720×1280 en 720p y 1080×1920 en 1080p para un lienzo de 1080×1920.
+- Alertas para el agente (2026-11-01): `core-data-tools.verify.ts` → con 1080p, 720p y una
+  imagen de 1600×900 en un lienzo 1080p, `read_timeline` devuelve
+  `[{ p720, alert, 150 }, { p900, warning, 120 }]`; con solo audio, `[]`.
+  `qualityAlerts.verify.ts` → un GIF de 480×270 en 1080p da `alert` a 4×.
+  `systemPromptOrder.verify.ts` exige que la regla nombre `qualityIssues`.
 
 ## Pendiente
 
@@ -167,14 +174,9 @@ Queda para una segunda fase, porque hoy esos datos no se guardan en el asset:
   `server/media-normalization.ts` y no se guarda.
 - **Audio que satura**, avisado durante la edición. Hoy se detecta solo en el QA
   posterior a la exportación (`audio_peak`).
-- Exponer las alertas al agente (por ejemplo, en `read_timeline`) para que las tenga en
-  cuenta al editar.
 
 Quedó fuera de la fase 1:
 
-- **GIF animados**: también son ráster y se ven borrosos al ampliarse, pero el spec acotó
-  la fase 1 a video e imagen. Sumarlos es agregar el tipo en `sourceSize`
-  (`qualityAlerts.ts`) y un caso en el verify.
 - **Clips dentro de secuencias anidadas**: se ignora el clip `sequence` y no se mira su
   contenido. Habría que componer la escala de la secuencia con la de sus clips.
 - **Revisión visual con un video real**: se hizo con imágenes, porque en esa máquina no

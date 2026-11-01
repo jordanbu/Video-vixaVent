@@ -70,6 +70,7 @@ const commonPrefixLength = (a: string, b: string): number => {
   assert.match(SYSTEM_PROMPT, /Titles and overlays go on a higher video track/);
   assert.match(SYSTEM_PROMPT, /moved to the track end/);
   assert.match(SYSTEM_PROMPT, /Past 150 % enlargement, tell the user/);
+  assert.match(SYSTEM_PROMPT, /read_timeline lists qualityIssues/, 'the rule points at the computed issues, not arithmetic');
   assert.match(PRODUCT_IDENTITY_PROMPT, /Do not inherit product identity/);
   assert.ok(
     system.indexOf(PRODUCT_IDENTITY_PROMPT) > system.indexOf(workflow),

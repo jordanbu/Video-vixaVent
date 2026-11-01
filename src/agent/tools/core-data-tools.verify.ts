@@ -36,4 +36,25 @@ assert.deepEqual(
   },
   'read_timeline shares the full media/state projection',
 );
-console.log('core-data-tools.verify: shared timeline projection passed');
+assert.deepEqual((result as { qualityIssues?: unknown }).qualityIssues, [], 'an audio-only timeline has no quality issues');
+
+// read_timeline hands the agent the same quality check as the timeline badge (specs/05).
+{
+  const pictures = docFromTimeline({
+    fps: 30, width: 1920, height: 1080, selectedId: null,
+    trackOrder: ['V1'], tracks: { V1: { kind: 'video' } },
+    items: [
+      { id: 'hd', track: 'V1', startFrame: 0, durationInFrames: 30, name: 'hd', kind: 'video', src: '/media/hd.mp4', width: 1920, height: 1080 },
+      { id: 'p720', track: 'V1', startFrame: 30, durationInFrames: 30, name: 'p720', kind: 'video', src: '/media/720.mp4', width: 1280, height: 720 },
+      { id: 'p900', track: 'V1', startFrame: 60, durationInFrames: 30, name: 'p900', kind: 'image', src: '/media/900.jpg', width: 1600, height: 900 },
+    ],
+  });
+  const picturesDraft = makeDraft(pictures);
+  const picturesCtx = { ...ctx, commands: picturesDraft.commands, getState: picturesDraft.getState, getDoc: picturesDraft.getDoc } as AgentContext;
+  const read = execCoreDataTool('read_timeline', {}, picturesCtx) as { qualityIssues: unknown };
+  assert.deepEqual(read.qualityIssues, [
+    { itemId: 'p720', severity: 'alert', enlargedPercent: 150 },
+    { itemId: 'p900', severity: 'warning', enlargedPercent: 120 },
+  ], '720p → alert at 150 %, 900p → warning at 120 %, 1080p → nothing');
+}
+console.log('core-data-tools.verify: shared timeline projection and quality issues passed');
