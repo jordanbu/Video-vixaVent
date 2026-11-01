@@ -58,6 +58,28 @@ assert.deepEqual(
   `package.json scripts run verify files git does not track (check .gitignore):\n  ${untracked.join('\n  ')}`,
 );
 
+// A verify listed loose in test:serial must not also run through a group that npm test
+// already runs (pretest, posttest, or a group nested in test:serial): it ran twice and
+// added a process to every suite. Groups may share files with each other, since each
+// group is also run on its own (npm run verify:mcp).
+{
+  const loose = new Set();
+  const grouped = new Set();
+  const expand = (name, inGroup) => {
+    for (const segment of scripts[name].split('&&').map((part) => part.trim()).filter(Boolean)) {
+      const nested = segment.match(/^npm run (\S+)$/);
+      if (nested) { expand(nested[1], true); continue; }
+      const file = segment.match(/(\S+\.verify\.(?:tsx|mjs|ts))$/)?.[1];
+      if (file) (inGroup ? grouped : loose).add(file);
+    }
+  };
+  expand('pretest', true);
+  expand('test:serial', false);
+  expand('posttest', true);
+  const twice = [...loose].filter((file) => grouped.has(file));
+  assert.deepEqual(twice, [], `these test:serial entries already run through a group; drop the loose copy:\n  ${twice.join('\n  ')}`);
+}
+
 // Same for every other repo file a script names. /scripts/ used to be ignored
 // except for verifies, so run-tests.mjs, dev-profile.mjs, check-i18n.mjs and six
 // more existed only on one machine: a fresh clone could not run dev, test or build.
