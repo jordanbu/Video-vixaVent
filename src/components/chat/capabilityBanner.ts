@@ -25,7 +25,5 @@ export function missingCreativeCaps(): readonly CapabilityKey[] {
 }
 
 export function formatCapabilityNames(names: readonly string[], locale: Locale): string {
-  return locale === 'zh'
-    ? names.join('、')
-    : new Intl.ListFormat(locale, { style: 'long', type: 'conjunction' }).format(names);
+  return new Intl.ListFormat(locale, { style: 'long', type: 'conjunction' }).format(names);
 }

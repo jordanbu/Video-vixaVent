@@ -150,4 +150,3 @@ Resultados del 2026-10-26, con Node 24.22.1:
 - Fuera de este caso, un `stale` que no se resuelve (por ejemplo, un MCP offline guardó
   mientras la pestaña dormía) sigue reintentando en silencio. Mostrar "recarga" tras varios
   `stale` seguidos queda para otro cambio.
-- Los textos nuevos solo tienen español e inglés; ruso e italiano caen al inglés.

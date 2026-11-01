@@ -14,7 +14,7 @@ let reads = 0;
 let deletes = 0;
 const createdLocales: string[] = [];
 const controls = {
-  async createSession(locale: 'zh' | 'en' | 'it' | 'ru' = 'zh') {
+  async createSession(locale: 'es' | 'en' = 'es') {
     creates += 1;
     createdLocales.push(locale);
     return snapshot;
@@ -107,7 +107,7 @@ try {
     method: 'POST', headers: { origin },
   });
   assert.equal(italian.status, 201);
-  assert.deepEqual(createdLocales, ['en', 'ru', 'it']);
+  assert.deepEqual(createdLocales, ['en', 'es', 'es'], 'removed languages (ru, it) get the Spanish page');
 } finally {
   await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
 }

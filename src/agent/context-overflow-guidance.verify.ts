@@ -15,7 +15,7 @@ assert.equal(
 const firstRound = 'The current request is too large for this model context window. Remove large attachments.';
 const compacted = 'The recent conversation is still too large after context compaction. Start a new chat.';
 
-// ── zh (default): guidance leads, original retained, round-trip exact ────────
+// ── no dictionary loaded yet: guidance leads, original retained, round-trip exact ──
 {
   const mapped = contextOverflowGuidance(firstRound);
   assert.ok(mapped, 'first-round overflow must map to guidance');
@@ -38,7 +38,7 @@ const compacted = 'The recent conversation is still too large after context comp
     'en users get the localized guidance, not the Chinese original');
   assert.equal(extractOverflowOriginal(mapped!), firstRound,
     'en-composed overflow messages round-trip too');
-  setLocale('zh');
+  setLocale('es');
 }
 
 assert.equal(extractOverflowOriginal('plain error text'), null, 'plain text has no embedded original');

@@ -1,19 +1,18 @@
-// Locale dictionaries moved from static imports to a per-locale lazy fetch, so
-// t()/tData() now read a table that may not be loaded yet. This pins the lookup
-// semantics that were previously inlined in locale.ts, per language:
-//   t:     zh → key · en → EN · es → ES then EN · it → IT then EN · ru → RU only (no EN fallback)
-//   tData: zh → ZH_DATA · en → EN_DATA · es → ES_DATA then EN_DATA · it → IT_DATA then EN_DATA · ru → EN_DATA
+// Locale dictionaries are fetched per locale on demand, so t()/tData() read a
+// table that may not be loaded yet. This pins the lookup semantics per language:
+//   t:     en → EN · es → ES then EN
+//   tData: en → EN_DATA · es → ES_DATA then EN_DATA
 // and the "never go blank" contract while a dictionary is still in flight.
 // npx tsx src/i18n/dictRegistry.verify.ts
 import assert from 'node:assert/strict';
 
 Object.defineProperty(globalThis, 'localStorage', {
   configurable: true,
-  value: { getItem: () => 'zh', setItem: () => undefined },
+  value: { getItem: () => 'en', setItem: () => undefined },
 });
 Object.defineProperty(globalThis, 'document', {
   configurable: true,
-  value: { documentElement: { lang: 'zh-CN' } },
+  value: { documentElement: { lang: 'en' } },
 });
 
 const { ensureLocaleDict, localizedCatalogText, setLocale, t, tData } = await import('./locale.ts');
@@ -21,22 +20,10 @@ const { localeDicts } = await import('./dictRegistry.ts');
 const { EN } = await import('./dict/en');
 const { ES } = await import('./dict/es');
 const { ES_DATA } = await import('./dict/es/data');
-const { IT } = await import('./dict/it');
-const { RU } = await import('./dict/ru');
-const { ZH_DATA } = await import('./dict/zh');
 const EN_DATA = (await import('./dict/en/templates-data')).default;
-const IT_DATA = (await import('./dict/it/templates-data')).default;
-
-/** A key the reference dictionary translates and the compared one does not. */
-function onlyIn(has: Record<string, string>, lacks: Record<string, string>): string {
-  const key = Object.keys(has).find((k) => !(k in lacks));
-  assert.ok(key, 'the fixture needs a key present in one dictionary but not the other');
-  return key;
-}
 
 // ── in flight: the Chinese original stands in, never an empty string ─────────
 {
-  setLocale('en');
   const untranslatedYet = t('导出');
   assert.equal(untranslatedYet, '导出',
     'before the dictionary lands, t() returns the Chinese key rather than blank');
@@ -53,36 +40,7 @@ function onlyIn(has: Record<string, string>, lacks: Record<string, string>): str
     'an unknown key falls back to the Chinese original');
   const dataKey = Object.keys(EN_DATA)[0]!;
   assert.equal(tData(dataKey), EN_DATA[dataKey], 'en data names read EN_DATA');
-}
-
-// ── it: translated keys win, untranslated ones fall back to English ──────────
-{
-  setLocale('it');
-  await ensureLocaleDict('it');
-  const italian = Object.keys(IT)[0]!;
-  assert.equal(t(italian), IT[italian], 'it prefers the Italian dictionary');
-  const englishOnly = onlyIn(EN, IT);
-  assert.equal(t(englishOnly), EN[englishOnly], 'it falls back to English, not to Chinese');
-  const italianData = Object.keys(IT_DATA)[0]!;
-  assert.equal(tData(italianData), IT_DATA[italianData], 'it prefers IT_DATA');
-  // IT_DATA currently covers every EN_DATA key, so no lookup can exercise the
-  // data fallback. Assert the wiring instead — the day an English-only data
-  // name lands, tData() must already resolve it rather than show Chinese.
-  assert.equal(localeDicts('it').dataFallback, EN_DATA,
-    'it is wired to fall back to EN_DATA for data names');
-}
-
-// ── ru: no English fallback for UI copy, but EN_DATA for data names ──────────
-{
-  setLocale('ru');
-  await ensureLocaleDict('ru');
-  const russian = Object.keys(RU)[0]!;
-  assert.equal(t(russian), RU[russian], 'ru reads the Russian dictionary');
-  const englishOnly = onlyIn(EN, RU);
-  assert.equal(t(englishOnly), englishOnly,
-    'an untranslated key stays Chinese in ru — it must NOT fall back to English');
-  const dataKey = Object.keys(EN_DATA)[0]!;
-  assert.equal(tData(dataKey), EN_DATA[dataKey], 'ru data names still read EN_DATA');
+  assert.equal(localizedCatalogText('Undo', '撤销'), 'Undo', 'en catalog labels use the English label');
 }
 
 // ── es: Spanish first, then English — never Chinese ─────────────────────────
@@ -96,25 +54,17 @@ function onlyIn(has: Record<string, string>, lacks: Record<string, string>): str
   assert.equal(localeDicts('es').uiFallback, EN, 'es is wired to fall back to English for new keys');
   const dataKey = Object.keys(ES_DATA)[0]!;
   assert.equal(tData(dataKey), ES_DATA[dataKey], 'es data names read ES_DATA');
+  assert.equal(localeDicts('es').dataFallback, EN_DATA, 'es is wired to fall back to EN_DATA for data names');
   assert.equal(localizedCatalogText('Undo', '撤销'), 'Deshacer', 'catalog labels read the Spanish dictionary');
   assert.equal(localizedCatalogText('Brand new', '全新标签'), 'Brand new', 'an untranslated catalog label shows English');
 }
 
-// ── zh: the key language needs no UI table, only data names ─────────────────
-{
-  setLocale('zh');
-  await ensureLocaleDict('zh');
-  const english = Object.keys(EN)[0]!;
-  assert.equal(t(english), english, 'zh returns the key verbatim');
-  const dataKey = Object.keys(ZH_DATA)[0]!;
-  assert.equal(tData(dataKey), ZH_DATA[dataKey], 'zh data names read ZH_DATA');
-}
-
 // ── placeholders survive the table swap ─────────────────────────────────────
 {
-  setLocale('zh');
-  assert.equal(t('已选 {n} 项', { n: 3 }), '已选 3 项', 'placeholders are still substituted');
   assert.equal(t('缺少 {missing}', {}), '缺少 {missing}', 'an absent param leaves the placeholder');
+  const withParam = Object.keys(ES).find((k) => /\{n\}/.test(k) && /\{n\}/.test(ES[k]!));
+  assert.ok(withParam, 'the fixture needs a Spanish entry with an {n} placeholder');
+  assert.equal(t(withParam, { n: 3 }), ES[withParam]!.replace(/\{n\}/g, '3'), 'placeholders are substituted');
 }
 
-console.log('dictRegistry.verify: per-locale lazy dictionaries preserve every lookup rule');
+console.log('dictRegistry.verify: per-locale lazy dictionaries preserve every lookup rule (es, en)');

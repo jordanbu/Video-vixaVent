@@ -1,7 +1,6 @@
-// The locale dictionaries are ~760 kB of source. Importing them statically
-// put all of them in the entry chunk, so every user downloaded and parsed
-// languages they cannot read before the first frame. Each locale is fetched on
-// demand instead.
+// The locale dictionaries are large. Importing them statically put both in the
+// entry chunk, so every user downloaded and parsed a language they were not
+// using before the first frame. Each locale is fetched on demand instead.
 //
 // t()/tData() stay SYNCHRONOUS: they read whatever is loaded and fall back to
 // the Chinese original, which is also the dictionary key — the same "never go
@@ -12,7 +11,7 @@ import type { Locale } from './locale';
 export interface LocaleDicts {
   /** UI copy for the active locale. */
   readonly ui: Record<string, string>;
-  /** UI copy consulted when `ui` has no entry (Italian falls back to English). */
+  /** UI copy consulted when `ui` has no entry (Spanish falls back to English). */
   readonly uiFallback: Record<string, string>;
   /** Display names for **data** (template/sound/music names). */
   readonly data: Record<string, string>;
@@ -32,38 +31,18 @@ let loaded: Readonly<Partial<Record<Locale, LocaleDicts>>> = {};
 const inFlight = new Map<Locale, Promise<void>>();
 
 async function fetchDicts(locale: Locale): Promise<LocaleDicts> {
-  if (locale === 'zh') {
-    // Chinese IS the key language, so only the data names need a table.
-    const { ZH_DATA } = await import('./dict/zh');
-    return { ui: EMPTY, uiFallback: EMPTY, data: ZH_DATA, dataFallback: EMPTY };
-  }
   if (locale === 'en') {
     const [en, enData] = await Promise.all([
       import('./dict/en'), import('./dict/en/templates-data'),
     ]);
     return { ui: en.EN, uiFallback: EMPTY, data: enData.default, dataFallback: EMPTY };
   }
-  if (locale === 'es') {
-    // Spanish falls back to English for anything not translated yet, never to Chinese.
-    const [es, esData, en, enData] = await Promise.all([
-      import('./dict/es'), import('./dict/es/data'),
-      import('./dict/en'), import('./dict/en/templates-data'),
-    ]);
-    return { ui: es.ES, uiFallback: en.EN, data: esData.ES_DATA, dataFallback: enData.default };
-  }
-  if (locale === 'ru') {
-    // Russian UI has no English fallback (untranslated keys stay Chinese), but
-    // its data names come from the English table, matching tData() before.
-    const [ru, enData] = await Promise.all([
-      import('./dict/ru'), import('./dict/en/templates-data'),
-    ]);
-    return { ui: ru.RU, uiFallback: EMPTY, data: enData.default, dataFallback: EMPTY };
-  }
-  const [it, itData, en, enData] = await Promise.all([
-    import('./dict/it'), import('./dict/it/templates-data'),
+  // Spanish falls back to English for anything not translated yet, never to Chinese.
+  const [es, esData, en, enData] = await Promise.all([
+    import('./dict/es'), import('./dict/es/data'),
     import('./dict/en'), import('./dict/en/templates-data'),
   ]);
-  return { ui: it.IT, uiFallback: en.EN, data: itData.default, dataFallback: enData.default };
+  return { ui: es.ES, uiFallback: en.EN, data: esData.ES_DATA, dataFallback: enData.default };
 }
 
 /** The dictionaries currently in memory for `locale` (empty until loaded). */

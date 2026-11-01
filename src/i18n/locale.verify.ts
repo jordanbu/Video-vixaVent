@@ -18,10 +18,6 @@ const { getLocale, setLocale } = await import('./locale');
 assert.equal(getLocale(), 'en');
 assert.equal(persistedLocale, 'en', 'initialization must preserve the saved language');
 assert.equal(documentElement.lang, 'en', 'the persisted locale must set the initial document language');
-setLocale('zh');
-assert.equal(persistedLocale, 'zh');
-assert.equal(documentElement.lang, 'zh-CN');
-
 setLocale('es');
 assert.equal(persistedLocale, 'es');
 assert.equal(documentElement.lang, 'es');
@@ -31,9 +27,15 @@ persistedLocale = '';
 const fresh = await import(`./locale.ts?fresh=${Date.now()}`);
 assert.equal(fresh.getLocale(), 'es', 'Spanish is the default interface language');
 
-// A language the toggle no longer offers resets to Spanish.
-persistedLocale = 'zh';
-const legacy = await import(`./locale.ts?legacy=${Date.now()}`);
-assert.equal(legacy.getLocale(), 'es', 'a saved Chinese choice resets to Spanish');
+// A language that was removed (Chinese, Italian, Russian) resets to Spanish.
+for (const removed of ['zh', 'it', 'ru']) {
+  persistedLocale = removed;
+  const legacy = await import(`./locale.ts?legacy=${removed}-${Date.now()}`);
+  assert.equal(legacy.getLocale(), 'es', `a saved ${removed} choice resets to Spanish`);
+}
+
+// Only Spanish and English exist.
+assert.deepEqual(fresh.ALL_LOCALES, ['es', 'en']);
+assert.equal(fresh.isLocale('zh'), false, 'Chinese is no longer an interface language');
 
 console.log('locale.verify: persisted and changed locales update the document language; Spanish is the default');

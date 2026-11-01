@@ -41,38 +41,23 @@ const errorCode = (error: unknown): string | null => {
 
 const DIRECT_REMEDY = {
   es: 'Puede que esta red bloquee el host o que haga falta un proxy. Revisa la conexión, configura PROXY_URL en Ajustes → Modelo del agente o usa una URL de media a la que se llegue directo.',
-  zh: '该地址可能被当前网络屏蔽或需要代理。请检查网络，或在 设置 → Agent 模型 中配置 PROXY_URL；也可以换一个能直连的素材地址。',
   en: 'The host may be blocked on this network or need a proxy. Check the connection, set PROXY_URL under Settings → Agent model, or use a media URL that is reachable directly.',
-  ru: 'Хост может быть заблокирован в этой сети или требовать прокси. Проверьте соединение, задайте PROXY_URL в Настройки → Модель агента или используйте адрес, доступный напрямую.',
-  it: 'L\'host potrebbe essere bloccato su questa rete o richiedere un proxy. Controlla la connessione, imposta PROXY_URL in Impostazioni → Modello agente, oppure usa un URL raggiungibile direttamente.',
 };
 const PROXIED_REMEDY = {
   es: 'La solicitud ya pasó por el proxy y tampoco el proxy llega a este host. Revisa las reglas del proxy o usa una URL de media a la que pueda llegar.',
-  zh: '当前已经通过代理访问，代理也连不上这个主机。请检查代理规则，或换一个能访问的素材地址。',
   en: 'The request already went through the proxy and the proxy could not reach this host either. Check the proxy rules, or use a media URL it can reach.',
-  ru: 'Запрос уже шёл через прокси, но и прокси не смог достучаться до хоста. Проверьте правила прокси или используйте другой адрес.',
-  it: 'La richiesta è già passata dal proxy e nemmeno il proxy raggiunge questo host. Controlla le regole del proxy o usa un URL raggiungibile.',
 };
 const CONNECT_TIMEOUT = {
   es: (host: string, ms: number, address: string) => `Se agotó el tiempo al conectar con ${host} (sin conexión en ${ms} ms, ${address}). `,
-  zh: (host: string, ms: number, address: string) => `连接 ${host} 超时（${ms}ms 内未建立连接，${address}）。`,
   en: (host: string, ms: number, address: string) => `Connecting to ${host} timed out (no connection within ${ms}ms, ${address}). `,
-  ru: (host: string, ms: number, address: string) => `Тайм-аут подключения к ${host} (нет соединения за ${ms}мс, ${address}). `,
-  it: (host: string, ms: number, address: string) => `Connessione a ${host} scaduta (nessuna connessione entro ${ms}ms, ${address}). `,
 };
 const RESPONSE_TIMEOUT = {
   es: (host: string, ms: number, address: string) => `${host} aceptó la conexión pero no respondió en ${ms} ms (${address}). `,
-  zh: (host: string, ms: number, address: string) => `连接 ${host} 后 ${ms}ms 内没有收到响应（${address}）。`,
   en: (host: string, ms: number, address: string) => `${host} accepted the connection but sent no response within ${ms}ms (${address}). `,
-  ru: (host: string, ms: number, address: string) => `${host} принял соединение, но не ответил за ${ms}мс (${address}). `,
-  it: (host: string, ms: number, address: string) => `${host} ha accettato la connessione ma non ha risposto entro ${ms}ms (${address}). `,
 };
 const UNREACHABLE = {
   es: (host: string, code: string) => `No se pudo conectar con ${host} (${code}). `,
-  zh: (host: string, code: string) => `无法连接到 ${host}（${code}）。`,
   en: (host: string, code: string) => `Could not connect to ${host} (${code}). `,
-  ru: (host: string, code: string) => `Не удалось подключиться к ${host} (${code}). `,
-  it: (host: string, code: string) => `Impossibile connettersi a ${host} (${code}). `,
 };
 
 /** Which of the two things the user can change is the one that matters right now, in the interface language. */

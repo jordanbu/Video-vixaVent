@@ -26,4 +26,5 @@ export default {
   "人声分离失败，未修改任何片段。": "Falló el aislamiento de voz; no se modificó ningún clip.",
   "响度分析失败，未修改任何片段。": "Falló el análisis de volumen; no se modificó ningún clip.",
   "所选片段的源素材已变化，旧的人声分离结果已丢弃。请重试。": "La media original cambió; se descartó el resultado anterior de separación de voz. Vuelve a intentarlo.",
+  "版本 {time}": "Versión {time}",
 } as Record<string, string>;

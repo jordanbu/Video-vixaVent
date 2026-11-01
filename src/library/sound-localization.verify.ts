@@ -2,16 +2,16 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { SOUND_EFFECTS, SOUND_GROUPS } from '../audio/soundLibrary';
 import { EN } from '../i18n/dict/en';
-import { ZH_DATA } from '../i18n/dict/zh';
+import { ES_DATA } from '../i18n/dict/es/data';
 
 const missingNames = SOUND_EFFECTS
   .map((sound) => sound.name)
-  .filter((name) => !ZH_DATA[name]);
+  .filter((name) => !ES_DATA[name]);
 
 assert.deepEqual(
   missingNames,
   [],
-  'every built-in sound effect must have a Chinese display name',
+  'every built-in sound effect must have a Spanish display name',
 );
 
 const mismatchedGroupNames = SOUND_GROUPS

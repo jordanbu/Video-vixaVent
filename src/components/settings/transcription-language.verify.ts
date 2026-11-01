@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict';
 import { ASR_MODELS } from '../../../shared/asr-models';
 import { EN } from '../../i18n/dict/en';
-import { IT } from '../../i18n/dict/it';
-import { RU } from '../../i18n/dict/ru';
+import { ES } from '../../i18n/dict/es';
 import { localAsrPage, TRANSCRIPTION_SETTINGS_GROUP } from './settingsMediaProviders';
 
 function transcriptionLanguageOptions(pageFields: readonly { name: string; options?: readonly { value: string; label: string }[] }[]) {
@@ -34,9 +33,9 @@ assert.ok(
   'local ASR settings must offer Portuguese transcription',
 );
 
-// The Russian UI has no English fallback, so an untranslated language name would show in Chinese.
+// Every transcription language name is translated in each interface language.
 for (const option of transcriptionLanguageOptions(localAsrPage.fields)) {
-  for (const [locale, dict] of [['en', EN], ['it', IT], ['ru', RU]] as const) {
+  for (const [locale, dict] of [['en', EN], ['es', ES]] as const) {
     assert.ok(dict[option.label], `${locale} dictionary must translate ${option.label}`);
   }
 }

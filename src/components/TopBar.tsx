@@ -5,7 +5,7 @@ import { ExportHistory } from './ExportHistory';
 import { GenerationActivity } from './GenerationActivity';
 import { SkinPicker } from './settings/SkinPicker';
 import { loadMcpGuideDialog } from './settings/mcpGuideLoader';
-import { SELECTABLE_LOCALES, getLocale, setLocale, useT } from '../i18n/locale';
+import { ALL_LOCALES, getLocale, setLocale, useT } from '../i18n/locale';
 import { invokeAction, bindAction } from '../shortcuts/actionRegistry';
 import { DesktopWindowControls } from './DesktopWindowControls';
 import { TopBarIconButton } from './TopBarIconButton';
@@ -22,7 +22,7 @@ const McpGuideDialog = lazy(() => loadMcpGuideDialog().then((m) => ({ default: m
 export function LocaleToggle() {
   const t = useT();
   const locale = getLocale();
-  const next = SELECTABLE_LOCALES[(SELECTABLE_LOCALES.indexOf(locale) + 1) % SELECTABLE_LOCALES.length]!;
+  const next = ALL_LOCALES[(ALL_LOCALES.indexOf(locale) + 1) % ALL_LOCALES.length]!;
   return (
     <button
       className="vx-tip vx-tip-r"
@@ -32,7 +32,7 @@ export function LocaleToggle() {
       style={{ minWidth: 30, height: 22, background: 'none', border: `0.5px solid ${theme.border}`, borderRadius: 4, cursor: 'pointer', padding: '0 5px', fontSize: 11, fontWeight: 600, letterSpacing: 0.3, color: theme.textDim, display: 'grid', placeItems: 'center' }}
       onMouseEnter={(e) => { e.currentTarget.style.color = theme.text; e.currentTarget.style.background = theme.panelAlt; }}
       onMouseLeave={(e) => { e.currentTarget.style.color = theme.textDim; e.currentTarget.style.background = 'none'; }}>
-      {locale === 'zh' ? '中' : locale.toUpperCase()}
+      {locale.toUpperCase()}
     </button>
   );
 }

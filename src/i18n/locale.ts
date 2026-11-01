@@ -1,6 +1,6 @@
 // Language status + t(): The original Chinese text is the key (no additional key namespace is created),
-// if the active-language dictionary cannot be found, it will fall back to Chinese.
-// Never go blank. Switch persistence localStorage('vx.locale'), subscription rerendering (useSyncExternalStore).
+// if the active-language dictionary is not loaded yet, it falls back to that key.
+// Never go blank. Only Spanish and English exist (specs/02-idioma-espanol.md). Switch persistence localStorage('vx.locale'), subscription rerendering (useSyncExternalStore).
 // Rules: Use useT() (subscription switching) in React components; pure helper modules can directly import { t }
 //  — As long as the component that renders its output calls useT(), it will be recalculated when switching languages.
 // LLM interface (systemPrompt/tool ​​description/skill content) and persistent dynamic history tags do not enter i18n.
@@ -10,23 +10,14 @@ import { ensureLocaleDict, localeDictReady, localeDicts } from './dictRegistry';
 
 export { ensureLocaleDict } from './dictRegistry';
 
-export type Locale = 'es' | 'zh' | 'en' | 'it' | 'ru';
+export type Locale = 'es' | 'en';
 
-export const ALL_LOCALES: readonly Locale[] = ['es', 'en', 'zh', 'it', 'ru'];
+/** Every interface language; the toggle cycles through them in this order. */
+export const ALL_LOCALES: readonly Locale[] = ['es', 'en'];
 
 export const DEFAULT_LOCALE: Locale = 'es';
 
-/** Languages offered by the language toggle; the other dictionaries stay as fallbacks. */
-export const SELECTABLE_LOCALES: readonly Locale[] = ['es', 'en'];
-
 const STORAGE_KEY = 'vx.locale';
-const DOCUMENT_LANG: Record<Locale, string> = {
-  es: 'es',
-  zh: 'zh-CN',
-  en: 'en',
-  it: 'it',
-  ru: 'ru',
-};
 
 export function isLocale(value: unknown): value is Locale {
   return typeof value === 'string' && (ALL_LOCALES as readonly string[]).includes(value);
@@ -35,8 +26,8 @@ export function isLocale(value: unknown): value is Locale {
 function readInitial(): Locale {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    // A choice saved before the toggle was limited to Spanish/English resets to Spanish.
-    if (isLocale(stored) && SELECTABLE_LOCALES.includes(stored)) return stored;
+    // A language that no longer exists (zh, it, ru saved by an older build) resets to Spanish.
+    if (isLocale(stored)) return stored;
   } catch {
     // Private mode / storage disabled → default language below.
   }
@@ -44,7 +35,7 @@ function readInitial(): Locale {
 }
 
 let current: Locale = readInitial();
-if (typeof document !== 'undefined') document.documentElement.lang = DOCUMENT_LANG[current];
+if (typeof document !== 'undefined') document.documentElement.lang = current;
 const subscribers = new Set<() => void>();
 
 export function getLocale(): Locale {
@@ -57,21 +48,16 @@ export function subscribeLocale(onChange: () => void): () => void {
   return () => { subscribers.delete(onChange); };
 }
 
-export function localeLanguageName(locale: Locale): 'Spanish' | 'Chinese' | 'English' | 'Italian' | 'Russian' {
-  if (locale === 'es') return 'Spanish';
-  if (locale === 'zh') return 'Chinese';
-  if (locale === 'it') return 'Italian';
-  if (locale === 'ru') return 'Russian';
-  return 'English';
+export function localeLanguageName(locale: Locale): 'Spanish' | 'English' {
+  return locale === 'es' ? 'Spanish' : 'English';
 }
 
-/** Catalog labels carry English and Chinese; other locales look the Chinese label up in their UI dictionary. */
+/** Catalog labels carry English and Chinese; Spanish looks the Chinese label up in its UI dictionary. */
 export function localizedCatalogText(
   english: string,
   chinese: string,
   locale: Locale = current,
 ): string {
-  if (locale === 'zh') return chinese;
   if (locale === 'en') return english;
   return localeDicts(locale).ui[chinese] ?? english;
 }
@@ -88,7 +74,7 @@ export function setLocale(next: Locale): void {
     localStorage.setItem(STORAGE_KEY, next);
   } catch { /* If the private mode cannot be saved, it will only affect this session */ }
   if (typeof document !== 'undefined') {
-    document.documentElement.lang = DOCUMENT_LANG[next];
+    document.documentElement.lang = next;
   }
   // Switch the UI now — an unloaded dictionary renders the Chinese original
   // rather than nothing — then re-render once the dictionary lands. In practice
@@ -102,7 +88,7 @@ export function setLocale(next: Locale): void {
  * instant. Call after the first paint — never before, it competes with it.
  */
 export function prefetchLocaleDicts(): void {
-  for (const locale of SELECTABLE_LOCALES) {
+  for (const locale of ALL_LOCALES) {
     if (locale !== current) void ensureLocaleDict(locale);
   }
 }
@@ -115,8 +101,8 @@ export function t(zh: string, params?: Record<string, string | number>): string 
   return raw.replace(/\{(\w+)\}/g, (match, key: string) => (key in params ? String(params[key]) : match));
 }
 
-/** Two-way data localization: **data** names (template names, etc.) are displayed according to the current language in the table lookup. If not found, they are returned as they are.
- * English key data (211 built-in items) zh state walking ZH_DATA; Chinese key data (self-made package) en state walking EN_DATA.
+/** Data localization: **data** names (template names, etc.) are displayed in the current language by table lookup. If not found, they are returned as they are.
+ * Built-in data is keyed in English (shown as-is in en, ES_DATA in es); Chinese-keyed data (self-made packages) reads EN_DATA in en.
  * It is only used for display and does not change the data itself (the name is also a reference key). */
 export function tData(text: string): string {
   const { data, dataFallback } = localeDicts(current);

@@ -80,10 +80,11 @@ try {
   const englishProxied = unreachableImportError(withCode('ECONNRESET'), REMOTE);
   delete process.env.HTTPS_PROXY;
   assert.match(englishProxied!.message, /proxy could not reach this host/);
-  await setKeys({ UI_LOCALE: 'it' });
-  assert.match(unreachableImportError(withCode('ENOTFOUND'), REMOTE)!.message, /Impossibile connettersi/);
-  await setKeys({ UI_LOCALE: 'zh' });
-  assert.match(unreachableImportError(withCode('ENOTFOUND'), REMOTE)!.message, /无法连接到/, 'Chinese stays available');
+  for (const removed of ['zh', 'it', 'ru']) {
+    await setKeys({ UI_LOCALE: removed });
+    assert.match(unreachableImportError(withCode('ENOTFOUND'), REMOTE)!.message, /No se pudo conectar con/,
+      `a removed language (${removed}) falls back to Spanish`);
+  }
   await setKeys({ UI_LOCALE: 'nonsense' });
   assert.match(unreachableImportError(withCode('ENOTFOUND'), REMOTE)!.message, /No se pudo conectar con/, 'an unknown locale falls back to Spanish');
 } finally {

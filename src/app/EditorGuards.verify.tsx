@@ -9,8 +9,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { EN } from '../i18n/dict/en';
-import { IT } from '../i18n/dict/it';
-import { RU } from '../i18n/dict/ru';
+import { ES } from '../i18n/dict/es';
 import { editorAccess } from './editorAccess';
 import { EditorErrorBoundary, SecureContextRequiredView } from './EditorGuards';
 
@@ -66,8 +65,8 @@ try {
 }
 assert.ok(reported.some((args) => args.includes(failure)), 'the boundary must still report the error');
 
-// Every string both screens render is translated in each non-Chinese locale.
-for (const [locale, dict] of [['en', EN], ['it', IT], ['ru', RU]] as const) {
+// Every string both screens render is translated in each interface language.
+for (const [locale, dict] of [['en', EN], ['es', ES]] as const) {
   for (const key of usedKeys) {
     assert.ok(dict[key] && !CJK.test(dict[key]), `${locale} translation missing for ${JSON.stringify(key)}`);
   }

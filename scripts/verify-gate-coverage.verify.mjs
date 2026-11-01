@@ -94,7 +94,6 @@ assert.equal(renderStep['continue-on-error'], undefined);
 // AGENTS.md's 500-line source ceiling applies to new files too. Ask Git for
 // tracked + nonignored untracked paths, excluding local generated scratch files.
 const dataModules = new Set([
-  'src/i18n/dict/ru/index.ts', // Translation dictionary data, no application logic.
   'src/i18n/dict/en/settings.ts', // Translation dictionary data, no application logic.
 ]);
 const sourceFiles = [...new Set(execFileSync('git', [

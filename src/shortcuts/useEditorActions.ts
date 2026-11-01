@@ -3,6 +3,7 @@ import { activeEditorState, type ProjectDoc } from '../editor/types';
 import type { EditorCommands } from '../editor/store';
 import { keyboardPreviewNudgePlan, type PreviewNudgeDirection } from '../components/preview/previewTransform';
 import { saveVersion } from '../persist/versionStore';
+import { shortcutVersionName } from './versionName';
 import type { TimelineShortcutApi } from './timelineApi';
 import type { ActionBindings } from './useActionBindings';
 import { useActionBindings } from './useActionBindings';
@@ -150,10 +151,7 @@ export function useEditorActions(deps: EditorActionDeps): void {
     ...navigationActions(deps),
     ...viewActions(deps),
     'save-version': () => {
-      const name = `版本 ${new Date().toLocaleString('zh-CN', {
-        month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit',
-      })}`;
-      void saveVersion(deps.projectId, name, deps.docRef.current).then(deps.openHistory);
+      void saveVersion(deps.projectId, shortcutVersionName(), deps.docRef.current).then(deps.openHistory);
     },
   };
   useActionBindings(bindings);

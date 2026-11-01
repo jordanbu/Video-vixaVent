@@ -7,9 +7,9 @@
 // here instead of guessing. Unset means Spanish, the app's default language.
 import { getKey } from './keystore.ts';
 
-export type UiLocale = 'es' | 'zh' | 'en' | 'it' | 'ru';
+export type UiLocale = 'es' | 'en';
 
-const LOCALES: ReadonlySet<string> = new Set(['es', 'zh', 'en', 'it', 'ru']);
+const LOCALES: ReadonlySet<string> = new Set(['es', 'en']);
 
 export function parseUiLocale(value: unknown): UiLocale | null {
   const tag = typeof value === 'string' ? value.trim().toLowerCase() : '';
@@ -20,11 +20,7 @@ export function uiLocale(): UiLocale {
   return parseUiLocale(getKey('UI_LOCALE')) ?? 'es';
 }
 
-/** Pick the variant for the current interface language; Spanish, Russian and Italian fall back to English when not provided. */
-export function localized<T>(variants: { zh: T; en: T; es?: T; ru?: T; it?: T }, locale: UiLocale = uiLocale()): T {
-  if (locale === 'es') return variants.es ?? variants.en;
-  if (locale === 'zh') return variants.zh;
-  if (locale === 'ru') return variants.ru ?? variants.en;
-  if (locale === 'it') return variants.it ?? variants.en;
-  return variants.en;
+/** Pick the variant for the current interface language (Spanish or English). */
+export function localized<T>(variants: { es: T; en: T }, locale: UiLocale = uiLocale()): T {
+  return locale === 'en' ? variants.en : variants.es;
 }
