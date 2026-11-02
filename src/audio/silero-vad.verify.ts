@@ -2,7 +2,8 @@
 // probability → speech-span aggregation. The model session itself is exercised
 // in the live browser smoke (wasm + onnx), not here.
 import assert from 'node:assert/strict';
-import { resampleMonoTo16k, vadSpansFromProbabilities } from './silero-vad';
+import { resampleMonoTo16k, vadSpansFromProbabilities } from './silero-vad-core';
+import { readdirSync, readFileSync } from 'node:fs';
 
 // ── resampling ───────────────────────────────────────────────────────────────
 
@@ -57,3 +58,14 @@ const mixed = vadSpansFromProbabilities(prob(100, [[10, 20]], 0.8), 0.5, { windo
 assert.ok(Math.abs(mixed.confidence - 0.8) < 1e-6);
 
 console.log('silero-vad.check: resampling + span aggregation OK');
+
+// ── runtime files come from the installed package, never a hand-copied pair ──
+// A copy in public/models drifted to another onnxruntime-web build (11 MB) while Vite
+// also shipped the installed one (14 MB). specs/09 / commit history.
+const modelDir = new URL('../../public/models/silero-vad/', import.meta.url);
+assert.deepEqual(readdirSync(modelDir).filter((file) => file.startsWith('ort-')), [],
+  'no onnxruntime-web loader or wasm copied into public/models/silero-vad');
+const runner = readFileSync(new URL('./silero-vad.ts', import.meta.url), 'utf8');
+assert.match(runner, /node_modules\/onnxruntime-web\/dist\/ort-wasm-simd-threaded\.mjs\?url/);
+assert.match(runner, /node_modules\/onnxruntime-web\/dist\/ort-wasm-simd-threaded\.wasm\?url/);
+console.log('silero-vad.check: runtime taken from the installed onnxruntime-web');

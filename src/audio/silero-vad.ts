@@ -3,15 +3,16 @@
 // through onnxruntime-web; the session loads lazily on first use so the
 // chunk never enters the initial bundle. Absence or failure degrades the
 import * as ort from 'onnxruntime-web/wasm';
+// The loader and the wasm binary of the INSTALLED onnxruntime-web, so the JS API and the
+// binary are always the same version, and the build ships one copy of the wasm (the
+// asset ORT itself references). A hand-copied pair in public/models used to drift from
+// the package (11 MB of a different build, plus the 14 MB one Vite emitted anyway).
+// Same pattern as beatThis.worker.ts.
+import ortLoaderUrl from '../../node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.mjs?url';
+import ortWasmUrl from '../../node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm?url';
 import { registerVadRunner, type VadRunResult } from './vad';
-import type { VadTimeSpan } from '../persist/vadEvidenceStore';
+import { VAD_SAMPLE_RATE, WINDOW_SIZE, resampleMonoTo16k, vadSpansFromProbabilities } from './silero-vad-core';
 const MODEL_URL = '/models/silero-vad/silero_vad.onnx';
-// The ort backend loader + wasm binary sit beside the model in public/ so no
-// node_modules subpath (blocked by the package exports map) is ever imported.
-const WASM_PATH = '/models/silero-vad/';
-const VAD_SAMPLE_RATE = 16_000;
-const WINDOW_SIZE = 512; // 32ms @16kHz — Silero VAD's native window
-const MERGE_GAP_WINDOWS = 2;
 
 let sessionPromise: Promise<ort.InferenceSession> | null = null;
 let installed = false;
@@ -19,14 +20,9 @@ let installed = false;
 function loadSession(): Promise<ort.InferenceSession> {
   if (!sessionPromise) {
     sessionPromise = (async () => {
-      // Explicit non-jsep loader pair (the lighter wasm build); the mjs is a
-      // prebuilt module served verbatim from public/ — see the dev-only
-      // middleware in vite.config.ts.
+      // Explicit non-jsep loader pair (the lighter wasm build).
       ort.env.wasm.numThreads = 1;
-      ort.env.wasm.wasmPaths = {
-        mjs: `${WASM_PATH}ort-wasm-simd-threaded.mjs`,
-        wasm: `${WASM_PATH}ort-wasm-simd-threaded.wasm`,
-      };
+      ort.env.wasm.wasmPaths = { mjs: ortLoaderUrl, wasm: ortWasmUrl };
       return ort.InferenceSession.create(MODEL_URL, { executionProviders: ['wasm'] });
     })().catch((error) => {
       sessionPromise = null;
@@ -34,72 +30,6 @@ function loadSession(): Promise<ort.InferenceSession> {
     });
   }
   return sessionPromise;
-}
-
-/** Linear-decimate any sample rate down to 16 kHz mono (VAD quality is
- * insensitive to the resampling method). Pure and exported for verifies. */
-export function resampleMonoTo16k(samples: Float32Array, sampleRate: number): Float32Array {
-  if (sampleRate === VAD_SAMPLE_RATE) return samples;
-  if (sampleRate < VAD_SAMPLE_RATE) throw new Error(`unsupported sample rate ${sampleRate}`);
-  const ratio = sampleRate / VAD_SAMPLE_RATE;
-  const length = Math.floor(samples.length / ratio);
-  const out = new Float32Array(length);
-  for (let i = 0; i < length; i += 1) {
-    const position = i * ratio;
-    const base = Math.floor(position);
-    const fraction = position - base;
-    const next = Math.min(base + 1, samples.length - 1);
-    out[i] = samples[base] + (samples[next] - samples[base]) * fraction;
-  }
-  return out;
-}
-
-/** Merge per-window speech probabilities into spans. Pure and exported for
- * verifies: gap tolerance and per-span confidence live entirely here. */
-export function vadSpansFromProbabilities(
-  probabilities: Float32Array,
-  threshold: number,
-  options: { windowMs?: number; mergeGapWindows?: number } = {},
-): { spans: VadTimeSpan[]; confidence: number } {
-  const windowMs = options.windowMs ?? (WINDOW_SIZE / VAD_SAMPLE_RATE) * 1000;
-  const gap = Math.max(0, options.mergeGapWindows ?? MERGE_GAP_WINDOWS);
-  const spans: VadTimeSpan[] = [];
-  let start = -1;
-  let lastSpeech = -1;
-  let spanConfidenceSum = 0;
-  let spanConfidenceCount = 0;
-  let totalConfidenceSum = 0;
-  let totalConfidenceCount = 0;
-  const closeSpan = (endWindow: number): void => {
-    if (start < 0) return;
-    spans.push({
-      startMs: Math.round(start * windowMs),
-      endMs: Math.round((endWindow + 1) * windowMs),
-      confidence: Math.round((spanConfidenceSum / spanConfidenceCount) * 1000) / 1000,
-    });
-    start = -1;
-    spanConfidenceSum = 0;
-    spanConfidenceCount = 0;
-  };
-  for (let i = 0; i < probabilities.length; i += 1) {
-    if (probabilities[i] >= threshold) {
-      if (start < 0) start = i;
-      else if (i - lastSpeech > gap + 1) {
-        closeSpan(lastSpeech);
-        start = i;
-      }
-      lastSpeech = i;
-      spanConfidenceSum += probabilities[i];
-      spanConfidenceCount += 1;
-      totalConfidenceSum += probabilities[i];
-      totalConfidenceCount += 1;
-    } else if (start >= 0 && i - lastSpeech > gap) {
-      closeSpan(lastSpeech);
-    }
-  }
-  closeSpan(probabilities.length - 1);
-  const confidence = totalConfidenceCount > 0 ? totalConfidenceSum / totalConfidenceCount : 0;
-  return { spans, confidence };
 }
 
 async function runSileroVad(
