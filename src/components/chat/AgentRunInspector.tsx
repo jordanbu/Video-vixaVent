@@ -35,7 +35,7 @@ type Translate = (key: string, params?: Record<string, string | number>) => stri
 type PopoverBox = { left: number; top: number; width: number; maxHeight: number };
 
 const compactNumber = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 });
-const mono: CSSProperties = { fontFamily: 'Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace' };
+const mono: CSSProperties = { fontFamily: 'JetBrains Mono, Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace' };
 
 function useRuntimeSidecar(projectId: string, refreshKey: boolean) {
   const [sidecar, setSidecar] = useState<AgentRuntimeSidecar | null>(null);
@@ -400,12 +400,12 @@ const runSummary: CSSProperties = { padding: '10px 12px 9px' };
 const statusDot: CSSProperties = { width: 7, height: 7, flex: '0 0 auto', borderRadius: '50%' };
 const backend: CSSProperties = { marginTop: 6, color: theme.text, fontSize: 11.5, ...mono };
 const interrupted: CSSProperties = { margin: '0 12px 8px', padding: 8, border: `0.5px solid ${theme.gold}`, borderRadius: 4, color: theme.text, background: themeAlpha.ink(0.04), fontSize: 11, lineHeight: 1.45 };
-const serverBadge: CSSProperties = { padding: '1px 4px', borderRadius: 3, color: theme.accent, background: themeAlpha.accent(0.12), fontSize: 9.5 };
+const serverBadge: CSSProperties = { padding: '1px 4px', borderRadius: 3, color: theme.accent, background: themeAlpha.accent(0.12), fontSize: 10.5 };
 const reason: CSSProperties = { marginTop: 5, color: theme.textDim, fontSize: 10.5 };
 const serverReason: CSSProperties = { margin: '0 12px 8px', padding: 8, border: `0.5px solid ${theme.border}`, borderRadius: 4, color: theme.text, background: themeAlpha.ink(0.03), fontSize: 11, lineHeight: 1.45 };
 const section: CSSProperties = { padding: '9px 12px', borderTop: `0.5px solid ${theme.border}` };
 const sectionTitle: CSSProperties = { margin: '0 0 7px', color: theme.textMuted, fontSize: 10.5, fontWeight: 650, display: 'flex', alignItems: 'center', gap: 4 };
-const subheadInSection: CSSProperties = { margin: '6px 0 4px', color: theme.textMuted, fontSize: 9.5, fontWeight: 650, textTransform: 'uppercase', letterSpacing: 0.3 };
+const subheadInSection: CSSProperties = { margin: '6px 0 4px', color: theme.textMuted, fontSize: 10.5, fontWeight: 650, textTransform: 'uppercase', letterSpacing: 0.3 };
 const metrics: CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: '5px 10px' };
 const metric: CSSProperties = { color: theme.text, fontSize: 10.5, fontVariantNumeric: 'tabular-nums' };
 const row: CSSProperties = { display: 'flex', alignItems: 'flex-start', gap: 8, padding: '5px 0' };
@@ -414,4 +414,4 @@ const rowTitle: CSSProperties = { display: 'flex', alignItems: 'baseline', justi
 const detailLine: CSSProperties = { color: theme.text, fontSize: 11, lineHeight: 1.45 };
 const subtle: CSSProperties = { color: theme.textDim, fontSize: 10.5, lineHeight: 1.4, overflowWrap: 'anywhere' };
 const emptyLine: CSSProperties = { color: theme.textDim, fontSize: 10.5 };
-const digest: CSSProperties = { display: 'block', marginTop: 5, color: theme.textDim, fontSize: 9.5, lineHeight: 1.35, overflowWrap: 'anywhere', ...mono };
+const digest: CSSProperties = { display: 'block', marginTop: 5, color: theme.textDim, fontSize: 10.5, lineHeight: 1.35, overflowWrap: 'anywhere', ...mono };

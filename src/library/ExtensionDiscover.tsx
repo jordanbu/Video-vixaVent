@@ -43,13 +43,13 @@ function RegistryCard({ entry, installed, busyId, onInstall }: {
       <div style={{ minWidth: 0, flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 5 }}>
           <div style={{ color: theme.textStrong, fontSize: 12, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{entry.name}</div>
-          {entry.version && <span style={{ color: theme.textDim, fontSize: 9.5 }}>v{entry.version}</span>}
+          {entry.version && <span style={{ color: theme.textDim, fontSize: 10.5 }}>v{entry.version}</span>}
         </div>
         <div title={entry.description} style={{ color: theme.textDim, fontSize: 10, marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {entry.description ?? t('创意资源扩展包')}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 5 }}>
-          <span style={{ color: theme.textDim, fontSize: 9.5 }}>{entry.author ?? t('社区作者')}</span>
+          <span style={{ color: theme.textDim, fontSize: 10.5 }}>{entry.author ?? t('社区作者')}</span>
           {entry.categories.map((item) => <ExtensionTag key={item}>{t(item)}</ExtensionTag>)}
           {entry.sha256 && <ExtensionTag verified>{t('已校验')}</ExtensionTag>}
         </div>

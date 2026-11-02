@@ -16,7 +16,7 @@ export function AppSplash({ text }: { text: string }) {
   return (
     <div style={{
       height: '100vh', display: 'grid', placeItems: 'center', background: theme.bg,
-      color: theme.textDim, fontFamily: 'Geist, system-ui, sans-serif', fontSize: 13,
+      color: theme.textDim, fontFamily: 'Instrument Sans, Geist, system-ui, sans-serif', fontSize: 13,
     }}>
       {text}
     </div>
@@ -56,7 +56,7 @@ function EditorLoader({ meta, onHome, onRename }: EditorLoaderProps) {
     return (
       <div style={{
         height: '100vh', display: 'grid', placeItems: 'center', background: theme.bg,
-        fontFamily: 'Geist, system-ui, sans-serif',
+        fontFamily: 'Instrument Sans, Geist, system-ui, sans-serif',
       }}>
         <div style={{ display: 'grid', gap: 10, justifyItems: 'center', maxWidth: 420, textAlign: 'center' }}>
           <b style={{ color: theme.text, fontSize: 14 }}>{t('工程数据暂时无法读取')}</b>

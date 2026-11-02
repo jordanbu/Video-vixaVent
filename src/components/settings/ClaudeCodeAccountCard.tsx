@@ -167,7 +167,7 @@ const summaryTitle: React.CSSProperties = { color: theme.text, fontSize: 12, fon
 const summaryDetail: React.CSSProperties = { marginTop: 2, color: theme.textDim, fontSize: 10.5, lineHeight: 1.45 };
 const versionTag: React.CSSProperties = {
   flex: '0 0 auto', padding: '1px 5px', border: `0.5px solid ${theme.border}`,
-  borderRadius: 4, color: theme.textDim, fontSize: 9.5,
+  borderRadius: 4, color: theme.textDim, fontSize: 10.5,
 };
 const metadata: React.CSSProperties = {
   display: 'flex', flexWrap: 'wrap', gap: '2px 9px', marginTop: 5, color: theme.textMuted,
@@ -177,7 +177,7 @@ const loginDetails: React.CSSProperties = { display: 'flex', flexDirection: 'col
 const valueRow: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 };
 const valueLabel: React.CSSProperties = { width: 52, flex: '0 0 52px', color: theme.textDim, fontSize: 10.5 };
 const valueCode: React.CSSProperties = {
-  display: 'block', minWidth: 0, overflow: 'hidden', color: 'inherit', fontFamily: 'Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace',
+  display: 'block', minWidth: 0, overflow: 'hidden', color: 'inherit', fontFamily: 'JetBrains Mono, Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace',
   fontSize: 10.5, lineHeight: 1.45, textOverflow: 'ellipsis', whiteSpace: 'nowrap', userSelect: 'all',
 };
 const prominentCode: React.CSSProperties = { color: theme.textStrong, fontSize: 13, fontWeight: 700 };

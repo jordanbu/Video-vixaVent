@@ -24,9 +24,9 @@ export function ToolGroupRow({ name, items, onOpenSettings }: { name: string; it
         style={{ display: 'flex', alignItems: 'center', gap: 9, background: 'none', border: 'none', cursor: 'pointer', color: theme.textDim, fontSize: 12.5, padding: 0, textAlign: 'left' }}
       >
         <span style={{ width: 7, height: 7, borderRadius: '50%', background: anyError ? theme.danger : GREEN, flexShrink: 0 }} />
-        <span style={{ fontFamily: 'Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace', letterSpacing: 0.2 }}>{name}</span>
+        <span style={{ fontFamily: 'JetBrains Mono, Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace', letterSpacing: 0.2 }}>{name}</span>
         <span style={{ opacity: 0.8 }}>· {t('{n} 次', { n: items.length })}</span>
-        <span style={{ fontSize: 9, opacity: 0.7 }}>{open ? '▾' : '▸'}</span>
+        <span style={{ fontSize: 10.5, opacity: 0.7 }}>{open ? '▾' : '▸'}</span>
       </button>
       {open && (
         <div style={{ marginLeft: 3, paddingLeft: 9, borderLeft: `0.5px solid ${theme.border}` }}>

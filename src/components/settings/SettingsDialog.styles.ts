@@ -24,7 +24,7 @@ export function dot(on: boolean): CSSProperties {
 
 export const overlay: CSSProperties = {
   position: 'fixed', inset: 0, background: themeAlpha.shadow(0.62), display: 'grid', placeItems: 'center',
-  zIndex: 200, padding: 24, fontFamily: 'Geist, system-ui, -apple-system, sans-serif',
+  zIndex: 200, padding: 24, fontFamily: 'Instrument Sans, Geist, system-ui, -apple-system, sans-serif',
 };
 export const panel: CSSProperties = {
   width: 'min(1010px, 100%)', height: 'min(640px, 86vh)', display: 'flex', flexDirection: 'column',

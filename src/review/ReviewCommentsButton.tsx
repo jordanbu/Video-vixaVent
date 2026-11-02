@@ -275,7 +275,7 @@ const toolbarButton: CSSProperties = {
 };
 const countBadge: CSSProperties = {
   minWidth: 14, height: 14, padding: '0 3px', display: 'grid', placeItems: 'center',
-  borderRadius: 7, background: theme.accent, color: theme.onAccent, fontSize: 9, fontWeight: 700,
+  borderRadius: 7, background: theme.accent, color: theme.onAccent, fontSize: 10.5, fontWeight: 700,
 };
 const popover: CSSProperties = {
   position: 'absolute', zIndex: 40, top: 27, right: 0, width: 'min(360px, calc(100vw - 32px))',

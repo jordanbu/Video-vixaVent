@@ -203,7 +203,7 @@ const cardStyle: React.CSSProperties = {
 const endpointStyle: React.CSSProperties = {
   margin: 0, padding: '6px 9px', border: `0.5px solid ${theme.borderLight}`, borderRadius: 4,
   background: theme.inset, color: theme.textMuted, fontSize: 11.5, lineHeight: 1.5,
-  fontFamily: 'Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace',
+  fontFamily: 'JetBrains Mono, Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace',
   whiteSpace: 'nowrap', overflowX: 'auto', userSelect: 'text',
 };
 

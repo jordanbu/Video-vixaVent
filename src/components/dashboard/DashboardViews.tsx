@@ -77,7 +77,7 @@ function ProjectToolbar({ projects, model }: { projects: ProjectMeta[]; model: D
   const t = useT();
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
-      <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em' }}>{t('工程')}</h1>
+      <h1 style={{ margin: 0, fontFamily: 'var(--vx-font-serif)', fontSize: 28, fontWeight: 400, letterSpacing: '-0.02em' }}>{t('工程')}</h1>
       {model.transfer.note && <span style={{ color: theme.textDim, fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{model.transfer.note}</span>}
       <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 10 }}>
         <ProjectSearch value={model.query} onChange={model.setQuery} />

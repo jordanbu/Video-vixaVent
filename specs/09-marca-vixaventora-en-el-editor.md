@@ -29,6 +29,16 @@ ordenado y fácil de leer.
 - **Tema "Vixaventora"** en `src/skins.ts`, por defecto (`DEFAULT_SKIN`). Superficies con la
   escala ink de las secciones oscuras de la web; acento clay; el resto de los temas sigue
   disponible en el selector.
+- **Tipografía de marca**, alojada en `public/fonts/` (subconjunto `latin`, variable por peso,
+  registrada en `assets/fonts/LICENSES.md` con SHA-256): `--vx-font-sans` = Instrument Sans,
+  `--vx-font-serif` = Source Serif 4, `--vx-font-mono` = JetBrains Mono (`src/index.css`).
+  Cada pila de fuentes de la interfaz las pone primero y deja Geist / Geist Mono de respaldo.
+  El `body` usa `--vx-font-sans`, así los menús montados en `<body>` también la toman.
+- **Títulos en serif, como en la web, solo en lo grande**: "Proyectos" en el panel (28 px, 400)
+  y el encabezado del chat vacío (21 px, 400), con el sobretítulo de marca encima ("EMPIEZA
+  AQUÍ": 11 px, mayúsculas, 600, +0,14 em, clay).
+- **Piso de tamaño**: los textos de 9 y 9,5 px pasan a 10,5 px (50 lugares: 26 en CSS y 24 en
+  componentes). En el escritorio, con la base de 110 %, se ven de ~11,5 px.
 
 | Token del editor | Valor | Origen |
 |---|---|---|
@@ -58,7 +68,10 @@ ordenado y fácil de leer.
 | Llevar la marca como un tema más y ponerlo por defecto | Reescribir los colores de Graphite | El sistema de temas ya maneja todos los tokens y sus contrastes; Graphite queda para quien lo prefiera |
 | Superficies de las secciones oscuras de la web, no el papel crema | Un editor claro como la portada | Un editor de video se trabaja en oscuro: el color del video tiene que leerse sin un marco claro alrededor. El tema claro "Latte" sigue existiendo |
 | Acento clay-400 con texto oscuro | clay-500 con texto blanco | Blanco sobre `#c4613c` da ~4,1:1; texto ink-900 sobre `#d57a57` da ~6:1, y la web ya usa texto oscuro sobre su color cálido (botón ocre) |
-| Mantener Geist en la interfaz por ahora | Pasar ya a Instrument Sans + Source Serif 4 | Son de Google Fonts y habría que alojarlas (specs/01); Geist e Instrument Sans son grotescas parecidas. Queda en Pendiente |
+| Alojar Instrument Sans, Source Serif 4 y JetBrains Mono (decidido con el equipo el 2026-11-01) | Seguir con Geist | La interfaz queda igual que la web. Alojadas en `public/fonts/` no se contacta a Google (specs/01); el subconjunto latin pesa 30 + 122 + 31 KB |
+| Las capas de texto del video siguen en Geist (`TimelineGraphicLayers.tsx`) y el logo no cambia | Cambiar también la letra por defecto del contenido | Cambiaría la letra de proyectos existentes y de sus exportaciones; la marca es para la interfaz |
+| Fuentes de marca primero y Geist de respaldo en cada pila | Reemplazar Geist por completo | Si falta un glifo fuera del subconjunto latin, cae en una letra parecida en vez de en la del sistema |
+| Subir solo los textos de 9–9,5 px (decidido con el equipo) | Subir todo o subir el zoom a 120 % | Lo ilegible desaparece sin cambiar la densidad; en el escritorio ya hay una base de 110 % y subir todo la duplicaría |
 | No usar la guía genérica de la skill (rosa/azul, Inter, patrón landing) | Aplicarla tal cual | La marca ya existe; la skill aporta las reglas de contraste, foco, tamaños mínimos y movimiento |
 
 ## Verificación
@@ -75,10 +88,18 @@ Resultados del 2026-11-01, con Node 24.22.1:
   el `body` queda en `rgb(13, 12, 11)` (ink-950); el panel de proyectos, el editor, la
   tarjeta de permiso y el selector de temas se ven con la paleta de marca; el selector
   muestra "Vixaventora" marcado y el resto disponible. Sin errores en la página.
+- Tipografía (mismo servidor aislado): `document.fonts` → Instrument Sans y Source Serif 4
+  cargadas, ningún 404 en `/fonts/`; el `body` y los menús usan Instrument Sans; el `h1` del
+  panel usa Source Serif 4. Instrument Sans trae dígitos tabulares (con `tabular-nums`,
+  "1111" y "0000" miden lo mismo), así que los tiempos del timeline no bailan.
+- Tamaños: en el editor no queda texto de 9–9,5 px (lo más chico visible son los 10 px de la
+  regla); ningún texto recortado por su caja (escaneo de `scrollWidth`/`scrollHeight`).
+  Capturas del chat, la regla, los cabezales de pista y las insignias de duración sin
+  desbordes.
 
 ## Pendiente
 
-- Tipografía de la marca (Instrument Sans / Source Serif 4 / JetBrains Mono, OFL) alojada
-  en `public/fonts/`.
-- Piso de tamaño de texto (nada por debajo de 11 px) y nombres accesibles en los botones de
-  solo ícono (cabezales de pista, cabecera del chat).
+- Los números de la regla del timeline siguen en 10 px (19 en pantalla): no estaban en el
+  rango acordado (9–9,5 px).
+- Menú contextual del clip: ocultar los ítems que no aplican al tipo de clip (siguiente
+  cambio de este spec).

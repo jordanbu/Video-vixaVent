@@ -207,7 +207,7 @@ const ResourceListItem = memo(function ResourceListItem({ item, clickable, canDr
         style={{ width: '100%', height: 66, objectFit: 'cover', borderRadius: 5, marginBottom: 5, background: theme.inset }} /> : null}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <span style={{ fontSize: 12.5, fontWeight: 500 }}>{t(item.name)}</span>
-        {item.badge && <span style={{ fontSize: 9, color: theme.accent, border: `0.5px solid ${theme.accent}`, borderRadius: 3, padding: '0 3px' }}>{t(item.badge)}</span>}
+        {item.badge && <span style={{ fontSize: 10.5, color: theme.accent, border: `0.5px solid ${theme.accent}`, borderRadius: 3, padding: '0 3px' }}>{t(item.badge)}</span>}
       </div>
       {item.desc && <span style={{ fontSize: 10.5, color: theme.textDim, lineHeight: 1.35 }}>{t(item.desc)}</span>}
     </button>

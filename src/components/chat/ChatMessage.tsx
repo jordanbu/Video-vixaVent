@@ -39,7 +39,7 @@ function ThinkingBlock({ text }: { text: string }) {
         {t('思考过程')}
       </button>
       {open && (
-        <Markdown text={text} style={{ marginTop: 4, maxHeight: 180, overflowY: 'auto', padding: '6px 8px', fontFamily: 'Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace', fontStyle: 'italic', fontSize: 11.5, lineHeight: 1.55, color: theme.textDim, whiteSpace: 'pre-wrap', background: theme.panelAlt, border: `0.5px solid ${theme.border}`, borderRadius: 4 }} />
+        <Markdown text={text} style={{ marginTop: 4, maxHeight: 180, overflowY: 'auto', padding: '6px 8px', fontFamily: 'JetBrains Mono, Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace', fontStyle: 'italic', fontSize: 11.5, lineHeight: 1.55, color: theme.textDim, whiteSpace: 'pre-wrap', background: theme.panelAlt, border: `0.5px solid ${theme.border}`, borderRadius: 4 }} />
       )}
     </div>
   );
@@ -108,7 +108,7 @@ export function ChatMessage({ msg, streaming, running = false, retry, onRetry, o
         {/* Tool name + summary + error in a wrappable block: minWidth:0 to allow it to shrink within the flex parent,
 overflowWrap:anywhere breaks long tokens - long errors/summaries are wrapped in the panel, no longer cut off when a single line overflows.*/}
         <span style={{ minWidth: 0, overflowWrap: 'anywhere', lineHeight: 1.45 }}>
-          <span style={{ fontFamily: 'Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace', letterSpacing: 0.2 }}>{tool.name}</span>
+          <span style={{ fontFamily: 'JetBrains Mono, Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace', letterSpacing: 0.2 }}>{tool.name}</span>
           {summary && <span style={{ opacity: 0.8 }}> · {summary}</span>}
           {!ok && <span style={{ color: theme.danger }}>：{String(r!.error)}</span>}
           {!ok && onOpenSettings && isMissingModelPacksResult(r) && (

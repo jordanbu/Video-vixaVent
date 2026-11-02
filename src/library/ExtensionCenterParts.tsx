@@ -91,7 +91,7 @@ export function ExtensionTag({ children, verified = false }: { children: ReactNo
       padding: '1px 5px',
       borderRadius: 3,
       color: verified ? theme.success : theme.textDim,
-      fontSize: 9.5,
+      fontSize: 10.5,
       lineHeight: 1.45,
     }}>
       {verified && <Icon name="check" size={9} />}

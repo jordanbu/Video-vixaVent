@@ -144,7 +144,7 @@ export function EffectsControl({ item, onChange, previewStatus }: { item: Timeli
           <div key={effect.id} style={{ display: 'flex', flexDirection: 'column', gap: 9, border: `0.5px solid ${theme.border}`, borderRadius: 4, padding: 9 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11.5, color: theme.text }}>
               <b style={{ flex: 1 }}>{index + 1}. {t(def.name)}
-                {effect.assetId in LUT_EFFECTS && <span style={{ fontSize: 9, fontWeight: 700, color: theme.textDim, border: `0.5px solid ${theme.border}`, borderRadius: 3, padding: '0 3px', marginLeft: 5, verticalAlign: 'middle' }}>LUT</span>}
+                {effect.assetId in LUT_EFFECTS && <span style={{ fontSize: 10.5, fontWeight: 700, color: theme.textDim, border: `0.5px solid ${theme.border}`, borderRadius: 3, padding: '0 3px', marginLeft: 5, verticalAlign: 'middle' }}>LUT</span>}
               </b>
               <button title={t('上移')} disabled={index === 0} onClick={() => moveEffect(index, -1)}>↑</button>
               <button title={t('下移')} disabled={index === active.length - 1} onClick={() => moveEffect(index, 1)}>↓</button>

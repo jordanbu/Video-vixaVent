@@ -100,7 +100,7 @@ const summaryDetail: React.CSSProperties = {
 };
 const versionTag: React.CSSProperties = {
   flex: '0 0 auto', padding: '1px 5px', border: `0.5px solid ${theme.border}`,
-  borderRadius: 4, color: theme.textDim, fontSize: 9.5,
+  borderRadius: 4, color: theme.textDim, fontSize: 10.5,
 };
 const metadata: React.CSSProperties = {
   display: 'flex', flexWrap: 'wrap', gap: '2px 9px', marginTop: 5, color: theme.textMuted,

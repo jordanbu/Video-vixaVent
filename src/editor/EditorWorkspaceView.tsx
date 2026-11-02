@@ -76,7 +76,7 @@ export function EditorWorkspaceView(props: EditorWorkspaceViewProps) {
         overflow: 'hidden',
         background: theme.bg,
         color: theme.text,
-        fontFamily: 'Geist, system-ui, -apple-system, sans-serif',
+        fontFamily: 'Instrument Sans, Geist, system-ui, -apple-system, sans-serif',
       }}
     >
       <TopBar {...props.topBar} />

@@ -16,7 +16,7 @@ function GuardScreen({ title, children, actions }: { title: string; children: Re
   return (
     <div style={{
       height: '100vh', display: 'grid', placeItems: 'center', background: theme.bg,
-      fontFamily: 'Geist, system-ui, sans-serif',
+      fontFamily: 'Instrument Sans, Geist, system-ui, sans-serif',
     }}>
       <div style={{
         display: 'grid', gap: 10, justifyItems: 'center', maxWidth: 460, padding: '0 16px', textAlign: 'center',
