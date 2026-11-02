@@ -24,6 +24,27 @@ function source(options: {
   };
 }
 
+// StrictMode runs the mount effect twice: two overlapping startups seed ONE example.
+{
+  let creates = 0;
+  let releaseList!: () => void;
+  const listed = new Promise<void>((resolve) => { releaseList = resolve; });
+  const racing: ProjectStartupSource = {
+    list: async () => { await listed; return []; },
+    hasHistory: async () => false,
+    canSeedDemo: () => true,
+    createDemo: async () => { creates += 1; return demo; },
+  };
+  const first = loadInitialProjects(racing);
+  const second = loadInitialProjects(racing);
+  releaseList();
+  assert.deepEqual(await Promise.all([first, second]), [[demo], [demo]]);
+  assert.equal(creates, 1, 'overlapping startups share one load and create one example project');
+  // Once settled, the next startup reads the store again instead of reusing the result.
+  await loadInitialProjects(racing);
+  assert.equal(creates, 2, 'a later startup is a fresh load');
+}
+
 let readOnlyCreates = 0;
 const readOnlyProjects = await loadInitialProjects(source({
   canSeedDemo: false,

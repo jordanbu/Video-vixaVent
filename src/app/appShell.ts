@@ -176,13 +176,27 @@ const projectStartupSource: ProjectStartupSource = {
   createDemo: async () => createProject(t('示例工程'), await seedDoc()),
 };
 
-export async function loadInitialProjects(
+const initialLoads = new WeakMap<ProjectStartupSource, Promise<ProjectMeta[]>>();
+
+/**
+ * First list of projects, seeding the example project on an empty install. Single
+ * flight: StrictMode runs the mount effect twice in development, and both calls saw
+ * an empty list and created an example each. A call made while one is running gets
+ * the same result; once it settles, the next call reads the store again.
+ */
+export function loadInitialProjects(
   source: ProjectStartupSource = projectStartupSource,
 ): Promise<ProjectMeta[]> {
-  const list = await source.list();
-  if (list.length > 0 || await source.hasHistory()) return list;
-  if (!source.canSeedDemo()) return [];
-  return [await source.createDemo()];
+  const pending = initialLoads.get(source);
+  if (pending) return pending;
+  const task = (async () => {
+    const list = await source.list();
+    if (list.length > 0 || await source.hasHistory()) return list;
+    if (!source.canSeedDemo()) return [];
+    return [await source.createDemo()];
+  })().finally(() => { initialLoads.delete(source); });
+  initialLoads.set(source, task);
+  return task;
 }
 
 export function useProjects(): {
