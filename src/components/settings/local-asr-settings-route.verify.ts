@@ -28,8 +28,8 @@ for (const page of pages) {
     `${page.key}: its note button opens ${action.route}, which is not a settings page`);
 }
 
-assert.doesNotMatch(localAsrPage.note ?? '', /见下方列表/, 'the note must not promise a list the page lacks');
-assert.match(localAsrPage.note ?? '', /本地模型 → 本地转写/, 'the note names the page with the buttons');
+assert.doesNotMatch(localAsrPage.note ?? '', /见Down方列表/, 'the note must not promise a list the page lacks');
+assert.match(localAsrPage.note ?? '', /Local models → Local transcription/, 'the note names the page with the buttons');
 
 // Buttons that dispatch a global action keep doing so.
 let dispatched = 0;

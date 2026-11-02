@@ -51,7 +51,7 @@ function EditorLoader({ meta, onHome, onRename }: EditorLoaderProps) {
     });
     return () => { alive = false; };
   }, [meta.id, attempt]);
-  if (load.kind === 'loading') return <AppSplash text={t('加载工程…')} />;
+  if (load.kind === 'loading') return <AppSplash text={t('Loading project…')} />;
   if (load.kind === 'unreadable') {
     return (
       <div style={{
@@ -59,9 +59,9 @@ function EditorLoader({ meta, onHome, onRename }: EditorLoaderProps) {
         fontFamily: 'Instrument Sans, Geist, system-ui, sans-serif',
       }}>
         <div style={{ display: 'grid', gap: 10, justifyItems: 'center', maxWidth: 420, textAlign: 'center' }}>
-          <b style={{ color: theme.text, fontSize: 14 }}>{t('工程数据暂时无法读取')}</b>
+          <b style={{ color: theme.text, fontSize: 14 }}>{t('Project data is temporarily unreadable')}</b>
           <span style={{ color: theme.textDim, fontSize: 12.5, lineHeight: 1.6 }}>
-            {t('为避免覆盖已保存的内容，已停止打开该工程。数据仍保留在本机存储中，可稍后重试。')}
+            {t('Opening was stopped to avoid overwriting your saved work. The data is still in local storage — try again shortly.')}
           </span>
           <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
             <button
@@ -72,7 +72,7 @@ function EditorLoader({ meta, onHome, onRename }: EditorLoaderProps) {
                 background: theme.accent, color: theme.bg, fontSize: 12.5, cursor: 'pointer',
               }}
             >
-              {t('重试')}
+              {t('Retry')}
             </button>
             <button
               type="button"
@@ -82,7 +82,7 @@ function EditorLoader({ meta, onHome, onRename }: EditorLoaderProps) {
                 background: 'transparent', color: theme.text, fontSize: 12.5, cursor: 'pointer',
               }}
             >
-              {t('返回工程列表')}
+              {t('Back to projects')}
             </button>
           </div>
         </div>
@@ -91,7 +91,7 @@ function EditorLoader({ meta, onHome, onRename }: EditorLoaderProps) {
   }
   return (
     <EditorErrorBoundary translate={t} onHome={onHome}>
-      <Suspense fallback={<AppSplash text={t('加载编辑器…')} />}>
+      <Suspense fallback={<AppSplash text={t('Loading editor…')} />}>
         <Editor initial={load.doc} project={meta} onHome={onHome} onRename={onRename} />
       </Suspense>
     </EditorErrorBoundary>
@@ -109,7 +109,7 @@ export function EditorRoute({ route, projects, refresh }: EditorRouteProps) {
   const meta = projects.find((project) => project.id === route.id);
   if (!meta) {
     navigateTo('#/');
-    return <AppSplash text={t('工程不存在，返回…')} />;
+    return <AppSplash text={t('Project not found, going back…')} />;
   }
   // Decide before the editor chunk is requested: outside a secure context it cannot run.
   const access = editorAccess(window.isSecureContext, window.location.origin);

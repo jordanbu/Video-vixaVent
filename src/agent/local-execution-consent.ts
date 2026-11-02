@@ -79,14 +79,14 @@ export function localExecutionRequest(name: string, args: Readonly<Record<string
     const command = shown(args.command);
     return {
       id, tool: name, skill, command,
-      message: t('智能体想在这台电脑上运行技能「{skill}」的命令：\n\n{command}\n\n只有信任这个技能时才允许。要允许吗？', { skill, command }),
+      message: t('The agent wants to run this command from the skill “{skill}” on this computer:\n\n{command}\n\nOnly allow it if you trust this skill. Allow it?', { skill, command }),
     };
   }
   if (name === 'install_skill') {
     const repo = shown(args.repo);
     return {
       id, tool: name, repo,
-      message: t('智能体想从 GitHub 安装技能：{repo}\n\n安装后，它的脚本可以在这台电脑上运行。只有信任来源时才允许。要允许吗？', { repo }),
+      message: t('The agent wants to install a skill from GitHub: {repo}\n\nOnce installed, its scripts can run on this computer. Only allow it if you trust the source. Allow it?', { repo }),
     };
   }
   return null;

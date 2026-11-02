@@ -10,7 +10,7 @@ const note = toolFailureNoteText([
   { name: 'probe_media', reason: 'no unique asset / path / url for "nope-123"' },
   { name: 'edit_item', reason: 'x'.repeat(400) },
 ]);
-assert.match(note, /^本轮有 2 个工具调用失败，模型已据此作答：probe_media: no unique asset/);
+assert.match(note, /^本iterations有 2 个Tool callingFailed，Model已据此作答：probe_media: no unique asset/);
 assert.match(note, /；edit_item: x{159}…$/, 'long reasons are clipped');
 assert.doesNotMatch(note, /couldn't complete|No success was recorded/, 'the old failure template is gone for good');
 

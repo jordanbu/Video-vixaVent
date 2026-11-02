@@ -49,7 +49,7 @@ function useClaudeCodeStatusControl(): RemoteStatusControl {
     } catch {
       if (mounted.current) {
         setState((current) => ({
-          ...current, loading: false, error: t('无法连接 Claude Code 服务，请确认开发服务正在运行。'),
+          ...current, loading: false, error: t('Could not reach the Claude Code service. Make sure the development server is running.'),
         }));
       }
       return null;
@@ -81,14 +81,14 @@ function useClaudeCodeModels(autoDiscover: boolean) {
       const response = await fetchClaudeCodeModels();
       if (generation !== requestGeneration.current) return [];
       if (response.error) {
-        if (mounted.current) setError(t('读取模型失败：{message}', { message: response.error }));
+        if (mounted.current) setError(t('Could not load models: {message}', { message: response.error }));
         return [];
       }
       if (mounted.current) setModels(response.models);
       return response.models;
     } catch {
       if (generation === requestGeneration.current && mounted.current) {
-        setError(t('无法读取 Claude Code 模型，请稍后重试。'));
+        setError(t('Could not load Claude Code models. Please try again.'));
       }
       return [];
     } finally {

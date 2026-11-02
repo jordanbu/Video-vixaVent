@@ -131,7 +131,7 @@ async function submitExport(
     return await submitRenderJob(submissionBody(context, format, codec, operationId), signal);
   } catch (error) {
     if (error instanceof RenderJobRequestError) {
-      throw new Error(error.responseMessage ?? context.t('导出失败 ({status})', { status: error.status }));
+      throw new Error(error.responseMessage ?? context.t('Export failed ({status})', { status: error.status }));
     }
     throw error;
   }
@@ -146,7 +146,7 @@ async function readSnapshot(
     return await readRenderJobSnapshot(renderId, signal);
   } catch (error) {
     if (error instanceof RenderJobRequestError) {
-      throw new Error(error.responseMessage ?? t('无法读取导出进度 ({status})', { status: error.status }));
+      throw new Error(error.responseMessage ?? t('Could not read export progress ({status})', { status: error.status }));
     }
     throw error;
   }
@@ -168,13 +168,13 @@ function updateActiveProgress(context: ServerExportPollContext, snapshot: Export
     processedFrames: snapshot.processedFrames,
     totalFrames: snapshot.totalFrames,
     detail: snapshot.phase === 'queued'
-      ? context.t('已有其他导出任务正在运行，当前任务将在其完成后自动开始')
+      ? context.t('Another export is running. This job will start automatically when it finishes.')
       : current.phase === 'queued' ? undefined : current.detail,
   } : current);
 }
 
 function completeSnapshot(context: ServerExportPollContext, snapshot: ExportJobSnapshot): ExportJobResult {
-  if (!snapshot.result?.path) throw new Error(context.t('导出完成，但没有可下载的文件'));
+  if (!snapshot.result?.path) throw new Error(context.t('Export finished without a downloadable file'));
   context.setProgress((current) => current ? {
     ...current,
     phase: 'finalizing',
@@ -196,7 +196,7 @@ export async function pollExport(
     if (snapshot.status === 'failed') {
       const cause = snapshot.failure
         ? new ExportFailureError(snapshot.failure)
-        : new Error(snapshot.error ?? context.t('导出失败'));
+        : new Error(snapshot.error ?? context.t('Export failed'));
       throw new ServerRenderError(cause);
     }
     if (snapshot.status === 'succeeded') return completeSnapshot(context, snapshot);

@@ -155,20 +155,20 @@ export const SoundBrowser = memo(function SoundBrowser({ fps, onAdd }: SoundBrow
         <input
           id="vx-sound-library-search"
           type="search"
-          placeholder={t('搜索音效')}
+          placeholder={t('Search sounds')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           autoComplete="off"
           spellCheck={false}
         />
         {query ? (
-          <button type="button" className="vx-sound-search-clear" onClick={() => setQuery('')} aria-label={t('清除')}>
+          <button type="button" className="vx-sound-search-clear" onClick={() => setQuery('')} aria-label={t('Clear·2')}>
             <Icon name="x" size={12} />
           </button>
         ) : null}
       </label>
 
-      <div className="vx-sound-chips" role="tablist" aria-label={t('音效分组')}>
+      <div className="vx-sound-chips" role="tablist" aria-label={t('Sound groups')}>
         <button
           type="button"
           role="tab"
@@ -176,7 +176,7 @@ export const SoundBrowser = memo(function SoundBrowser({ fps, onAdd }: SoundBrow
           className={`vx-sound-chip${chip === POPULAR ? ' selected' : ''}`}
           onClick={() => setChip(POPULAR)}
         >
-          {t('热门')}
+          {t('Popular')}
         </button>
         {SOUND_GROUPS.map((g) => (
           <button
@@ -193,13 +193,13 @@ export const SoundBrowser = memo(function SoundBrowser({ fps, onAdd }: SoundBrow
       </div>
 
       {list.length === 0 ? (
-        <div className="vx-sound-empty">{t('此分类下暂无音效')}{query ? t('（与「{query}」不匹配）', { query }) : ''}</div>
+        <div className="vx-sound-empty">{t('No sounds in this group')}{query ? t('(nothing matches "{query}")', { query }) : ''}</div>
       ) : (
         <div
           ref={virtualList.containerRef}
           className="vx-sound-list"
           role="listbox"
-          aria-label={t('音效列表')}
+          aria-label={t('Sound list')}
           style={{ height: virtualList.totalHeight }}
         >
           {virtualList.rows.map((row) => {
@@ -231,7 +231,7 @@ export const SoundBrowser = memo(function SoundBrowser({ fps, onAdd }: SoundBrow
         </div>
       )}
 
-      <div className="vx-sound-hint">{t('单击试听 · 双击/点 + 或拖到时间线音轨 · 共 {n} 个音效', { n: list.length })}</div>
+      <div className="vx-sound-hint">{t('Click to preview · Double-click / + / drag onto an audio track · {n} sounds total', { n: list.length })}</div>
     </div>
   );
 });
@@ -268,7 +268,7 @@ const SoundRow = memo(function SoundRow({
       role="option"
       aria-selected={playing}
       className={`vx-sound-row${playing ? ' active' : ''}`}
-      title={t('{desc} · 可拖到时间线音轨', { desc: tData(sound.desc) })}
+      title={t('{desc} · Drag onto a timeline audio track', { desc: tData(sound.desc) })}
       draggable
       onDragStart={(event) => {
         onDragChange(sound.id);
@@ -296,7 +296,7 @@ const SoundRow = memo(function SoundRow({
           event.stopPropagation();
           onAudition(sound);
         }}
-        aria-label={playing ? t('暂停 {name}', { name: displayName }) : t('试听 {name}', { name: displayName })}
+        aria-label={playing ? t('Pause {name}', { name: displayName }) : t('Preview {name}', { name: displayName })}
       >
         <Icon name={playing ? 'pause' : 'play'} size={12} />
       </button>
@@ -316,8 +316,8 @@ const SoundRow = memo(function SoundRow({
       <button
         type="button"
         className="vx-sound-add"
-        title={t('添加到时间线：{name}', { name: displayName })}
-        aria-label={t('添加 {name}', { name: displayName })}
+        title={t('Add to timeline: {name}', { name: displayName })}
+        aria-label={t('Add {name}', { name: displayName })}
         onClick={(event) => {
           event.stopPropagation();
           onAdd(sound);

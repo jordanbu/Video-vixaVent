@@ -39,18 +39,18 @@ interface SecureContextRequiredViewProps {
 export function SecureContextRequiredView({ origin, translate, onHome }: SecureContextRequiredViewProps) {
   return (
     <GuardScreen
-      title={translate('编辑器需要通过 localhost 或 HTTPS 访问')}
+      title={translate('The editor requires localhost or HTTPS')}
       actions={(
         <button type="button" onClick={onHome} style={buttonStyle(true)}>
-          {translate('返回工程列表')}
+          {translate('Back to projects')}
         </button>
       )}
     >
       <span style={BODY_TEXT}>
-        {translate('当前地址不是浏览器认可的安全上下文，编辑器依赖的 Web Crypto、WebCodecs 视频解码和剪贴板等能力在这里被禁用。请在运行 Vixaventora 的电脑上打开 http://localhost 或 http://127.0.0.1，或通过 HTTPS 提供服务。')}
+        {translate('This address is not a secure context, so the browser disables Web Crypto, WebCodecs video decoding, the clipboard, and other capabilities the editor relies on. Open http://localhost or http://127.0.0.1 on the computer running Vixaventora, or serve it over HTTPS.')}
       </span>
       <span style={{ ...BODY_TEXT, color: theme.textMuted, wordBreak: 'break-all' }}>
-        {translate('当前地址：{origin}', { origin })}
+        {translate('Current address: {origin}', { origin })}
       </span>
     </GuardScreen>
   );
@@ -87,14 +87,14 @@ export class EditorErrorBoundary extends Component<EditorErrorBoundaryProps, Edi
     const { translate, onHome } = this.props;
     return (
       <GuardScreen
-        title={translate('编辑器出现错误')}
+        title={translate('The editor ran into an error')}
         actions={(
           <>
             <button type="button" onClick={() => window.location.reload()} style={buttonStyle(true)}>
-              {translate('重新加载')}
+              {translate('Reload')}
             </button>
             <button type="button" onClick={onHome} style={buttonStyle(false)}>
-              {translate('返回工程列表')}
+              {translate('Back to projects')}
             </button>
           </>
         )}

@@ -51,7 +51,7 @@ export function useCopilotSettings(enabled: boolean): CopilotSettingsController 
     } catch {
       if (mounted.current) {
         setLoading(false);
-        setError(t('无法连接 Copilot 服务，请确认开发服务正在运行。'));
+        setError(t('Could not reach the Copilot service. Make sure the development server is running.'));
       }
       return null;
     }
@@ -75,7 +75,7 @@ export function useCopilotSettings(enabled: boolean): CopilotSettingsController 
     } catch {
       if (mounted.current) {
         setModelBusy(false);
-        setModelError(t('无法读取 Copilot 模型列表，请稍后重试。'));
+        setModelError(t('Could not load Copilot models. Please try again.'));
       }
       return [];
     }

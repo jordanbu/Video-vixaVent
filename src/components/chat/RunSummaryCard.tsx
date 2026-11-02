@@ -30,7 +30,7 @@ function ClipChips({ clips, onSelect, t }: { clips: RunClipRef[]; onSelect?: ((i
   const shown = clips.slice(0, MAX_CHIPS);
   const rest = clips.length - shown.length;
   const chip = (key: string, label: string, ids: string[]) => (
-    <button key={key} type="button" title={t('在时间线上选中')} onClick={() => onSelect(ids)}
+    <button key={key} type="button" title={t('Select on the timeline')} onClick={() => onSelect(ids)}
       style={{ border: `0.5px solid ${theme.border}`, background: theme.panel, color: theme.textMuted, borderRadius: 4, padding: '1px 7px', fontSize: 11.5, cursor: 'pointer', maxWidth: 170, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
       {label}
     </button>
@@ -56,22 +56,22 @@ function ChangeLine({ children, chips }: { children: ReactNode; chips?: ReactNod
 function ChangeList({ changes, exports, onSelect, t }: { changes: RunChangeSummary | null; exports: string[]; onSelect?: ((ids: string[]) => void) | null; t: Translate }) {
   const lines: ReactNode[] = [];
   if (changes) {
-    if (changes.clipsAdded.length) lines.push(<ChangeLine key="added" chips={<ClipChips clips={changes.clipsAdded} onSelect={onSelect} t={t} />}>{t('新增片段：{n}', { n: changes.clipsAdded.length })}</ChangeLine>);
-    if (changes.clipsRemoved.length) lines.push(<ChangeLine key="removed">{t('移除片段：{n}', { n: changes.clipsRemoved.length })}</ChangeLine>);
-    if (changes.clipsChanged.length) lines.push(<ChangeLine key="changed" chips={<ClipChips clips={changes.clipsChanged} onSelect={onSelect} t={t} />}>{t('修改片段：{n}', { n: changes.clipsChanged.length })}</ChangeLine>);
-    if (changes.clipsRecoded.length) lines.push(<ChangeLine key="recoded" chips={<ClipChips clips={changes.clipsRecoded} onSelect={onSelect} t={t} />}>{t('更新了设计的动态图形：{n}', { n: changes.clipsRecoded.length })}</ChangeLine>);
-    if (changes.transitionsAdded) lines.push(<ChangeLine key="tr-add">{t('新增转场：{n}', { n: changes.transitionsAdded })}</ChangeLine>);
-    if (changes.transitionsRemoved) lines.push(<ChangeLine key="tr-rm">{t('移除转场：{n}', { n: changes.transitionsRemoved })}</ChangeLine>);
-    if (changes.tracksAdded) lines.push(<ChangeLine key="tracks">{t('新增轨道：{n}', { n: changes.tracksAdded })}</ChangeLine>);
-    if (changes.assetsAdded.length) lines.push(<ChangeLine key="assets">{t('新增素材：{names}', { names: changes.assetsAdded.map((asset) => tData(asset.name)).join(', ') })}</ChangeLine>);
+    if (changes.clipsAdded.length) lines.push(<ChangeLine key="added" chips={<ClipChips clips={changes.clipsAdded} onSelect={onSelect} t={t} />}>{t('Clips added: {n}', { n: changes.clipsAdded.length })}</ChangeLine>);
+    if (changes.clipsRemoved.length) lines.push(<ChangeLine key="removed">{t('Clips removed: {n}', { n: changes.clipsRemoved.length })}</ChangeLine>);
+    if (changes.clipsChanged.length) lines.push(<ChangeLine key="changed" chips={<ClipChips clips={changes.clipsChanged} onSelect={onSelect} t={t} />}>{t('Clips changed: {n}', { n: changes.clipsChanged.length })}</ChangeLine>);
+    if (changes.clipsRecoded.length) lines.push(<ChangeLine key="recoded" chips={<ClipChips clips={changes.clipsRecoded} onSelect={onSelect} t={t} />}>{t('Graphics redesigned: {n}', { n: changes.clipsRecoded.length })}</ChangeLine>);
+    if (changes.transitionsAdded) lines.push(<ChangeLine key="tr-add">{t('Transitions added: {n}', { n: changes.transitionsAdded })}</ChangeLine>);
+    if (changes.transitionsRemoved) lines.push(<ChangeLine key="tr-rm">{t('Transitions removed: {n}', { n: changes.transitionsRemoved })}</ChangeLine>);
+    if (changes.tracksAdded) lines.push(<ChangeLine key="tracks">{t('New tracks: {n}', { n: changes.tracksAdded })}</ChangeLine>);
+    if (changes.assetsAdded.length) lines.push(<ChangeLine key="assets">{t('New assets: {names}', { names: changes.assetsAdded.map((asset) => tData(asset.name)).join(', ') })}</ChangeLine>);
     for (const volume of changes.volumeChanges) {
-      lines.push(<ChangeLine key={`vol-${volume.from}-${volume.to}`}>{t('音量 {from}% → {to}%（{n}）', { from: volume.from, to: volume.to, n: volume.count })}</ChangeLine>);
+      lines.push(<ChangeLine key={`vol-${volume.from}-${volume.to}`}>{t('Volume {from}% → {to}% ({n})', { from: volume.from, to: volume.to, n: volume.count })}</ChangeLine>);
     }
     if (changes.durationFrom !== changes.durationTo) {
-      lines.push(<ChangeLine key="length">{t('时长 {from} → {to}', { from: clock(changes.durationFrom, changes.fps), to: clock(changes.durationTo, changes.fps) })}</ChangeLine>);
+      lines.push(<ChangeLine key="length">{t('Length {from} → {to}', { from: clock(changes.durationFrom, changes.fps), to: clock(changes.durationTo, changes.fps) })}</ChangeLine>);
     }
   }
-  for (const name of exports) lines.push(<ChangeLine key={`export-${name}`}>{t('已导出：{name}', { name })}</ChangeLine>);
+  for (const name of exports) lines.push(<ChangeLine key={`export-${name}`}>{t('Exported: {name}', { name })}</ChangeLine>);
   return <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>{lines}</ul>;
 }
 
@@ -85,10 +85,10 @@ function IssueRow({ issue, fps, running, onFix, t }: { issue: ReviewIssue; fps: 
         {issueText(t, issue, fps)}
       </span>
       {onFix && (
-        <button type="button" disabled={running} title={t('把修复请求发给 Agent')}
+        <button type="button" disabled={running} title={t('Ask the agent to fix it')}
           onClick={() => onFix(issue, issueFixPrompt(t, issue, fps))}
           style={{ flex: '0 0 auto', border: `0.5px solid ${theme.accent}`, background: 'transparent', color: theme.accent, borderRadius: 6, padding: '2px 10px', fontSize: 12, cursor: running ? 'default' : 'pointer', opacity: running ? 0.45 : 1 }}>
-          {t('让 Agent 修复')}
+          {t('Fix')}
         </button>
       )}
     </li>
@@ -101,14 +101,14 @@ export function RunSummaryCard({ summary, running = false, onSelectClips, onFixI
   const t = useT();
   const fps = summary.changes?.fps ?? 30;
   return (
-    <section aria-label={t('本次改动')} style={{
+    <section aria-label={t('What I did')} style={{
       margin: '10px 0', padding: '10px 12px', border: `0.5px solid ${theme.border}`, borderRadius: 6,
       background: theme.panelAlt, fontSize: 12.5, overflowWrap: 'anywhere',
     }}>
-      <h3 style={sectionTitle}>{t('本次改动')}</h3>
+      <h3 style={sectionTitle}>{t('What I did')}</h3>
       <ChangeList changes={summary.changes} exports={summary.exports} onSelect={onSelectClips} t={t} />
       <div style={{ height: 0.5, background: theme.border, margin: '10px 0' }} />
-      <h3 style={sectionTitle}>{t('质量检查')}</h3>
+      <h3 style={sectionTitle}>{t('Review')}</h3>
       {summary.issues.length ? (
         <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
           {summary.issues.map((issue, index) => (
@@ -117,7 +117,7 @@ export function RunSummaryCard({ summary, running = false, onSelectClips, onFixI
         </ul>
       ) : (
         <div style={{ color: theme.textMuted }}>
-          <span aria-hidden="true" style={{ color: theme.success, marginRight: 6 }}>✓</span>{t('没有质量问题')}
+          <span aria-hidden="true" style={{ color: theme.success, marginRight: 6 }}>✓</span>{t('No quality warnings')}
         </div>
       )}
     </section>

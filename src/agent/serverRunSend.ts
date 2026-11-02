@@ -114,7 +114,7 @@ async function prepareServerRunPayload(
       && choice.backend !== 'codex'
       && choice.backend !== 'copilot'
       && choice.backend !== 'claude-code')) {
-    environment.appendMessage({ role: 'error', text: '服务端运行仅支持已配置的 API / Codex / Copilot / Claude Code 模型。' });
+    environment.appendMessage({ role: 'error', text: 'The chat only runs with a configured model: an API key, Codex, Copilot or Claude Code. Set one up in Settings → Agent model.' });
     return null;
   }
   return buildPreparedServerRun({

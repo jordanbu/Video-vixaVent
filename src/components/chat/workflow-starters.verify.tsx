@@ -84,11 +84,11 @@ assert.equal(
   'every built-in workflow should render as an independently bordered card',
 );
 assert.equal((pickerMarkup.match(/aria-pressed="true"/g) ?? []).length, 1, 'exactly one workflow should expose selected state');
-assert.match(pickerMarkup, /长视频转短视频/);
-assert.match(pickerMarkup, /技能创作器/);
-assert.match(pickerMarkup, /新闻智能粗剪/);
-assert.match(pickerMarkup, /直播智能切片/);
-assert.match(pendingComposerMarkup, /请等待附件导入完成。/, 'pending attachment reason should be visible');
+assert.match(pickerMarkup, /Long video to shorts/);
+assert.match(pickerMarkup, /Skill creator/);
+assert.match(pickerMarkup, /News rough cut/);
+assert.match(pickerMarkup, /Livestream to clips/);
+assert.match(pendingComposerMarkup, /Wait for attachment imports to finish\./, 'pending attachment reason should be visible');
 assert.match(pendingComposerMarkup, /aria-describedby="vx-chat-composer-import-status"/, 'textarea should describe its pending gate');
 const pendingSubmitButton = pendingComposerMarkup.match(/<button[^>]*class="vx-chat-send-btn"[^>]*>/)?.[0];
 assert.ok(pendingSubmitButton, 'pending composer should render the submit button');

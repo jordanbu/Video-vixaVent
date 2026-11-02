@@ -53,8 +53,8 @@ let sharedClient: LocalAsrClient | null = null;
 function wasmOutOfMemoryMessage(modelId: string): string {
   const model = ASR_MODELS.find((entry) => entry.modelId === modelId)?.label ?? modelId;
   return typeof window !== 'undefined' && window.vixaventoraDesktop?.inference
-    ? t('本地转写模型 {model} 超出了浏览器引擎（wasm）的内存上限。请到 设置 → 本地模型 → 本地转写 改选更小的模型（Base / Small），或开启「桌面原生推理加速」并下载该模型，改由没有此限制的 whisper.cpp 运行。', { model })
-    : t('本地转写模型 {model} 超出了浏览器引擎（wasm）的内存上限。请到 设置 → 本地模型 → 本地转写 改选更小的模型（Base / Small），或改用桌面版，由没有此限制的 whisper.cpp 原生运行。', { model });
+    ? t('The local transcription model {model} ran out of memory in the browser engine (wasm). In Settings → Local models → Local transcription, pick a smaller model (Base / Small), or turn on "Native desktop inference acceleration" and download this model so whisper.cpp, which has no such limit, runs it.', { model })
+    : t('The local transcription model {model} ran out of memory in the browser engine (wasm). In Settings → Local models → Local transcription, pick a smaller model (Base / Small), or use the desktop app, which runs it natively with whisper.cpp and has no such limit.', { model });
 }
 
 export class LocalAsrClient {
@@ -266,7 +266,7 @@ async function runTranscriptionStage<T>(stage: string, operation: () => Promise<
   } catch (error) {
     if (error instanceof TranscriptionError) throw error;
     const detail = error instanceof Error ? error.message : String(error);
-    throw new TranscriptionError('service-unavailable', t('{stage}失败：{detail}', { stage, detail }));
+    throw new TranscriptionError('service-unavailable', t('{stage} failed: {detail}', { stage, detail }));
   }
 }
 
@@ -282,7 +282,7 @@ async function tryNativeEngine(
   onWait?: (note?: string) => void,
 ): Promise<{ readonly result?: AsrResult; readonly failure?: Error }> {
   if (status && !asrEngineReady(status, 'native')) {
-    onWait?.(t('桌面引擎的模型文件未下载，本次使用浏览器引擎'));
+    onWait?.(t('The desktop engine\'s model file is not downloaded; using the browser engine this time'));
     return {};
   }
   let failure: Error | undefined;
@@ -293,7 +293,7 @@ async function tryNativeEngine(
     onProgress: (progress, file) => reportModelProgress(onWait, progress, file),
     onFallback: (reason) => {
       failure = reason;
-      onWait?.(t('桌面原生推理不可用，已回退浏览器引擎'));
+      onWait?.(t('Native desktop inference is unavailable; fell back to the browser engine'));
     },
   });
   return native ? { result: native.result } : { failure };
@@ -325,17 +325,17 @@ export async function localTranscribePathResumable(
     return toTranscriptResult(native.result);
   }
   assertBrowserAsrReady(config, status, { enabled: nativeEnabled, failure: native.failure });
-  const source = await runTranscriptionStage(t('音轨准备'), () => transcriptionSourceForPath(path, opts, true));
-  const samples = await runTranscriptionStage(t('音频解码'), () => decodeSourceToSamples(source));
+  const source = await runTranscriptionStage(t('Audio track preparation'), () => transcriptionSourceForPath(path, opts, true));
+  const samples = await runTranscriptionStage(t('Audio decoding'), () => decodeSourceToSamples(source));
   if (!hasTranscribableSignal(samples, TARGET_SR)) {
     await onCheckpoint({ ...checkpoint, providerStatus: 'completed' });
     return toTranscriptResult({ text: '', chunks: [] });
   }
   const client = getSharedClient();
   client.attachProgress((progress, file) => reportModelProgress(onWait, progress, file));
-  await runTranscriptionStage(t('模型加载'), () => client.ensureLoaded(config));
+  await runTranscriptionStage(t('Model loading'), () => client.ensureLoaded(config));
   await onCheckpoint({ ...checkpoint, providerStatus: 'processing' });
-  const result = await runTranscriptionStage(t('模型推理'), () => client.transcribe(samples, opts.languageCode ?? DEFAULT_TRANSCRIPTION_LANGUAGE));
+  const result = await runTranscriptionStage(t('Model inference'), () => client.transcribe(samples, opts.languageCode ?? DEFAULT_TRANSCRIPTION_LANGUAGE));
   await onCheckpoint({ ...checkpoint, providerStatus: 'completed' });
   return toTranscriptResult(result);
 }

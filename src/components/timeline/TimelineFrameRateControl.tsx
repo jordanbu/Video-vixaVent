@@ -19,9 +19,9 @@ export function TimelineFrameRateControlView({ fps, lock, onChange, translate }:
   const label = `${formatFrameRate(fps)} fps`;
   return (
     <label className={`vx-aspect-select vx-fps-select vx-tip vx-tip-r${lock ? ' is-locked' : ''}`}
-      data-tip={lock ? translate(lock) : translate('时间线帧率')}>
+      data-tip={lock ? translate(lock) : translate('Timeline frame rate')}>
       <span aria-hidden="true">{label}</span>
-      <select aria-label={translate('时间线帧率')} value={String(fps)} disabled={!!lock}
+      <select aria-label={translate('Timeline frame rate')} value={String(fps)} disabled={!!lock}
         onChange={(event) => onChange(Number(event.target.value))}>
         {!TIMELINE_FPS_OPTIONS.includes(fps) && <option value={String(fps)} disabled>{label}</option>}
         {TIMELINE_FPS_OPTIONS.map((option) => <option key={option} value={String(option)}>{option} fps</option>)}

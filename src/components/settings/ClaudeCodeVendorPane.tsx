@@ -18,10 +18,10 @@ export function ClaudeCodeVendorPane({ page, hint, ctx, children, rawOverrides, 
 }) {
   const t = useT();
   const status = ctx.claudeCode.status;
-  const statusLabel = !status ? t('状态未知')
-    : !status.installed ? t('CLI 未安装')
-      : status.account?.loggedIn ? t('已登录')
-        : status.error || ctx.claudeCode.error ? t('连接异常') : t('未登录');
+  const statusLabel = !status ? t('Status unknown')
+    : !status.installed ? t('CLI not installed')
+      : status.account?.loggedIn ? t('Signed in')
+        : status.error || ctx.claudeCode.error ? t('Connection error') : t('Signed out');
   const on = vendorConfigured(ctx.status, page, ctx.codex.status, ctx.copilot.status, status);
   const capabilityModelId = (ctx.values.CLAUDE_CODE_MODEL ?? modelValue(ctx.status, 'CLAUDE_CODE_MODEL'))
     || ctx.claudeCode.models.find((model) => model.isDefault)?.id

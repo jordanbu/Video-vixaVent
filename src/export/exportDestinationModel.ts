@@ -63,12 +63,12 @@ export function exportDestinationErrorMessage(
   t: (key: string, params?: Record<string, string | number>) => string,
 ): string {
   if (error instanceof ExportDestinationError) return t(error.key, error.params);
-  return error instanceof Error ? error.message : t('导出失败');
+  return error instanceof Error ? error.message : t('Export failed');
 }
 
 export const DEFAULT_EXPORT_DESTINATION: ExportDestination = Object.freeze({
   type: 'downloads',
-  label: '浏览器下载目录',
+  label: 'Browser downloads',
 });
 
 export function exportDestinationTargetPath(destination: ExportDestination, filename: string): string {
@@ -147,7 +147,7 @@ export function desktopDestination(value: unknown): ExportDestination | null {
 }
 
 export function checkedDestination(value: unknown): ExportDestination {
-  if (typeof value !== 'object' || value === null) throw new ExportDestinationError('导出目录无效');
+  if (typeof value !== 'object' || value === null) throw new ExportDestinationError('The export destination is invalid.');
   const destination = value as Partial<ExportDestination>;
   if (destination.type === 'downloads' && validDestinationLabel(destination.label)) {
     return value as ExportDestination;
@@ -170,7 +170,7 @@ export function checkedDestination(value: unknown): ExportDestination {
     && destination.label === destination.filename) {
     return value as ExportDestination;
   }
-  throw new ExportDestinationError('导出目录授权无效');
+  throw new ExportDestinationError('The export destination permission is invalid.');
 }
 
 function validFilename(name: string): boolean {
@@ -182,6 +182,6 @@ function validFilename(name: string): boolean {
 }
 
 export function checkedFilename(name: unknown): string {
-  if (typeof name !== 'string' || !validFilename(name)) throw new ExportDestinationError('导出文件名无效');
+  if (typeof name !== 'string' || !validFilename(name)) throw new ExportDestinationError('The export filename is invalid.');
   return name;
 }

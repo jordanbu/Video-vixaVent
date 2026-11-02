@@ -36,15 +36,15 @@ export function CopilotAccountCard({ controller }: {
   const state = accountState(controller);
   const status = controller.status;
   const copy: Record<AccountState, readonly [string, string]> = {
-    loading: [t('正在检查 Copilot CLI…'), t('正在读取本机 Copilot 运行时状态。')],
+    loading: [t('Checking Copilot CLI…'), t('Reading the local Copilot runtime status.')],
     missing: [
-      t('未检测到 Copilot CLI'),
-      t('安装后重试：npm i -g @github/copilot（或 brew install copilot）。'),
+      t('Copilot CLI was not found'),
+      t('Install it and retry: npm i -g @github/copilot (or brew install copilot).'),
     ],
-    unsupported: [t('Copilot CLI 版本过低'), t('在终端运行 copilot update 后重试。')],
-    'signed-out': [t('尚未登录 Copilot'), t('在终端运行 copilot login 完成登录后点击刷新。')],
-    'signed-in': [t('已登录 GitHub Copilot'), t('凭据与续期均由 Copilot CLI 管理。')],
-    error: [t('无法连接 Copilot'), t('请确认开发服务正在运行后重试。')],
+    unsupported: [t('Copilot CLI is out of date'), t('Run `copilot update` in a terminal, then retry.')],
+    'signed-out': [t('Not signed in to Copilot'), t('Run `copilot login` in a terminal, then refresh.')],
+    'signed-in': [t('Signed in to GitHub Copilot'), t('Credentials and renewal are managed by the Copilot CLI.')],
+    error: [t('Could not reach Copilot'), t('Make sure the development server is running, then retry.')],
   };
   const [title, detail] = copy[state];
   return (
@@ -56,9 +56,9 @@ export function CopilotAccountCard({ controller }: {
           <div style={summaryDetail}>{detail}</div>
           {state === 'signed-in' && status?.account && (
             <div style={metadata}>
-              {status.account.login && <span>{t('账号')}: {status.account.login}</span>}
-              {status.account.authType && <span>{t('登录方式')}: {status.account.authType}</span>}
-              {status.account.host && <span>{t('主机')}: {status.account.host}</span>}
+              {status.account.login && <span>{t('Account')}: {status.account.login}</span>}
+              {status.account.authType && <span>{t('Sign-in method')}: {status.account.authType}</span>}
+              {status.account.host && <span>{t('Host')}: {status.account.host}</span>}
             </div>
           )}
         </div>
@@ -67,12 +67,12 @@ export function CopilotAccountCard({ controller }: {
       <div style={actions}>
         <button type="button" style={button} disabled={controller.loading}
           onClick={() => { void controller.refresh(); }}>
-          {controller.loading ? t('刷新中…') : t('刷新状态')}
+          {controller.loading ? t('Refreshing…') : t('Refresh status')}
         </button>
         {state === 'signed-in' && (
           <button type="button" style={button} disabled={controller.modelBusy}
             onClick={() => { void controller.discoverModels(); }}>
-            {controller.modelBusy ? t('读取中…') : t('读取模型')}
+            {controller.modelBusy ? t('Loading…') : t('Load models')}
           </button>
         )}
       </div>

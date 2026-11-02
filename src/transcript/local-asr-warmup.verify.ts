@@ -201,7 +201,7 @@ try {
   }
   const browserOom = await outOfMemoryMessage();
   assert.match(browserOom, /Whisper Medium/, 'the message names the model the user sees in settings');
-  assert.match(browserOom, /设置 → 本地模型 → 本地转写/);
+  assert.match(browserOom, /Settings → Local models → Local transcription/);
   assert.match(browserOom, /桌面版/, 'a browser user is pointed at the desktop app');
   assert.doesNotMatch(browserOom, /exhausted the wasm heap/, 'the raw worker text is replaced');
   Object.defineProperty(globalThis, 'window', {
@@ -209,7 +209,7 @@ try {
   });
   const desktopOom = await outOfMemoryMessage();
   Reflect.deleteProperty(globalThis, 'window');
-  assert.match(desktopOom, /桌面原生推理加速/, 'a desktop user is pointed at the toggle that runs whisper.cpp');
+  assert.match(desktopOom, /Native desktop inference acceleration/, 'a desktop user is pointed at the toggle that runs whisper.cpp');
 
   console.log('local-asr-warmup.verify: downloaded-only, reuse, and model switching passed');
 } finally {

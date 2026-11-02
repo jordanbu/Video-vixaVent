@@ -173,7 +173,7 @@ const projectStartupSource: ProjectStartupSource = {
   list: listProjects,
   hasHistory: hasProjectHistory,
   canSeedDemo: () => kvRemoteMode() === 'local' || projectStoreWriteCredential(),
-  createDemo: async () => createProject(t('示例工程'), await seedDoc()),
+  createDemo: async () => createProject(t('Example project'), await seedDoc()),
 };
 
 const initialLoads = new WeakMap<ProjectStartupSource, Promise<ProjectMeta[]>>();

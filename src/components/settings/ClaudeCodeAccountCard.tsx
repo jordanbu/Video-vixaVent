@@ -43,11 +43,11 @@ function StatusSummary({ state, controller }: {
   const t = useT();
   const status = controller.status;
   const copy: Record<AccountState, readonly [string, string]> = {
-    loading: [t('正在检查 Claude Code CLI…'), t('正在读取本机 Claude Code 运行时状态。')],
-    missing: [t('未检测到 Claude Code CLI'), t('请先安装官方 Claude Code CLI，然后刷新状态。')],
-    'signed-out': [t('尚未登录 Claude'), t('在终端完成登录后点击“重新检测”。')],
-    'signed-in': [t('已登录 Claude'), t('凭据与续期均由 Claude Code CLI 管理。')],
-    error: [t('Claude Code 暂时不可用'), controller.error ?? status?.error ?? t('请刷新后重试。')],
+    loading: [t('Checking Claude Code CLI…'), t('Reading the local Claude Code runtime status.')],
+    missing: [t('Claude Code CLI was not found'), t('Install the official Claude Code CLI, then refresh the status.')],
+    'signed-out': [t('Not signed in to Claude'), t('After signing in from a terminal, click “Recheck”.')],
+    'signed-in': [t('Signed in to Claude'), t('Credentials and renewal are managed by the Claude Code CLI.')],
+    error: [t('Claude Code is temporarily unavailable'), controller.error ?? status?.error ?? t('Refresh and try again.')],
   };
   const [title, detail] = copy[state];
   const tone = state === 'signed-in' ? theme.success
@@ -72,7 +72,7 @@ function AccountMetadata({ status }: { status: ClaudeCodeAgentStatus }) {
   return (
     <div style={metadata}>
       {account.email && <span title={account.email}>{account.email}</span>}
-      {account.subscriptionType && <span>{t('套餐：{plan}', { plan: account.subscriptionType })}</span>}
+      {account.subscriptionType && <span>{t('Plan: {plan}', { plan: account.subscriptionType })}</span>}
     </div>
   );
 }
@@ -81,8 +81,8 @@ function SignInCommands() {
   const t = useT();
   return (
     <div style={loginDetails}>
-      <ValueRow label={t('登录')} value="claude auth login" prominent />
-      <ValueRow label={t('长期令牌')} value="claude setup-token" prominent />
+      <ValueRow label={t('Sign in')} value="claude auth login" prominent />
+      <ValueRow label={t('Long-lived token')} value="claude setup-token" prominent />
     </div>
   );
 }
@@ -107,14 +107,14 @@ function ActionRow({ state, controller, onLoadModels }: {
   if (state === 'signed-in') {
     return (
       <div style={actions}>
-        <ActionButton primary disabled={busy} onClick={onLoadModels}>{controller.modelBusy ? t('读取中…') : t('读取模型')}</ActionButton>
-        <ActionButton disabled={busy} onClick={() => { void controller.refresh(); }}>{controller.loading ? t('刷新中…') : t('重新检测')}</ActionButton>
+        <ActionButton primary disabled={busy} onClick={onLoadModels}>{controller.modelBusy ? t('Loading…') : t('Load models')}</ActionButton>
+        <ActionButton disabled={busy} onClick={() => { void controller.refresh(); }}>{controller.loading ? t('Refreshing…') : t('Run again')}</ActionButton>
       </div>
     );
   }
   return (
     <div style={actions}>
-      <ActionButton disabled={busy} onClick={() => { void controller.refresh(); }}>{controller.loading ? t('刷新中…') : t('重新检测')}</ActionButton>
+      <ActionButton disabled={busy} onClick={() => { void controller.refresh(); }}>{controller.loading ? t('Refreshing…') : t('Run again')}</ActionButton>
     </div>
   );
 }
@@ -148,7 +148,7 @@ function CopyButton({ value }: { value: string }) {
     window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => setState('idle'), COPY_FEEDBACK_MS);
   };
-  const label = state === 'copied' ? t('已复制') : state === 'failed' ? t('复制失败') : t('复制');
+  const label = state === 'copied' ? t('Copied') : state === 'failed' ? t('Copy failed') : t('Duplicate');
   return (
     <button type="button" onClick={() => { void copy(); }} title={label} aria-label={label} style={copyButton}>
       <Icon name={state === 'copied' ? 'check' : 'copy'} size={11} />

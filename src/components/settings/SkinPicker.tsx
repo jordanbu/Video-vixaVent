@@ -15,7 +15,7 @@ export function SkinPicker() {
 
   return (
     <div style={{ position: 'relative', display: 'inline-flex' }}>
-      <button type="button" data-tip={t('皮肤')} aria-label={t('皮肤')}
+      <button type="button" data-tip={t('Skin')} aria-label={t('Skin')}
         aria-haspopup="menu" aria-expanded={open} className="vx-header-btn vx-tip vx-tip-r" onClick={() => setOpen((o) => !o)}
         style={{ ...trigger, color: open ? theme.text : theme.textDim, background: open ? theme.panelAlt : 'none' }}>
         <Icon name="brush" size={16} />
@@ -23,8 +23,8 @@ export function SkinPicker() {
       {open && (
         <>
           <div onClick={() => setOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 120 }} />
-          <div role="menu" aria-label={t('皮肤')} style={pop}>
-            <div style={head}>{t('皮肤')}</div>
+          <div role="menu" aria-label={t('Skin')} style={pop}>
+            <div style={head}>{t('Skin')}</div>
             {SKINS.map((s) => {
               const active = current === s.id;
               return (

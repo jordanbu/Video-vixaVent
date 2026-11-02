@@ -21,8 +21,8 @@ import { DEFAULT_RENDER_TIMEOUT_MS } from '../../remotion/render-timeout.mjs';
  * the console, where it helps diagnose the machine without reading like the
  * export failed.
  */
-export const BROWSER_ENCODER_UNSUPPORTED_REASON = '浏览器编码器不支持此导出规格';
-export const BROWSER_RENDER_INCOMPLETE_REASON = '浏览器快导未能完成';
+export const BROWSER_ENCODER_UNSUPPORTED_REASON = 'The browser\'s video encoder can\'t produce this export';
+export const BROWSER_RENDER_INCOMPLETE_REASON = 'The browser export did not finish';
 // Mediabunny's messages when WebCodecs refuses the encoder the render asked for.
 const ENCODER_REFUSED = /encoder configuration .* is not supported|VideoEncoder is not supported|cannot be encoded by this browser/i;
 
@@ -129,7 +129,7 @@ async function loadBrowserRenderConfig(
 ): Promise<BrowserRenderConfig | Extract<BrowserExportAttempt, { status: 'unsupported' }>> {
   const { state, codec, resolution, videoBitrate, signal } = options;
   if (codec === 'prores') {
-    return { status: 'unsupported', reason: 'ProRes 母带仅支持本机渲染', issues: ['codec=prores'] };
+    return { status: 'unsupported', reason: 'ProRes mezzanine is server-rendered only', issues: ['codec=prores'] };
   }
   const { width, height, scale } = browserScaledExportDimensions(state, resolution);
   const container = codec === 'h264' ? 'mp4' : 'webm';
@@ -148,7 +148,7 @@ async function loadBrowserRenderConfig(
   });
   const issues = capability.issues.map((issue) => issue.message);
   if (!capability.canRender) {
-    return { status: 'unsupported', reason: issues[0] ?? '当前浏览器不支持此编码配置', issues };
+    return { status: 'unsupported', reason: issues[0] ?? 'This browser does not support the selected encoding settings', issues };
   }
   // canRenderMediaOnWeb only asks about a 1280x720 frame with no hardware
   // preference, which passes wherever a software encoder exists. The render
@@ -176,14 +176,14 @@ function staticBrowserBlocker(
   if (options.codec === 'prores') {
     return {
       status: 'unsupported',
-      reason: 'ProRes 母带仅支持本机渲染',
+      reason: 'ProRes mezzanine is server-rendered only',
       issues: ['codec=prores'],
     };
   }
   if (options.fps !== options.state.fps) {
     return {
       status: 'unsupported',
-      reason: '浏览器快导暂不转换时间线帧率',
+      reason: 'Browser fast export cannot retime the timeline yet',
       issues: [`timeline=${options.state.fps}fps, requested=${options.fps}fps`],
     };
   }
@@ -313,7 +313,7 @@ export async function exportVideoWithFallback<T>({
     return { engine: 'server', value: await server(), reason: attempt.reason };
   } catch (error) {
     if (isAbortError(error)) throw error;
-    const reason = error instanceof Error ? error.message : '浏览器快导失败';
+    const reason = error instanceof Error ? error.message : 'Browser fast export failed';
     onFallback?.(reason);
     return { engine: 'server', value: await server(), reason };
   }

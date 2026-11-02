@@ -38,13 +38,13 @@ assert.ok(empty.error);
 
 const ok = await execFrictionTool('report_user_friction', {
   category: 'blocked',
-  summary: '用户说导出一直失败',
+  summary: '用户说Export一直Failed',
 }, ctx) as { ok: boolean; id: string; localDev: boolean };
 assert.strictEqual(ok.ok, true);
 assert.ok(ok.id);
 assert.strictEqual(ok.localDev, true);
 
 const list = listFrictionReports();
-assert.ok(list.some((e) => e.summary.includes('导出') && e.projectId === 'proj_test' && e.category === 'blocked'));
+assert.ok(list.some((e) => e.summary.includes('Export') && e.projectId === 'proj_test' && e.category === 'blocked'));
 
 console.log('friction-tools.check: ok');

@@ -9,5 +9,5 @@ export function shortcutVersionName(now: Date = new Date()): string {
   const time = now.toLocaleString(getLocale(), {
     month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit',
   });
-  return t('版本 {time}', { time });
+  return t('Version {time}', { time });
 }

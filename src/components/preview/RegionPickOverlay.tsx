@@ -22,7 +22,7 @@ export function RegionPickOverlay({ state, playerRef }: { state: TimelineState; 
   return (
     <div
       ref={boxRef}
-      title={t('拖拽框选画面区域作为引用')}
+      title={t('Drag to select a frame region as a reference')}
       onPointerDown={(event) => {
         if (event.button !== 0) return; // left button only
         event.currentTarget.setPointerCapture(event.pointerId);

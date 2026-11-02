@@ -34,7 +34,7 @@ const state: TimelineState = {
   selectedId: null,
   items: [{ id: 'clip', track: 'V1', startFrame: 0, durationInFrames: 120, name: 'clip', kind: 'solid', props: { color: '#000' } }],
 };
-const webcodecs: ExportEngineInfo = { id: 'webcodecs', label: 'WebCodecs · 本机编码', hardware: false, transport: 'browser' };
+const webcodecs: ExportEngineInfo = { id: 'webcodecs', label: 'WebCodecs · Local encoding', hardware: false, transport: 'browser' };
 const nvenc: ExportEngineInfo = { id: 'h264_nvenc', label: 'NVIDIA NVENC', hardware: true, transport: 'server' };
 const supported: BrowserExportInspection = { status: 'supported', issues: [] };
 
@@ -45,7 +45,7 @@ function plan(route: 'browser' | 'server', browser: BrowserExportInspection = su
     browserEngine: webcodecs,
     serverEngine: nvenc,
     browser,
-    reason: route === 'browser' ? '浏览器兼容且无需额外渲染进程' : '检测到本机硬件编码器',
+    reason: route === 'browser' ? 'The compatible browser path avoids an extra render process' : 'A working local hardware encoder was detected',
   };
 }
 

@@ -23,7 +23,7 @@ export function formatFrameRate(fps: number): string {
 }
 
 /** Shown while a project cannot change frame rate; also the i18n key. */
-export const FRAME_RATE_LOCKED_REASON = '帧率需在时间线添加内容前设置';
+export const FRAME_RATE_LOCKED_REASON = 'Set the frame rate before adding anything to the timeline';
 
 /** Anything the timeline positions in frames at its current rate. */
 function timelineHasFramedContent(timeline: TimelineState): boolean {

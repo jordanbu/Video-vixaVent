@@ -48,15 +48,15 @@ export function ProjectElsewhereNotice({ external }: { external: ExternalProposa
       <span style={{ color: theme.textDim, lineHeight: 0 }}><Icon name="info" size={14} /></span>
       <span style={{ flex: 1, minWidth: 0 }}>
         {reload
-          ? t('工程已在另一个标签页中更改。重新加载此页面即可在这里继续。')
-          : t('此工程已在另一个标签页中打开。智能体的修改会应用在那里。')}
+          ? t('The project changed in another tab. Reload this page to continue here.')
+          : t('This project is open in another tab. Agent changes are applied there.')}
       </span>
       <button
         type="button"
         style={actionStyle}
         onClick={reload ? () => window.location.reload() : external.takeOwnership}
       >
-        {reload ? t('重新加载') : t('在此标签页中使用')}
+        {reload ? t('Reload') : t('Use in this tab')}
       </button>
     </div>
   );

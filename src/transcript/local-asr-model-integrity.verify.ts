@@ -12,7 +12,7 @@ import { localAsrModelRowState } from '../components/settings/localAsrModelRow';
 
 const originalFetch = globalThis.fetch;
 const config = { device: 'wasm' as const, modelId: 'Xenova/whisper-small', revision: 'a'.repeat(40), modelTier: 'small' as const };
-const SETTINGS_PAGE = /设置 → 本地模型 → 本地转写/;
+const SETTINGS_PAGE = /Settings → Local models → Local transcription/;
 
 const complete: LocalAsrModelStatus = {
   modelId: config.modelId, label: 'Whisper Small', downloaded: true, onnxDownloaded: true, ggmlDownloaded: true,

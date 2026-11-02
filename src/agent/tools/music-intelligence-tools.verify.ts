@@ -305,7 +305,7 @@ function state(items: TimelineItem[], tracks: TimelineState['tracks'] = {}): Tim
   assert.equal(askNames.includes('sync_images_to_music'), false, 'Q&A mode must not expose the mutating photo tool');
   const routed = new ToolActivation(
     TOOL_SCHEMAS,
-    [{ role: 'user', content: '请根据 BGM 卡点剪辑这些视频' }],
+    [{ role: 'user', content: '请根据 BGM 卡点剪辑这些Video' }],
   ).names();
   assert.ok(routed.includes('analyze_music'));
   assert.ok(routed.includes('inspect_music'));
@@ -313,7 +313,7 @@ function state(items: TimelineItem[], tracks: TimelineState['tracks'] = {}): Tim
   assert.ok(routed.includes('sync_cuts_to_music'));
   const photoRouted = new ToolActivation(
     TOOL_SCHEMAS,
-    [{ role: 'user', content: '按音乐节拍把这些照片卡点排布' }],
+    [{ role: 'user', content: '按Music节拍把这些照片卡点排布' }],
   ).names();
   assert.ok(photoRouted.includes('analyze_music'));
   assert.ok(photoRouted.includes('music_image_plan'));

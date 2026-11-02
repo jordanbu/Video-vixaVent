@@ -163,7 +163,7 @@ async function verifyQueuedProgressExplainsTheWait(): Promise<void> {
     } as ServerExportContext, 'render-queued');
     assert.equal(seen.length, phases.length);
     if (phases[0] === 'queued') {
-      assert.equal(seen[0]?.detail, '已有其他导出任务正在运行，当前任务将在其完成后自动开始');
+      assert.equal(seen[0]?.detail, 'Another export is running. This job will start automatically when it finishes.');
       assert.ok(seen.slice(1).every((entry) => entry?.detail === undefined), 'queue hint clears when rendering or completion starts');
     } else {
       assert.ok(seen.every((entry) => entry?.detail === 'Hardware encoder detected'), 'nonqueued detail is unchanged');
@@ -303,7 +303,7 @@ async function verifyCancellationAfterRenderDoesNotSave(): Promise<void> {
   await permissionStarted.promise;
   const saving = store.getSnapshot().jobs.find((job) => job.id === id);
   assert.equal(saving?.progress.phase, 'downloading');
-  assert.equal(saving?.busy, '正在保存…');
+  assert.equal(saving?.busy, 'Saving…');
   assert.equal(store.cancel(id), true);
   permissionGate.resolve();
   await done.promise;

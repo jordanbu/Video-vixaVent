@@ -48,38 +48,38 @@ export type {
   SettingsVendorPage,
 } from './settingsFields';
 
-const MINIMAX_NOTE = 'MiniMax 同一个 Key，配置一次全能力（生图 / 配音 / 视频 / 音乐）通用。';
+const MINIMAX_NOTE = 'One MiniMax key covers every capability (image / voice / video / music) — configure once.';
 const minimaxPage = (cap: string, modelField: SettingsField, title = 'MiniMax', vendor: VendorId = 'minimax'): SettingsVendorPage => ({
   key: `${cap}/${vendor}`, vendor, title, note: MINIMAX_NOTE,
   fields: [
     secret('MINIMAX_API_KEY', 'API Key'),
-    text('MINIMAX_BASE_URL', 'Base URL', '默认 https://api.minimaxi.com'),
+    text('MINIMAX_BASE_URL', 'Base URL', 'Default https://api.minimaxi.com'),
     modelField,
   ],
 });
 
 // BytePlus ModelArk serves image (Seedream) and video (Seedance) from the same Key/Base URL,
 // separate from LLM_BYTEPLUS_* (Agent chat) — same sharing convention as MiniMax above.
-const BYTEPLUS_NOTE = 'BytePlus ModelArk 同一个 Key，图生 / 视频生成通用；与「Agent 大脑」的 BytePlus 配置各自独立。';
+const BYTEPLUS_NOTE = 'One BytePlus ModelArk key covers image and video generation; it is separate from the BytePlus configuration under Agent Brain.';
 const byteplusPage = (cap: string, modelField: SettingsField, title = 'BytePlus · ModelArk'): SettingsVendorPage => ({
   key: `${cap}/byteplus`, vendor: 'byteplus', title, note: BYTEPLUS_NOTE,
   fields: [
     secret('BYTEPLUS_API_KEY', 'API Key'),
-    text('BYTEPLUS_BASE_URL', 'Base URL', '默认 https://ark.ap-southeast.bytepluses.com/api/v3'),
+    text('BYTEPLUS_BASE_URL', 'Base URL', 'Default https://ark.ap-southeast.bytepluses.com/api/v3'),
     modelField,
   ],
 });
 
 const falPage = (cap: 'image' | 'video'): SettingsVendorPage => ({
   key: `${cap}/fal`, vendor: 'fal', title: 'Fal.ai',
-  note: '选择 Fal.ai 作为默认厂商，然后选择模型。聊天中指定的模型优先于此默认值。',
+  note: 'Select Fal.ai as the default provider, then choose a model. An explicit model request in chat overrides this default.',
   fields: [
     secret('FAL_KEY', 'API Key'),
     {
       name: cap === 'image' ? 'FAL_IMAGE_MODEL' : 'FAL_VIDEO_MODEL',
-      label: cap === 'image' ? '生图模型' : '视频模型', kind: 'select',
+      label: cap === 'image' ? 'Image model' : 'Video model', kind: 'select',
       options: [
-        { value: '', label: '每次询问（默认）' },
+        { value: '', label: 'Ask every time (default)' },
         ...FAL_MODELS.filter((model) => model.kind === cap).map(({ id, label }) => ({ value: id, label })),
       ],
     },
@@ -88,23 +88,23 @@ const falPage = (cap: 'image' | 'video'): SettingsVendorPage => ({
 
 export const SETTINGS_CATEGORIES: readonly SettingsCategory[] = [
   {
-    key: 'agent', title: 'Agent 模型', icon: 'sparkles',
+    key: 'agent', title: 'Agent Model', icon: 'sparkles',
     groups: [
-      { key: 'llm', title: 'Agent 大脑',
-        hint: '对话与工具调用的核心，未配置无法对话。',
+      { key: 'llm', title: 'Agent Brain',
+        hint: 'Core of chat and tool calls — chat is unavailable until configured.',
         vendors: AGENT_VENDOR_PAGES_WITH_VISION },
     ],
   },
   {
-    key: 'proxy', title: '网络代理', icon: 'plug',
+    key: 'proxy', title: 'Network proxy', icon: 'plug',
     groups: [
-      { key: 'proxy', title: '网络代理', hint: '统一配置服务端访问海外 API 使用的代理地址。', vendors: [PROXY_PAGE] },
+      { key: 'proxy', title: 'Network proxy', hint: 'Configure the proxy URL used by the server to access overseas APIs.', vendors: [PROXY_PAGE] },
     ],
   },
   {
-    key: 'generation', title: 'AI 生成', icon: 'image',
+    key: 'generation', title: 'AI Generation', icon: 'image',
     groups: [
-      { key: 'image', title: '生图', hint: 'submit_image · 文生图 / 图生图，任一厂商即可。',
+      { key: 'image', title: 'Image', hint: 'submit_image · Text-to-image / image-to-image; any one vendor works.',
         route: routeSelect('PREFERRED_IMAGE_VENDOR', [
           { value: 'fal', label: 'Fal.ai' },
           { value: 'gpt-image-2', label: 'OpenAI gpt-image' },
@@ -116,71 +116,71 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategory[] = [
         ]),
         vendors: [
           { key: 'image/openai', vendor: 'openai', title: 'OpenAI', fields: [
-            secret('IMAGE_API_KEY', 'API Key（gpt-image）'),
-            text('IMAGE_BASE_URL', 'Base URL', '默认 https://api.openai.com'),
+            secret('IMAGE_API_KEY', 'API Key (gpt-image)'),
+            text('IMAGE_BASE_URL', 'Base URL', 'Default https://api.openai.com'),
           ] },
           { key: 'image/gemini', vendor: 'gemini', title: 'Google Gemini', fields: [
-            secret('GEMINI_API_KEY', 'API Key（Nano Banana）'),
-            text('GEMINI_BASE_URL', 'Base URL', '默认 https://generativelanguage.googleapis.com'),
-            modelText('GEMINI_IMAGE_MODEL', '生图模型', 'gemini-3.1-flash-image'),
+            secret('GEMINI_API_KEY', 'API Key (Nano Banana)'),
+            text('GEMINI_BASE_URL', 'Base URL', 'Default https://generativelanguage.googleapis.com'),
+            modelText('GEMINI_IMAGE_MODEL', 'Image model', 'gemini-3.1-flash-image'),
           ] },
           falPage('image'),
-          minimaxPage('image', modelPicker('MINIMAX_IMAGE_MODEL', '生图模型', 'image-01', ['image-01', 'image-01-live'])),
+          minimaxPage('image', modelPicker('MINIMAX_IMAGE_MODEL', 'Image model', 'image-01', ['image-01', 'image-01-live'])),
           { key: 'image/wavespeed', vendor: 'wavespeed', title: 'WaveSpeed', fields: [
             secret('WAVESPEED_API_KEY', 'API Key'),
-            text('WAVESPEED_BASE_URL', 'Base URL', '默认 https://api.wavespeed.ai'),
-            modelText('WAVESPEED_IMAGE_MODEL', '生图模型', 'wavespeed-ai/flux-dev'),
+            text('WAVESPEED_BASE_URL', 'Base URL', 'Default https://api.wavespeed.ai'),
+            modelText('WAVESPEED_IMAGE_MODEL', 'Image model', 'wavespeed-ai/flux-dev'),
           ] },
-          byteplusPage('image', modelText('BYTEPLUS_IMAGE_MODEL', '生图模型', 'seedream-4-5-251128',
-            '测试连接后可直接选择接口返回的模型，也可以手动填写模型 ID。', true), 'BytePlus · Seedream'),
+          byteplusPage('image', modelText('BYTEPLUS_IMAGE_MODEL', 'Image model', 'seedream-4-5-251128',
+            'After testing, choose a returned model or enter a model ID manually.', true), 'BytePlus · Seedream'),
           { key: 'image/xai', vendor: 'xai', title: 'xAI · Grok Imagine',
-            note: '使用 xAI 订阅会话（SuperGrok / X Premium+，优先）或 LLM_XAI_API_KEY 生成图片。文生图：最多 4 张，1K / 2K。',
+            note: 'Generates images with your xAI subscription session (SuperGrok / X Premium+, preferred) or LLM_XAI_API_KEY. Text-to-image: up to 4 images, 1K / 2K.',
             fields: [
-              modelText('XAI_IMAGE_MODEL', '生图模型', 'grok-imagine-image-2.0',
-                '测试连接后可直接选择接口返回的模型，也可以手动填写模型 ID。', true),
+              modelText('XAI_IMAGE_MODEL', 'Image model', 'grok-imagine-image-2.0',
+                'After testing, choose a returned model or enter a model ID manually.', true),
             ] },
         ] },
       VOICE_SETTINGS_GROUP,
-      { key: 'video', title: '生视频', hint: 'submit_video · 文 / 图生视频，任一厂商即可。',
+      { key: 'video', title: 'Video', hint: 'submit_video · Text / image to video; any one vendor works.',
         route: routeSelect('PREFERRED_VIDEO_VENDOR', [
           { value: 'fal', label: 'Fal.ai' },
           { value: 'seedance2', label: 'Seedance' },
-          { value: 'kling', label: '可灵' },
-          { value: 'hailuo', label: 'MiniMax 海螺' },
+          { value: 'kling', label: 'Kling' },
+          { value: 'hailuo', label: 'MiniMax Hailuo' },
           { value: 'byteplus', label: 'BytePlus · Seedance' },
           { value: 'grok-imagine-video', label: 'xAI Grok Imagine' },
-          { value: 'ofox', label: 'OFox · 多模型' },
+          { value: 'ofox', label: 'OFox · Multi-model' },
         ]),
         vendors: [
           falPage('video'),
-          { key: 'video/seedance', vendor: 'seedance', title: 'Seedance · 火山', fields: [
+          { key: 'video/seedance', vendor: 'seedance', title: 'Seedance · Volcano', fields: [
             secret('SEEDANCE_API_KEY', 'API Key'),
-            text('SEEDANCE_BASE_URL', 'Base URL', '默认 https://ark.cn-beijing.volces.com/api/v3'),
-            modelText('SEEDANCE_VIDEO_MODEL', '视频模型', 'doubao-seedance-2-0-260128'),
+            text('SEEDANCE_BASE_URL', 'Base URL', 'Default https://ark.cn-beijing.volces.com/api/v3'),
+            modelText('SEEDANCE_VIDEO_MODEL', 'Video model', 'doubao-seedance-2-0-260128'),
           ] },
-          { key: 'video/kling', vendor: 'kling', title: '可灵 Kling', fields: [
+          { key: 'video/kling', vendor: 'kling', title: 'Kling', fields: [
             secret('KLING_API_KEY', 'API Key'),
-            text('KLING_BASE_URL', 'Base URL', '默认 https://api-singapore.klingai.com'),
-            modelText('KLING_VIDEO_MODEL', '视频模型', 'kling-v3-omni'),
+            text('KLING_BASE_URL', 'Base URL', 'Default https://api-singapore.klingai.com'),
+            modelText('KLING_VIDEO_MODEL', 'Video model', 'kling-v3-omni'),
           ] },
-          minimaxPage('video', modelPicker('MINIMAX_VIDEO_MODEL', '视频模型', 'MiniMax-Hailuo-02',
-            ['MiniMax-Hailuo-02', 'MiniMax-Hailuo-2.3', 'MiniMax-Hailuo-2.3-Fast', 'S2V-01']), 'MiniMax 海螺', 'hailuo'),
-          byteplusPage('video', modelText('BYTEPLUS_VIDEO_MODEL', '视频模型', 'seedance-1-5-pro-251215',
-            '测试连接后可直接选择接口返回的模型，也可以手动填写模型 ID。', true), 'BytePlus · Seedance'),
-          { key: 'video/xai', vendor: 'xai', title: 'xAI · Grok Imagine (视频)',
-            note: '使用 xAI 订阅会话（SuperGrok / X Premium+，优先）或 LLM_XAI_API_KEY 生成视频。文生视频：1–15 秒，自带音轨，480p / 720p / 1080p。',
+          minimaxPage('video', modelPicker('MINIMAX_VIDEO_MODEL', 'Video model', 'MiniMax-Hailuo-02',
+            ['MiniMax-Hailuo-02', 'MiniMax-Hailuo-2.3', 'MiniMax-Hailuo-2.3-Fast', 'S2V-01']), 'MiniMax Hailuo', 'hailuo'),
+          byteplusPage('video', modelText('BYTEPLUS_VIDEO_MODEL', 'Video model', 'seedance-1-5-pro-251215',
+            'After testing, choose a returned model or enter a model ID manually.', true), 'BytePlus · Seedance'),
+          { key: 'video/xai', vendor: 'xai', title: 'xAI · Grok Imagine (Video)',
+            note: 'Generates videos with your xAI subscription session (SuperGrok / X Premium+, preferred) or LLM_XAI_API_KEY. Text-to-video: 1–15s, audio track included, 480p / 720p / 1080p.',
             fields: [
-              modelText('XAI_VIDEO_MODEL', '视频模型', 'grok-imagine-video-1.5',
-                '测试连接后可直接选择接口返回的模型，也可以手动填写模型 ID。', true),
+              modelText('XAI_VIDEO_MODEL', 'Video model', 'grok-imagine-video-1.5',
+                'After testing, choose a returned model or enter a model ID manually.', true),
             ] },
-          { key: 'video/ofox', vendor: 'ofox', title: 'OFox · 多模型网关',
-            note: '使用 LLM_OFOX_API_KEY（在 Agent 供应商里配置 OFox）生成视频。一个 Key 覆盖 Seedance、Wan 等视频模型；支持文生视频、首帧/首尾帧图生视频与图片参考（最多 9 张）；时长/分辨率按模型由 API 校验，2–30 秒。',
+          { key: 'video/ofox', vendor: 'ofox', title: 'OFox · Multi-model Gateway',
+            note: 'Generates videos with LLM_OFOX_API_KEY (configure OFox under Agent providers). One key covers Seedance, Wan and other video models; supports text-to-video, first-frame / first-and-last-frame image-to-video, and up to 9 reference images; duration/resolution are validated per model by the API, 2–30 seconds.',
             fields: [
-              modelText('OFOX_VIDEO_MODEL', '视频模型', 'bytedance/seedance-2.0-fast',
-                '测试连接后可直接选择接口返回的模型，也可以手动填写模型 ID。', true),
+              modelText('OFOX_VIDEO_MODEL', 'Video model', 'bytedance/seedance-2.0-fast',
+                'After testing, choose a returned model or enter a model ID manually.', true),
             ] },
         ] },
-      { key: 'music', title: '生音乐', hint: 'submit_music · 文字 / 成片生成配乐，任一厂商即可。',
+      { key: 'music', title: 'Music', hint: 'submit_music · Text or finished cut to soundtrack; any one vendor works.',
         route: routeSelect('PREFERRED_MUSIC_VENDOR', [
           { value: 'mureka', label: 'Mureka' },
           { value: 'minimax', label: 'MiniMax' },
@@ -190,15 +190,15 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategory[] = [
         vendors: [
           { key: 'music/mureka', vendor: 'mureka', title: 'Mureka', fields: [
             secret('MUREKA_API_KEY', 'API Key'),
-            text('MUREKA_BASE_URL', 'Base URL', '默认 https://api.mureka.ai'),
-            modelText('MUREKA_MUSIC_MODEL', '音乐模型', 'auto'),
+            text('MUREKA_BASE_URL', 'Base URL', 'Default https://api.mureka.ai'),
+            modelText('MUREKA_MUSIC_MODEL', 'Music model', 'auto'),
           ] },
-          minimaxPage('music', modelPicker('MINIMAX_MUSIC_MODEL', '音乐模型', 'music-2.6',
+          minimaxPage('music', modelPicker('MINIMAX_MUSIC_MODEL', 'Music model', 'music-2.6',
             ['music-3.0', 'music-2.6', 'music-3.0-free', 'music-2.6-free', 'music-cover', 'music-cover-free'])),
           { key: 'music/atlas', vendor: 'atlas', title: 'Atlas Cloud', fields: [
             secret('ATLASCLOUD_API_KEY', 'API Key'),
-            text('ATLASCLOUD_API_BASE', 'Base URL', '默认 https://api.atlascloud.ai/api/v1'),
-            modelPicker('ATLASCLOUD_MUSIC_MODEL', '音乐模型', 'minimax/music-2.6', ['minimax/music-2.6']),
+            text('ATLASCLOUD_API_BASE', 'Base URL', 'Default https://api.atlascloud.ai/api/v1'),
+            modelPicker('ATLASCLOUD_MUSIC_MODEL', 'Music model', 'minimax/music-2.6', ['minimax/music-2.6']),
           ] },
           { key: 'music/sonilo', vendor: 'sonilo', title: 'Sonilo',
             note: '按成片生成：把渲染好的视频交给 Sonilo，配乐跟着画面节奏走（可选一句风格提示，不填也行）。'
@@ -206,15 +206,15 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategory[] = [
               + '同一个 Key 也用于按成片生成音效（submit_sound，免版税）。',
             fields: [
               secret('SONILO_API_KEY', 'API Key'),
-              text('SONILO_BASE_URL', 'Base URL', '默认 https://api.sonilo.com'),
+              text('SONILO_BASE_URL', 'Base URL', 'Default https://api.sonilo.com'),
             ] },
         ] },
     ],
   },
   {
-    key: 'assets', title: '素材 · 转写', icon: 'folder',
+    key: 'assets', title: 'Assets · Transcription', icon: 'folder',
     groups: [
-      { key: 'stock', title: '在线图库', hint: 'search_stock_media · 搜索可商用图片 / 视频素材。',
+      { key: 'stock', title: 'Stock Media', hint: 'search_stock_media · Search commercially usable photos / videos.',
         vendors: [
           { key: 'stock/pexels', vendor: 'pexels', title: 'Pexels', fields: [secret('PEXELS_API_KEY', 'API Key')] },
           { key: 'stock/pixabay', vendor: 'pixabay', title: 'Pixabay', fields: [secret('PIXABAY_API_KEY', 'API Key')] },
@@ -225,36 +225,36 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategory[] = [
     ],
   },
   {
-    key: 'cloud', title: '存储', icon: 'cloud',
+    key: 'cloud', title: 'Storage', icon: 'cloud',
     groups: [
-      { key: 'storage', title: '默认工程位置', hint: '新工程和生成素材的默认保存位置，以及可选的 R2 云备份。',
+      { key: 'storage', title: 'Default project location', hint: 'The default location for new projects and generated media, plus optional R2 cloud backup.',
         vendors: [
-          { key: 'storage/projects', vendor: 'localdisk', title: '默认工程位置',
+          { key: 'storage/projects', vendor: 'localdisk', title: 'Default project location',
             note: '新建工程、历史版本和应用生成的素材保存在这里。桌面端从外部拖入的文件和文件夹保留在原位置，'
               + '工程只建立引用；浏览器运行时会上传托管副本。修改后重启应用生效。',
             fields: [
-              directory('VIXAVENTORA_DATA_DIR', '默认工程位置', '应用默认数据目录',
-                '桌面端点击“选择目录”；也可手动输入绝对路径（可用 ~/ 开头）。清除后回到默认目录。'),
+              directory('VIXAVENTORA_DATA_DIR', 'Default project location', 'Default app data folder',
+                'On desktop, click "Choose folder"; you can also type an absolute path (~/ accepted). Clear it to return to the default folder.'),
             ] },
           { key: 'storage/r2', vendor: 'r2', title: 'Cloudflare R2',
             note: '未配置时素材只存本机。配置后：每次上传同步写入 R2（桶保持私有，'
               + '读取经本地服务回源，src 路径不变）；本机缺文件时自动从云端取回。改动即时生效。'
               + 'R2 控制台建桶 → R2 API Token（Object Read & Write）即可拿到下面四个值。',
             fields: [
-              { name: 'R2_ENABLED', label: '云同步', kind: 'toggle',
-                note: '停用后新上传只存本地（密钥保留、已上云文件不受影响）；重新启用即恢复写穿。' },
+              { name: 'R2_ENABLED', label: 'Cloud sync', kind: 'toggle',
+                note: 'When off, new uploads stay local only (keys kept, files already in the cloud unaffected); re-enable to resume write-through.' },
               secret('R2_ACCOUNT_ID', 'Account ID'),
               secret('R2_ACCESS_KEY_ID', 'Access Key ID'),
               secret('R2_SECRET_ACCESS_KEY', 'Secret Access Key'),
-              secret('R2_BUCKET', 'Bucket 名'),
+              secret('R2_BUCKET', 'Bucket name'),
             ] },
         ] },
     ],
   },
   {
-    key: 'tools', title: '增强工具', icon: 'sliders',
+    key: 'tools', title: 'Power Tools', icon: 'sliders',
     groups: [
-      { key: 'sandbox', title: '沙箱执行', hint: 'run_code · 云端沙箱运行 ffmpeg / node / python。',
+      { key: 'sandbox', title: 'Sandbox Execution', hint: 'run_code · Run ffmpeg / node / python in a cloud sandbox.',
         vendors: [
           { key: 'sandbox/e2b', vendor: 'e2b', title: 'E2B',
             note: '云端隔离 Linux 沙箱，不触碰本机文件。Agent 用它跑 run_code：ffprobe 探测素材时长 / '
@@ -262,16 +262,16 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategory[] = [
               + '由本地工具应用到时间线。未配置只影响这些工具，剪辑与预览不受影响。',
             fields: [
               secret('E2B_API_KEY', 'API Key'),
-              text('E2B_TEMPLATE', '模板 ID（可选）', undefined,
-                '默认模板不带 ffmpeg；转码 / 抽帧类任务需自建含 ffmpeg 的模板并填其 ID。'),
+              text('E2B_TEMPLATE', 'Template ID (optional)', undefined,
+                'The default template has no ffmpeg; for transcode / frame-extraction tasks, build a template with ffmpeg and enter its ID.'),
             ] },
         ] },
-      { key: 'web', title: '网页抓取', hint: 'web_browser · 抓取网页内容供 Agent 参考。',
+      { key: 'web', title: 'Web Scraping', hint: 'web_browser · Fetch web pages for the Agent to reference.',
         vendors: [
           { key: 'web/firecrawl', vendor: 'firecrawl', title: 'Firecrawl',
             fields: [secret('FIRECRAWL_API_KEY', 'API Key')] },
         ] },
-      { key: 'publish', title: '发布到社交平台', hint: 'publish_to_social · 把导出的成片发布到 TikTok、Instagram、YouTube 等平台。',
+      { key: 'publish', title: 'Social Publishing', hint: 'publish_to_social · Publish finished exports to TikTok, Instagram, YouTube and more.',
         vendors: [
           { key: 'publish/upload-post', vendor: 'uploadpost', title: 'Upload-Post',
             note: '一个 Key 发布到 TikTok、Instagram、YouTube、LinkedIn、Facebook、X、Threads、Pinterest、Bluesky。'
@@ -279,20 +279,20 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategory[] = [
               + 'Agent 发布前总会先预览平台、标题与视频，等你确认后才上传；YouTube 默认私密。',
             fields: [
               secret('UPLOAD_POST_API_KEY', 'API Key'),
-              text('UPLOAD_POST_PROFILE', 'Profile', undefined, '在 Upload-Post 控制台创建、已连接社交账号的 Profile 名称。'),
+              text('UPLOAD_POST_PROFILE', 'Profile', undefined, 'The Upload-Post profile name (created in the Upload-Post dashboard, with your social accounts connected).'),
             ] },
         ] },
     ],
   },
   {
-    key: 'interface', title: '界面', icon: 'layoutPanel',
+    key: 'interface', title: 'Interface', icon: 'layoutPanel',
     groups: [
-      { key: 'display', title: '显示', hint: '界面缩放与显示相关设置。',
+      { key: 'display', title: 'Show', hint: 'Interface scale and display settings.',
         vendors: [
-          { key: 'display/scale', vendor: 'localasr', title: '界面缩放',
-            note: '调整整个编辑器的缩放比例（80%–150%）。桌面版保存后立即生效，也可用 Ctrl/Cmd + +/- 快速调整、Ctrl/Cmd + 0 复位。浏览器版请使用浏览器自带缩放。',
+          { key: 'display/scale', vendor: 'localasr', title: 'Interface scale',
+            note: 'Adjust the entire editor scale (80%–150%). Desktop changes apply immediately after saving; Ctrl/Cmd + +/- adjusts quickly, and Ctrl/Cmd + 0 resets. In the browser, use the browser zoom controls.',
             fields: [
-              { name: 'UI_SCALE', label: '界面缩放', kind: 'select', defaultLabel: '100%',
+              { name: 'UI_SCALE', label: 'Interface scale', kind: 'select', defaultLabel: '100%',
                 options: [
                   { value: '0.8', label: '80%' },
                   { value: '0.9', label: '90%' },
@@ -306,13 +306,13 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategory[] = [
     ],
   },
   {
-    key: 'local', title: '本地模型', icon: 'database',
+    key: 'local', title: 'Local models', icon: 'database',
     groups: [
-      { key: 'local', title: '本地模型', hint: '本地转写、节拍与音乐分析、画面语义搜索。模型按需安装，数据不出本机。',
+      { key: 'local', title: 'Local models', hint: 'Local transcription, beat/music analysis, and visual semantic search. Models are installed on demand and data stays on this machine.',
         vendors: [
-          { key: LOCAL_ASR_SETTINGS_ROUTE, vendor: 'localasr', title: '本地转写', icon: 'mic', kind: 'local-models', fields: localAsrPage.fields },
-          { key: 'local/music/packs', vendor: 'localasr', title: '节拍与音乐分析', icon: 'music', kind: 'local-models', fields: [] },
-          { key: 'local/semantic/setup', vendor: 'localasr', title: '画面语义搜索', icon: 'search', kind: 'local-models', fields: [] },
+          { key: LOCAL_ASR_SETTINGS_ROUTE, vendor: 'localasr', title: 'Local transcription', icon: 'mic', kind: 'local-models', fields: localAsrPage.fields },
+          { key: 'local/music/packs', vendor: 'localasr', title: 'Beat and music analysis', icon: 'music', kind: 'local-models', fields: [] },
+          { key: 'local/semantic/setup', vendor: 'localasr', title: 'Visual semantic search', icon: 'search', kind: 'local-models', fields: [] },
         ] },
     ],
   },
@@ -336,7 +336,7 @@ export function buildPatch(values: StagedValues): Record<string, string> {
 }
 
 export function savedMessage(): string {
-  return t('已保存 · 工具即时生效，Agent 下一条消息即可感知');
+  return t('Saved · Tools take effect immediately; the Agent sees it from the next message');
 }
 
 /** Whether the field goes through the non-confidential models value channel (current value echo; temporary baseline = current value on the server; clear = return to default).*/
@@ -419,7 +419,7 @@ export function findGroup(key: string): SettingsGroup {
 export function selectOptions(field: SettingsField): readonly SelectOption[] {
   const base = field.options ?? [];
   if (field.defaultLabel === undefined) return base;
-  return [{ value: '', label: t('默认（{name}）', { name: t(field.defaultLabel) }) }, ...base];
+  return [{ value: '', label: t('Default ({name})', { name: t(field.defaultLabel) }) }, ...base];
 }
 
 // Routing requirements live beside the provider groups so settings and capability
@@ -434,16 +434,16 @@ export function selectOptionLabel(
   const needs = ROUTE_NEEDS[opt.value];
   const has = (n: string): boolean => Boolean(status?.keys[n]?.configured);
   const ok = Boolean(needs?.some((group) => group.every(has)));
-  return ok ? t(opt.label) : t('{name}（未配置）', { name: t(opt.label) });
+  return ok ? t(opt.label) : t('{name} (not configured)', { name: t(opt.label) });
 }
 
 /** Input box placeholder: secret / Ordinary text never backfills, only describes the status; model text describes the default value.*/
 export function fieldPlaceholder(field: SettingsField, configured: boolean, stagedClear: boolean): string {
   if (isModelField(field)) {
-    if (stagedClear) return t('恢复默认 · 保存后生效');
-    return field.defaultLabel ? t('默认 {name}', { name: t(field.defaultLabel) }) : t('默认');
+    if (stagedClear) return t('Restore default · Takes effect after save');
+    return field.defaultLabel ? t('Default {name}', { name: t(field.defaultLabel) }) : t('Default');
   }
-  if (stagedClear) return t('将清除 · 保存后生效');
-  if (configured) return field.placeholder ? t('已自定义 · 留空保持不变') : t('已配置 · 留空保持不变');
-  return field.placeholder ? t(field.placeholder) : t('未配置 · 粘贴以启用');
+  if (stagedClear) return t('Will be cleared · Takes effect after save');
+  if (configured) return field.placeholder ? t('Customized · Leave empty to keep') : t('Configured · Leave empty to keep');
+  return field.placeholder ? t(field.placeholder) : t('Not configured · Paste to enable');
 }

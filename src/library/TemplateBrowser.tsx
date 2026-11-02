@@ -25,21 +25,21 @@ import {
 
 // Category id → Chinese label.
 const CAT_LABEL: Record<string, string> = {
-  'call-to-action': '行动号召',
-  'data-visualization': '数据可视化',
-  infographics: '信息图表',
-  'lower-thirds': '下三分之一字幕',
-  'quote-cards': '引用卡片',
-  'social-ui': '社交界面',
-  'talking-head-overlays': '出镜叠加',
-  'text-effects': '文字特效',
-  'title-cards': '标题卡片',
-  'social-media': '社交媒体',
-  'social-shorts': '竖屏自媒体',
-  'koubo-scenes': '口播场景',
-  插件: '插件',
-  扩展: '扩展',
-  uncategorized: '未分类',
+  'call-to-action': 'Call to Action',
+  'data-visualization': 'Data Visualization',
+  infographics: 'Infographics',
+  'lower-thirds': 'Lower Thirds',
+  'quote-cards': 'Quote Cards',
+  'social-ui': 'Social UI',
+  'talking-head-overlays': 'Talking-Head Overlays',
+  'text-effects': 'Text Effects',
+  'title-cards': 'Title Cards',
+  'social-media': 'Social Media',
+  'social-shorts': 'Vertical / Shorts',
+  'koubo-scenes': 'Talking-Head Scenes',
+  插件: 'Plugins',
+  扩展: 'Extension',
+  uncategorized: 'Uncategorized',
 };
 const catLabel = (id: string) => CAT_LABEL[id] ?? id.replace(/-/g, ' ');
 
@@ -191,7 +191,7 @@ export const TemplateBrowser = memo(function TemplateBrowser({ templates, onAdd,
         ref={chipScrollRef}
         className="vx-resource-tertiary-tabs vx-template-category-tabs"
         role="tablist"
-        aria-label={t('MG 动画')}
+        aria-label={t('Motion Graphics')}
         onDragStart={(event) => event.preventDefault()}
         onPointerDown={(event) => {
           if (event.button !== 0) return;
@@ -258,15 +258,15 @@ export const TemplateBrowser = memo(function TemplateBrowser({ templates, onAdd,
             }}
             style={chipStyle(chip === c)}
           >
-            {c === FAV ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Icon name="star" size={12} />{t('收藏')}</span> : c === RECENT ? t('最近') : c === POPULAR ? t('热门') : t(catLabel(c))}
+            {c === FAV ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Icon name="star" size={12} />{t('Favorite')}</span> : c === RECENT ? t('Recent') : c === POPULAR ? t('Popular') : t(catLabel(c))}
           </button>
         ))}
       </div>
 
       {chip === FAV && shown.length === 0 ? (
-        <div style={{ color: theme.textDim, fontSize: 12, padding: '20px 8px', textAlign: 'center' }}>{t('还没有收藏的模板。将鼠标移到卡片上点 ★ 收藏。')}</div>
+        <div style={{ color: theme.textDim, fontSize: 12, padding: '20px 8px', textAlign: 'center' }}>{t('No favorite templates yet. Hover over a card and click ★ to favorite it.')}</div>
       ) : chip === RECENT && shown.length === 0 ? (
-        <div style={{ color: theme.textDim, fontSize: 12, padding: '20px 8px', textAlign: 'center' }}>{t('还没有最近使用的模板。点卡片右上角＋或拖到时间线后会出现在这里。')}</div>
+        <div style={{ color: theme.textDim, fontSize: 12, padding: '20px 8px', textAlign: 'center' }}>{t('No recently used templates yet. Click + on a card or drag one to the timeline and it will appear here.')}</div>
       ) : (
         /* Fixed-size rows keep scroll geometry stable while only viewport rows are mounted. */
         <div
@@ -345,13 +345,13 @@ export const TemplateBrowser = memo(function TemplateBrowser({ templates, onAdd,
               role="menuitem"
               onClick={() => { addAndRemember(menuTpl); closeMenu(); }}
               style={menuItem}
-            >≡ {t('添加到时间线')}</button>
+            >≡ {t('Add to timeline')}</button>
             <button
               type="button"
               role="menuitem"
               onClick={() => { onUseAI(menuTpl); closeMenu(); }}
               style={{ ...menuItem, display: 'inline-flex', alignItems: 'center', gap: 6 }}
-            ><Icon name="sparkles" size={13} />{t('用 AI 生成')}</button>
+            ><Icon name="sparkles" size={13} />{t('Generate with AI')}</button>
             <div style={{ height: 0.5, background: theme.border, margin: '4px 6px' }} />
             {confirmDelete ? (
               <div style={{ display: 'flex', gap: 4, padding: '2px 4px 4px' }}>
@@ -360,22 +360,22 @@ export const TemplateBrowser = memo(function TemplateBrowser({ templates, onAdd,
                   role="menuitem"
                   onClick={() => { hideTemplate(menuTpl.id); closeMenu(); }}
                   style={{ ...menuItem, flex: 1, color: theme.danger, textAlign: 'center', padding: '7px 4px' }}
-                >{t('确认删除')}</button>
+                >{t('Confirm Delete')}</button>
                 <button
                   type="button"
                   role="menuitem"
                   onClick={() => setConfirmDelete(false)}
                   style={{ ...menuItem, flex: 1, color: theme.textDim, textAlign: 'center', padding: '7px 4px' }}
-                >{t('取消')}</button>
+                >{t('Cancel')}</button>
               </div>
             ) : (
               <button
                 type="button"
                 role="menuitem"
                 onClick={() => setConfirmDelete(true)}
-                title={t('从资源库列表移除(本地隐藏);时间线已用片段不受影响')}
+                title={t('Remove from the library list (hidden locally); clips already on the timeline are not affected')}
                 style={{ ...menuItem, color: theme.danger }}
-              >{t('删除')}</button>
+              >{t('Delete')}</button>
             )}
           </div>
         </>,

@@ -15,7 +15,7 @@ assert.deepEqual(optionValues(open), ['24', '25', '30', '50', '60'], 'only nativ
 assert.match(open, /<option value="30" selected="">30 fps<\/option>/, 'the current rate is selected');
 assert.match(open, /<span aria-hidden="true">30 fps<\/span>/, 'the rate is visible without opening the menu');
 assert.doesNotMatch(open, /<select[^>]*disabled/, 'an empty project can change its rate');
-assert.match(open, /data-tip="时间线帧率"/);
+assert.match(open, /data-tip="Timeline frame rate"/);
 
 const locked = renderToStaticMarkup(
   <TimelineFrameRateControlView fps={60} lock={FRAME_RATE_LOCKED_REASON} onChange={noop} translate={translate} />,

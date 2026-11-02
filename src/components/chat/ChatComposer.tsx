@@ -127,14 +127,14 @@ export function ChatComposer(props: ChatComposerProps) {
   const attachmentsPending = hasPendingComposerAttachment(pasting, pendingAttachmentCount);
   const canSend = !!value.trim() && !running && !attachmentsPending && modelReady;
   const canEnhance = !!value.trim() && !enhancing && !running && !attachmentsPending && modelReady;
-  const pendingReason = t('请等待附件导入完成。');
+  const pendingReason = t('Wait for attachment imports to finish.');
   const sendTitle = attachmentsPending
     ? pendingReason
     : modelReady
-      ? t('发送 (Enter)')
+      ? t('Send (Enter)')
       : modelState.loaded
-        ? t('请先在设置中配置一个模型厂商。')
-        : t('正在读取模型配置…');
+        ? t('Configure at least one model provider in Settings first.')
+        : t('Loading model configuration…');
   const refList = (kind: 'asset' | 'template') =>
     references.filter((r) => (kind === 'template' ? r.kind === 'template' : r.kind !== 'template'));
 
@@ -217,18 +217,18 @@ export function ChatComposer(props: ChatComposerProps) {
         .map((r) => ({ key: r.id, icon: REF_ICON[r.kind], label: r.name, action: () => insert(r) }));
     }
     return [
-      { key: 'assets', icon: 'filePlay', label: t('引用媒体池素材'), sub: `${assets.length}`, action: go('assets') },
-      { key: 'timeline', icon: 'film', label: t('时间线'), sub: `${tracks.length}`, action: go('timeline') },
-      { key: 'templates', icon: 'sparkles', label: t('引用模板库'), action: go('templates') },
+      { key: 'assets', icon: 'filePlay', label: t('Reference media-pool assets'), sub: `${assets.length}`, action: go('assets') },
+      { key: 'timeline', icon: 'film', label: t('Timeline'), sub: `${tracks.length}`, action: go('timeline') },
+      { key: 'templates', icon: 'sparkles', label: t('Reference template library'), action: go('templates') },
     ];
   };
 
   const refDrillTitle = (): { title: string; onBack: (() => void) | null } => {
-    if (refDrill === 'assets') return { title: t('引用媒体池素材'), onBack: () => { setRefDrill('root'); setRefIndex(0); } };
-    if (refDrill === 'timeline') return { title: t('时间线'), onBack: () => { setRefDrill('root'); setRefIndex(0); } };
-    if (refDrill === 'templates') return { title: t('引用模板库'), onBack: () => { setRefDrill('root'); setRefIndex(0); } };
+    if (refDrill === 'assets') return { title: t('Reference media-pool assets'), onBack: () => { setRefDrill('root'); setRefIndex(0); } };
+    if (refDrill === 'timeline') return { title: t('Timeline'), onBack: () => { setRefDrill('root'); setRefIndex(0); } };
+    if (refDrill === 'templates') return { title: t('Reference template library'), onBack: () => { setRefDrill('root'); setRefIndex(0); } };
     if (refDrill.startsWith('track:')) return { title: refDrill.slice('track:'.length), onBack: () => { setRefDrill('timeline'); setRefIndex(0); } };
-    return { title: t('引用'), onBack: null };
+    return { title: t('Reference'), onBack: null };
   };
 
   const refPopoverBody = (kind: 'asset' | 'template', empty: string) => {
@@ -236,7 +236,7 @@ export function ChatComposer(props: ChatComposerProps) {
       const list = refList('template');
       return (
         <>
-          {refGroupTitle(t('引用模板库'))}
+          {refGroupTitle(t('Reference template library'))}
           {list.length === 0 && <div style={{ fontSize: 12, color: theme.textDim, padding: '6px 10px' }}>{empty}</div>}
           {list.map(refRow)}
         </>
@@ -321,8 +321,8 @@ export function ChatComposer(props: ChatComposerProps) {
         className="vx-chat-composer-resize"
         role="separator"
         aria-orientation="horizontal"
-        aria-label={t('拖动调整输入框高度')}
-        title={t('上下拖动调整输入框高度')}
+        aria-label={t('Drag to resize the composer')}
+        title={t('Drag up/down to resize the composer')}
         onPointerDown={onResizePointerDown}
         onPointerMove={onResizePointerMove}
         onPointerUp={onResizePointerUp}
@@ -405,7 +405,7 @@ export function ChatComposer(props: ChatComposerProps) {
           const files = Array.from(e.clipboardData?.files ?? []);
           if (files.length > 0 && onPasteFiles) { e.preventDefault(); onPasteFiles(files); }
         }}
-        placeholder={placeholder ?? t('告诉 AI 要做哪些修改 - @ 引用素材')}
+        placeholder={placeholder ?? t('Tell the AI what to change — @ to reference assets')}
         aria-describedby={attachmentsPending ? 'vx-chat-composer-import-status' : undefined}
         rows={1}
         style={{
@@ -425,7 +425,7 @@ export function ChatComposer(props: ChatComposerProps) {
       {/* menus rendered fixed — never clipped by composer bounds */}
       {pop === 'mode' && (
         <ComposerPopover width={172} anchor={popAnchor} onClose={closePop}>
-          {modeRow('agent', t('代理模式'), t('可编辑时间线，改动可撤销'))}
+          {modeRow('agent', t('Agent mode'), t('Can edit the timeline; changes are undoable'))}
         </ComposerPopover>
       )}
       {pop === 'model' && (
@@ -443,14 +443,14 @@ export function ChatComposer(props: ChatComposerProps) {
       )}
       {pop === 'assets' && (
         <ComposerPopover anchor={popAnchor} onClose={closePop}>
-          {refPopoverBody('asset', t('媒体池暂无素材'))}
+          {refPopoverBody('asset', t('No assets in the media pool yet'))}
         </ComposerPopover>
       )}
       {pop === 'skill' && (
         <ComposerPopover
           width={WORKFLOW_POPOVER_WIDTH}
           className="vx-chat-popover--workflow"
-          ariaLabel={t('选择创作工作流')}
+          ariaLabel={t('Choose a creative workflow')}
           anchor={popAnchor}
           onClose={closePop}
         >
@@ -464,7 +464,7 @@ export function ChatComposer(props: ChatComposerProps) {
       )}
       {pop === 'templates' && (
         <ComposerPopover anchor={popAnchor} onClose={closePop}>
-          {refPopoverBody('template', t('暂无模板'))}
+          {refPopoverBody('template', t('No templates yet'))}
         </ComposerPopover>
       )}
       {slashOpen && slashMatchQuery !== null && (

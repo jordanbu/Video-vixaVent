@@ -24,8 +24,8 @@ const EN_DATA = (await import('./dict/en/templates-data')).default;
 
 // ── in flight: the Chinese original stands in, never an empty string ─────────
 {
-  const untranslatedYet = t('导出');
-  assert.equal(untranslatedYet, '导出',
+  const untranslatedYet = t('Export');
+  assert.equal(untranslatedYet, 'Export',
     'before the dictionary lands, t() returns the Chinese key rather than blank');
   assert.equal(tData('Bar Chart - Annual Sales'), 'Bar Chart - Annual Sales',
     'tData() likewise passes the original through');
@@ -40,7 +40,7 @@ const EN_DATA = (await import('./dict/en/templates-data')).default;
     'an unknown key falls back to the Chinese original');
   const dataKey = Object.keys(EN_DATA)[0]!;
   assert.equal(tData(dataKey), EN_DATA[dataKey], 'en data names read EN_DATA');
-  assert.equal(localizedCatalogText('Undo', '撤销'), 'Undo', 'en catalog labels use the English label');
+  assert.equal(localizedCatalogText('Undo', 'Undo'), 'Undo', 'en catalog labels use the English label');
 }
 
 // ── es: Spanish first, then English — never Chinese ─────────────────────────
@@ -55,7 +55,7 @@ const EN_DATA = (await import('./dict/en/templates-data')).default;
   const dataKey = Object.keys(ES_DATA)[0]!;
   assert.equal(tData(dataKey), ES_DATA[dataKey], 'es data names read ES_DATA');
   assert.equal(localeDicts('es').dataFallback, EN_DATA, 'es is wired to fall back to EN_DATA for data names');
-  assert.equal(localizedCatalogText('Undo', '撤销'), 'Deshacer', 'catalog labels read the Spanish dictionary');
+  assert.equal(localizedCatalogText('Undo', 'Undo'), 'Deshacer', 'catalog labels read the Spanish dictionary');
   assert.equal(localizedCatalogText('Brand new', '全新标签'), 'Brand new', 'an untranslated catalog label shows English');
 }
 

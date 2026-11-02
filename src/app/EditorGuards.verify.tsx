@@ -52,8 +52,8 @@ boundary.state = EditorErrorBoundary.getDerivedStateFromError(failure);
 const fallback = renderToStaticMarkup(<>{boundary.render()}</>);
 assert.doesNotMatch(fallback, /<i>editor<\/i>/, 'the failed editor tree must not render');
 assert.ok(fallback.includes(failure.message), 'the fallback must say what failed');
-assert.match(fallback, />重新加载<\/button>/, 'the fallback must offer a reload');
-assert.match(fallback, />返回工程列表<\/button>/, 'the fallback must keep the project list reachable');
+assert.match(fallback, />Reload<\/button>/, 'the fallback must offer a reload');
+assert.match(fallback, />Back to projects<\/button>/, 'the fallback must keep the project list reachable');
 
 const reported: unknown[][] = [];
 const consoleError = console.error;

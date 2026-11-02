@@ -77,28 +77,28 @@ export function LocalExecutionPrompt() {
     >
       <div id={`${request.id}-title`} style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 600 }}>
         <span style={{ color: theme.accent, lineHeight: 0 }}><Icon name="info" size={14} /></span>
-        {t('智能体想在这台电脑上运行代码')}
+        {t('The agent wants to run code on this computer')}
       </div>
       <div style={{ color: theme.textDim }}>
-        {script ? t('技能「{skill}」的命令：', { skill: request.skill ?? '' }) : t('从 GitHub 安装技能：')}
+        {script ? t('Command from the skill “{skill}”:', { skill: request.skill ?? '' }) : t('Install a skill from GitHub:')}
       </div>
       <pre style={codeStyle}>{script ? request.command : request.repo}</pre>
       <div style={{ color: theme.textDim }}>
         {script
-          ? t('只有信任这个技能时才允许。')
-          : t('安装后，它的脚本可以在这台电脑上运行。只有信任来源时才允许。')}
+          ? t('Only allow it if you trust this skill.')
+          : t('Once installed, its scripts can run on this computer. Only allow it if you trust the source.')}
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 6 }}>
         <button type="button" style={buttonStyle} autoFocus onClick={() => answer('deny')}>
-          {t('不允许')}
+          {t('Don\'t allow')}
         </button>
         {script && (
           <button type="button" style={buttonStyle} onClick={() => answer('allow-skill-session')}>
-            {t('本次会话中始终允许这个技能')}
+            {t('Always allow this skill this session')}
           </button>
         )}
         <button type="button" style={{ ...buttonStyle, borderColor: theme.accent }} onClick={() => answer('allow')}>
-          {t('允许')}
+          {t('Allow')}
         </button>
       </div>
     </div>

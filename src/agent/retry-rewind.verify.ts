@@ -42,8 +42,8 @@ const modelAssistant = (content: string): LLMMessage => ({ role: 'assistant', co
 
 // Display-only rows never count as user turns: the continue card and widgets do not shift the ordinal.
 {
-  const messages = [user('第一步'), { role: 'continue', text: '' } as DisplayMessage, user('继续')];
-  const llm = [modelUser('第一步'), modelAssistant('...'), modelUser('继续')];
+  const messages = [user('第一步'), { role: 'continue', text: '' } as DisplayMessage, user('Continue')];
+  const llm = [modelUser('第一步'), modelAssistant('...'), modelUser('Continue')];
   assert.deepEqual(planRetryRewind(messages, llm, 2), { messages: 2, llm: 2 });
   assert.deepEqual(planRetryRewind(messages, llm, 0), { messages: 0, llm: 0 });
 }

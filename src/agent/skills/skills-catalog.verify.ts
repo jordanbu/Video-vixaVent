@@ -31,10 +31,10 @@ for (const s of CREATIVE_SKILL_METADATA) {
 // a known real skill is present with its zh name
 const shorts = CREATIVE_SKILL_METADATA.find((s) => s.name === 'Long Video to Shorts');
 assert.ok(shorts, 'Long Video to Shorts present');
-assert.strictEqual(shorts!.nameZh, '长视频转短视频');
+assert.strictEqual(shorts!.nameZh, 'Long video to shorts');
 const livestream = CREATIVE_SKILL_METADATA.find((s) => s.name === 'Livestream to Clips');
 assert.ok(livestream, 'Livestream to Clips present');
-assert.strictEqual(livestream!.nameZh, '直播智能切片');
+assert.strictEqual(livestream!.nameZh, 'Livestream to clips');
 
 // findSkill: null/undefined/unknown → undefined (id-hit lookups are covered in
 // skill-loading.verify.ts where the Vite glob is available).

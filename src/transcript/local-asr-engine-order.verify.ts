@@ -11,7 +11,7 @@ import { TranscriptionError } from './assemblyai';
 import { localTranscribePathResumable } from './local-asr';
 
 const small = ASR_MODELS.find((model) => model.id === 'small')!;
-const SETTINGS_PAGE = /设置 → 本地模型 → 本地转写/;
+const SETTINGS_PAGE = /Settings → Local models → Local transcription/;
 
 const stored = new Map<string, string>([['vx.asrModel', 'small']]);
 Object.defineProperty(globalThis, 'localStorage', {

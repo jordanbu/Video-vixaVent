@@ -29,10 +29,10 @@ assert.deepEqual(group.actions.at(-1), {
 });
 
 const transformSource = readFileSync(new URL('./InspectorKeyframeControls.tsx', import.meta.url), 'utf8');
-assert.match(transformSource, /label: '裁左'/, 'Transform 分组在圆角下应有裁左');
-assert.match(transformSource, /label: '裁右'/, 'Transform 分组应有裁右');
-assert.match(transformSource, /label: '裁上'/, 'Transform 分组应有裁上');
-assert.match(transformSource, /label: '裁下'/, 'Transform 分组应有裁下');
-assert.match(transformSource, /CROP_ROWS\.map/, '四边裁切应排在关键帧行之后');
+assert.match(transformSource, /label: 'Crop Left'/, 'Transform 分组在Corner RadiusDown应有Crop Left');
+assert.match(transformSource, /label: 'Crop Right'/, 'Transform 分组应有Crop Right');
+assert.match(transformSource, /label: 'Crop Top'/, 'Transform 分组应有Crop Top');
+assert.match(transformSource, /label: 'Crop Bottom'/, 'Transform 分组应有Crop Bottom');
+assert.match(transformSource, /CROP_ROWS\.map/, '四边Crop应排在Keyframes行After');
 
 console.log('inspector-controls.verify: ok');

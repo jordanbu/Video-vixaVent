@@ -91,18 +91,18 @@ export const modelPicker = (
   label,
   kind: 'text',
   defaultLabel,
-  note: '也可以手动填写厂商的其它模型 ID，建议列表仅为常用模型。',
+  note: 'You can also enter any other model ID from this vendor; the suggestion list covers common models only.',
   options: values.map((value) => ({ value, label: value })),
 });
 
 export const routeSelect = (
   name: string,
   options: readonly SelectOption[],
-  defaultOptionLabel = '每次询问（默认）',
+  defaultOptionLabel = 'Ask every time (default)',
 ): SettingsField => ({
   name,
-  label: '默认厂商',
+  label: 'Default vendor',
   kind: 'select',
-  note: '选中未配置的厂商时，Agent 会回退为先询问。',
+  note: 'If the chosen vendor is not configured, the Agent falls back to asking first.',
   options: [{ value: '', label: defaultOptionLabel }, ...options],
 });

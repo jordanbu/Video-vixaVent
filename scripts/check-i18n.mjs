@@ -5,11 +5,11 @@ import { parse } from '@babel/parser';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SOURCE_ROOT = path.join(ROOT, 'src');
-const EN_ROOT = path.join(SOURCE_ROOT, 'i18n', 'dict', 'en');
 const ES_ROOT = path.join(SOURCE_ROOT, 'i18n', 'dict', 'es');
-const CJK = /[\u3400-\u9fff]/;
-// Test files (*.verify.ts/tsx, *.check.ts) are exempt: their Chinese literals are
-// assertion messages / CLI output, not user-facing UI copy (see AGENTS.md console.log rule).
+// Chinese or Korean anywhere in UI copy is a bug (specs/11): keys are English, values Spanish.
+const CJK = /[\u3400-\u9fff\uf900-\ufaff\u3000-\u303f\uff00-\uffef\uac00-\ud7af\u1100-\u11ff\u3130-\u318f]/;
+// Test files (*.verify.ts/tsx, *.check.ts) are exempt from the UI-copy audit: their literals are
+// assertion messages / CLI output, not user-facing UI copy.
 const isTestFile = (relative) => /\.(verify|check)\.(tsx?|mjs)$/.test(relative);
 const SKIPPED_UI_FILES = new Set([
   'src/captions/CaptionsLayer.tsx',
@@ -260,7 +260,7 @@ function auditNativeAttribute(file, node, initializers) {
     if (initializer) literals.push(...untranslatedLiterals(file, initializer));
   }
   return literals.map((literal) => (
-    issue(file, literal, `原生控件属性直接使用中文：${JSON.stringify(literalText(literal))}`)
+    issue(file, literal, `native attribute renders Chinese/Korean text: ${JSON.stringify(literalText(literal))}`)
   ));
 }
 
@@ -270,13 +270,13 @@ function auditJsxExpression(file, node, relative, initializers) {
   if (parent?.type !== 'JSXElement' && parent?.type !== 'JSXFragment') return [];
   const issues = directlyRenderedLiterals(file, node.expression)
     .filter((literal) => !ALLOWED_RAW_RENDER_LITERALS.has(`${relative}::${literalText(literal)}`))
-    .map((literal) => issue(file, literal, `JSX 表达式直接渲染中文：${JSON.stringify(literalText(literal))}`));
+    .map((literal) => issue(file, literal, `JSX expression renders Chinese/Korean text: ${JSON.stringify(literalText(literal))}`));
   if (node.expression.type !== 'Identifier') return issues;
   const initializer = initializerFor(node.expression, initializers);
   return [
     ...issues,
     ...(initializer ? untranslatedLiterals(file, initializer) : [])
-      .map((literal) => issue(file, literal, `变量 ${node.expression.name} 直接渲染未翻译中文：${JSON.stringify(literalText(literal))}`)),
+      .map((literal) => issue(file, literal, `variable ${node.expression.name} renders untranslated Chinese/Korean text: ${JSON.stringify(literalText(literal))}`)),
   ];
 }
 
@@ -287,7 +287,7 @@ function auditUiFile(filePath, keys) {
   const issues = [];
   walkAll(file.ast, (node) => {
     if (node.type === 'JSXText' && CJK.test(node.value.trim())) {
-      issues.push(issue(file, node, `直接渲染中文：${JSON.stringify(node.value.trim())}`));
+      issues.push(issue(file, node, `renders Chinese/Korean text: ${JSON.stringify(node.value.trim())}`));
     }
     issues.push(...auditNativeAttribute(file, node, initializers));
     issues.push(...auditJsxExpression(file, node, relative, initializers));
@@ -300,25 +300,25 @@ function auditUiFile(filePath, keys) {
         && !keys.has(text)
         && !ALLOWED_DATA_LITERALS.has(`${relative}::${text}`)
       ) {
-        issues.push(issue(file, node, `未登记的中文 UI 字面量：${JSON.stringify(text)}`));
+        issues.push(issue(file, node, `Chinese/Korean UI literal: ${JSON.stringify(text)}`));
       }
     }
   });
   return issues;
 }
 
-const keys = dictionaryKeys(EN_ROOT);
-// Spanish is the default interface language: every English entry needs its Spanish one.
-const spanishKeys = dictionaryKeys(ES_ROOT);
-const spanishIssues = [...keys]
-  .filter((key) => !spanishKeys.has(key))
-  .map((key) => `src/i18n/dict/es: falta la traducción al español de ${JSON.stringify(key)}`);
+// The Spanish dictionary is the key registry: keys are the English source text (specs/11).
+const keys = dictionaryKeys(ES_ROOT);
+const keyIssues = [...keys]
+  .filter((key) => CJK.test(key))
+  .map((key) => `src/i18n/dict/es: key contains Chinese/Korean text: ${JSON.stringify(key)}`);
 const sourceFiles = walk(SOURCE_ROOT).filter((filePath) => {
   if (!/\.tsx?$/.test(filePath)) return false;
   if (filePath.startsWith(path.join(SOURCE_ROOT, 'i18n'))) return false;
   const relative = relativeSourcePath(filePath);
   return !isTestFile(relative);
 });
+// Every literal t('…') key needs its Spanish translation: Spanish is the default language.
 const translationIssues = sourceFiles.flatMap((filePath) => {
   const file = sourceFile(filePath);
   const issues = [];
@@ -331,8 +331,8 @@ const translationIssues = sourceFiles.flatMap((filePath) => {
       && isStringLiteralLike(node.arguments[0])
     ) {
       const text = literalText(node.arguments[0]);
-      if (text && CJK.test(text) && !keys.has(text)) {
-        issues.push(issue(file, node.arguments[0], `英文词典缺少：${JSON.stringify(text)}`));
+      if (text && !keys.has(text)) {
+        issues.push(issue(file, node.arguments[0], `missing Spanish translation for ${JSON.stringify(text)}`));
       }
     }
   });
@@ -346,15 +346,15 @@ const uiFiles = walk(SOURCE_ROOT).filter((filePath) => {
   return !isTestFile(relative);
 });
 const issues = [
+  ...keyIssues,
   ...translationIssues,
-  ...spanishIssues,
   ...uiFiles.flatMap((filePath) => auditUiFile(filePath, keys)),
 ];
 
 if (issues.length > 0) {
-  console.error(`i18n 校验失败（${issues.length} 项）：`);
+  console.error(`i18n check failed (${issues.length}):`);
   console.error(issues.join('\n'));
   process.exit(1);
 }
 
-console.log(`i18n 校验通过：${uiFiles.length} 个 UI 文件，${keys.size} 个英文词条，${spanishKeys.size} 个西班牙语词条`);
+console.log(`i18n check passed: ${uiFiles.length} UI files, ${keys.size} Spanish entries keyed by English`);

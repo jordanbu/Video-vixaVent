@@ -29,5 +29,5 @@ function clip(text: string): string {
 export function toolFailureNoteText(failures: readonly PersistedToolFailure[]): string {
   if (failures.length === 0) return '';
   const details = failures.map((failure) => `${failure.name}: ${clip(failure.reason)}`).join('；');
-  return t('本轮有 {n} 个工具调用失败，模型已据此作答：{details}', { n: failures.length, details });
+  return t('In this run {n} tool call(s) failed and the model answered with that in mind: {details}', { n: failures.length, details });
 }

@@ -46,16 +46,16 @@ function InspectorHeader({ panel }: { panel: InspectorPanelProps }) {
     <button
       type="button"
       onClick={() => panel.onCollapsedChange(!panel.collapsed)}
-      title={panel.collapsed ? t('展开属性') : t('收起属性')}
+      title={panel.collapsed ? t('Expand properties') : t('Collapse properties')}
       className="vx-insp-header"
     >
       <span className={`vx-insp-chevron${panel.collapsed ? ' closed' : ''}`}><Icon name="chevronDown" size={12} /></span>
       <span className="vx-insp-heading">
-        <span className="vx-insp-title">{caption ? t('字幕属性') : t('片段属性')}</span>
+        <span className="vx-insp-title">{caption ? t('Caption properties') : t('Clip properties')}</span>
         {caption ? <span className="vx-insp-title-name" title={caption.target.cue.text}>{caption.target.cue.text}</span>
-          : item && <span className="vx-insp-title-name" title={tData(item.name)}>{count > 1 ? t('{n} 个片段', { n: count }) : tData(item.name)}</span>}
+          : item && <span className="vx-insp-title-name" title={tData(item.name)}>{count > 1 ? t('{n} clips', { n: count }) : tData(item.name)}</span>}
       </span>
-      {item?.denoisedSrc && <span className="vx-insp-pill">{t('人声隔离')}</span>}
+      {item?.denoisedSrc && <span className="vx-insp-pill">{t('Voice Isolation')}</span>}
     </button>
   );
 }
@@ -87,7 +87,7 @@ export function InspectorPanel(panel: InspectorPanelProps) {
         {!panel.collapsed && (panel.selectedCaption && panel.onCaptionUpdate
           ? <CaptionInspectorControls selection={panel.selectedCaption} onUpdate={panel.onCaptionUpdate} />
           : item ? <InspectorContent panel={panel} item={item} schema={schema} playheadLocal={playheadLocal} activeTab={activeTab} onTabChange={setActiveTab} />
-          : <div className="vx-insp-body"><div className="vx-insp-muted">{t('选中时间线上的片段以编辑属性。')}</div></div>)}
+          : <div className="vx-insp-body"><div className="vx-insp-muted">{t('Select a clip on the timeline to edit its properties.')}</div></div>)}
       </section>
     </HistoryGestureProvider>
   );

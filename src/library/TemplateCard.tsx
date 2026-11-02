@@ -58,7 +58,7 @@ export const TemplateCard = memo(function TemplateCard({
     >
       <div
         className="vx-template-add"
-        title={t('拖到时间线，或使用添加按钮：{name}', { name: template.name })}
+        title={t('Drag to the timeline, or use the add button: {name}', { name: template.name })}
       >
         <div className="vx-template-thumb">
           {template.thumb ? (
@@ -97,7 +97,7 @@ export const TemplateCard = memo(function TemplateCard({
           event.stopPropagation();
           onToggleFavorite(template.id);
         }}
-        title={favorite ? t('取消收藏') : t('收藏')}
+        title={favorite ? t('Unfavorite') : t('Favorite')}
       >
         <Icon name="star" size={12} filled={favorite} />
       </button>
@@ -108,8 +108,8 @@ export const TemplateCard = memo(function TemplateCard({
           event.stopPropagation();
           onAdd(template);
         }}
-        title={t('添加到时间线：{name}', { name: template.name })}
-        aria-label={t('添加到时间线：{name}', { name: template.name })}
+        title={t('Add to timeline: {name}', { name: template.name })}
+        aria-label={t('Add to timeline: {name}', { name: template.name })}
       >
         <Icon name="plus" size={14} />
       </button>
@@ -121,7 +121,7 @@ export const TemplateCard = memo(function TemplateCard({
           event.stopPropagation();
           onOpenMenu(template.id, event.currentTarget);
         }}
-        title={t('更多操作')}
+        title={t('More actions')}
         aria-expanded={menuOpen}
       >
         ⋮

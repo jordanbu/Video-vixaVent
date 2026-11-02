@@ -41,6 +41,6 @@ assert.match(history, /r\.destinationId && window\.vixaventoraDesktop\?\.revealE
 assert.match(history, /revealExport\(r\.destinationId!, r\.name\)\.catch\(\(\) => undefined\)/, 'history reveal must carry its own destination identity without unhandled rejections');
 assert.match(main, /trustedDesktopHandler\(trustedOrigin, async \(/, 'native reveal must remain behind trusted sender validation');
 assert.doesNotMatch(main, /restorePersistedExportDirectory\(exportStatePath\) \?\? app\.getPath\('downloads'\)/, 'reveal must never fall back to the current directory or Downloads');
-assert.match(english, /'打开文件夹': 'Open Folder'/, 'the new export action must stay localized in English');
+assert.match(english, /'Open Folder': 'Open Folder'/, 'the new export action must stay localized in English');
 
 console.log('export-reveal.verify: history reveal stays inside the trusted desktop boundary');

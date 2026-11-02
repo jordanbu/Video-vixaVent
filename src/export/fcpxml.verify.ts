@@ -250,7 +250,7 @@ function sourceFrameAt(xml: string, name: string, frame: number, fps: number): Q
   const state: TimelineState = {
     fps: 30, width: 1920, height: 1080, selectedId: null,
     tracks: { A1: { kind: 'audio' } }, trackOrder: ['A1'],
-    items: [{ id: 'a', track: 'A1', startFrame: 0, durationInFrames: 30, kind: 'audio', name: '音', src: '/media/uploads/采访.wav' }],
+    items: [{ id: 'a', track: 'A1', startFrame: 0, durationInFrames: 30, kind: 'audio', name: 'A', src: '/media/uploads/采访.wav' }],
   };
   const xml = timelineToFcpxml(state, { mediaDir: '/Users/me/clips' });
   assert.ok(xml.includes('src="file:///Users/me/clips/'), '导出串到 asset 的 src 上');

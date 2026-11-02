@@ -19,7 +19,7 @@ export {
   type BrowserExportDirectoryHandle, type BrowserExportFileHandle, type ExportDestination,
 } from './exportDestinationModel';
 
-const UNSUPPORTED_BROWSER_PICKER = '当前浏览器不支持选择导出目录，请使用 Chrome、Edge 或桌面版';
+const UNSUPPORTED_BROWSER_PICKER = 'This browser does not support choosing an export folder. Use Chrome, Edge, or the desktop app.';
 
 async function ensureBrowserWritePermission(
   handle: BrowserExportDirectoryHandle | BrowserExportFileHandle,
@@ -34,7 +34,7 @@ async function ensureBrowserWritePermission(
     signal?.throwIfAborted();
     if (requested === 'granted') return;
   }
-  throw new ExportDestinationError('没有所选导出目录的写入权限，请重新选择目录');
+  throw new ExportDestinationError('The selected export folder is no longer writable. Choose it again.');
 }
 
 export async function ensureExportDestinationWritable(destination: ExportDestination): Promise<void> {
@@ -86,13 +86,13 @@ export async function chooseExportDestination(
       const savePicker = savePickerFunction();
       if (!savePicker) throw new ExportDestinationError(UNSUPPORTED_BROWSER_PICKER);
       const handle = await savePicker({ suggestedName: checkedFilename(suggestedFilename) });
-      if (!isBrowserFileHandle(handle)) throw new ExportDestinationError('浏览器返回了无效的导出目录');
+      if (!isBrowserFileHandle(handle)) throw new ExportDestinationError('The browser returned an invalid export folder.');
       return Object.freeze({ type: 'browser-file', label: safeDirectoryLabel(handle.name), handle });
     }
     const directoryPicker = pickerFunction();
     if (!directoryPicker) throw new ExportDestinationError(UNSUPPORTED_BROWSER_PICKER);
     const handle = await directoryPicker({ mode: 'readwrite' });
-    if (!isBrowserDirectoryHandle(handle)) throw new ExportDestinationError('浏览器返回了无效的导出目录');
+    if (!isBrowserDirectoryHandle(handle)) throw new ExportDestinationError('The browser returned an invalid export folder.');
     await saveBrowserDirectory(handle);
     return Object.freeze({ type: 'browser-directory', label: safeDirectoryLabel(handle.name), handle });
   } catch (error) {
@@ -102,10 +102,10 @@ export async function chooseExportDestination(
 }
 
 function safeSourceUrl(sourceUrl: unknown): string {
-  if (typeof sourceUrl !== 'string' || !sourceUrl.trim()) throw new ExportDestinationError('导出来源地址无效');
+  if (typeof sourceUrl !== 'string' || !sourceUrl.trim()) throw new ExportDestinationError('The export source URL is invalid.');
   const parsed = new URL(sourceUrl, window.location.href);
   if (!['http:', 'https:', 'blob:'].includes(parsed.protocol)) {
-    throw new ExportDestinationError('导出来源地址不受支持');
+    throw new ExportDestinationError('The export source URL is not supported.');
   }
   return parsed.href;
 }
@@ -142,13 +142,13 @@ async function browserWritable(
 
 function desktopWriteError(status: number): ExportDestinationError {
   if (status === 404 || status === 410) {
-    return new ExportDestinationError('所选导出目录不可用，请重新选择目录');
+    return new ExportDestinationError('The selected export folder is unavailable. Choose it again.');
   }
   if (status === 400 || status === 401 || status === 403) {
-    return new ExportDestinationError('导出目录授权无效');
+    return new ExportDestinationError('The export destination permission is invalid.');
   }
-  if (status === 413) return new ExportDestinationError('导出文件过大，无法写入所选目录');
-  return new ExportDestinationError('写入导出目录失败（HTTP {status}）', { status });
+  if (status === 413) return new ExportDestinationError('The exported file is too large for the selected folder.');
+  return new ExportDestinationError('Writing to the export folder failed (HTTP {status}).', { status });
 }
 
 async function putDesktopBody(
@@ -279,7 +279,7 @@ export async function writeBlobToDestination(
   const targetPath = exportDestinationTargetPath(target, outputFilename);
   try {
     signal?.throwIfAborted();
-    if (!(blob instanceof Blob)) throw new ExportDestinationError('导出文件内容无效');
+    if (!(blob instanceof Blob)) throw new ExportDestinationError('The exported file content is invalid.');
     if (blob.size === 0) throw new ExportDestinationError('导出文件为空');
     if (target.type === 'downloads') {
       signal?.throwIfAborted();

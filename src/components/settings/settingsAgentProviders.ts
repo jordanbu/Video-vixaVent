@@ -15,9 +15,9 @@ const llmPage = (preset: (typeof LLM_PROVIDER_PRESETS)[number]): SettingsVendorP
     note: preset.id === 'anthropic'
       ? '内置 Agent 可使用 Anthropic API Key，也可以在下方「Anthropic · Claude Code」页用 Claude 订阅登录（无需 API Key）。'
         + '独立运行的 Claude Code 会话也可以通过「外部 Agent 接入 (MCP)」驱动 Vixaventora。'
-      : '每个厂商独立保存地址、密钥与模型。先测试连接，成功后可从接口返回的模型中选择。',
+      : 'Each provider keeps its own endpoint, key, and model. Test the connection, then choose from the models returned by that API.',
     ...(preset.id === 'anthropic'
-      ? { noteAction: { label: '外部 Agent 接入 (MCP)', action: 'open-mcp-guide' } }
+      ? { noteAction: { label: 'External agents (MCP)', action: 'open-mcp-guide' } }
       : {}),
     fields: [
       {
@@ -25,24 +25,24 @@ const llmPage = (preset: (typeof LLM_PROVIDER_PRESETS)[number]): SettingsVendorP
         label: 'API URL',
         kind: 'text',
         defaultLabel: preset.baseUrl,
-        note: '填写完整 API 前缀；可使用官方地址、自建网关或兼容中转。',
+        note: 'Enter the complete API prefix. You can use the official endpoint, your own gateway, or a compatible relay.',
       },
-      secret(names.apiKey, isLocalLlmProvider(preset.id) ? 'API Key（可选）' : 'API Key'),
+      secret(names.apiKey, isLocalLlmProvider(preset.id) ? 'API Key (optional)' : 'API Key'),
       ...(preset.id === 'openai' ? [{
         name: 'LLM_OPENAI_API_MODE',
-        label: '接口格式',
+        label: 'API format',
         kind: 'select' as const,
-        defaultLabel: 'Responses API（推荐）',
-        note: '选择服务实际支持的协议；OpenAI 使用 Responses API，兼容服务使用 Chat Completions API。',
+        defaultLabel: 'Responses API (recommended)',
+        note: 'Choose the protocol your service actually supports. OpenAI uses the Responses API; compatible services use Chat Completions.',
         options: [{ value: 'chat', label: 'Chat Completions API' }],
       }] : []),
       {
         name: names.model,
-        label: '模型',
+        label: 'Model',
         kind: 'text',
         defaultLabel: preset.defaultModel,
         discoverableModel: true,
-        note: '测试连接后可直接选择接口返回的模型，也可以手动填写模型 ID。',
+        note: 'After testing, choose a returned model or enter a model ID manually.',
         options: [{ value: preset.defaultModel, label: preset.defaultModel }],
       },
     ],
@@ -54,17 +54,17 @@ const CODEX_PAGE: SettingsVendorPage = {
   vendor: 'openai',
   title: 'OpenAI · Codex',
   connection: 'codex',
-  note: '使用 ChatGPT 订阅登录，由官方 Codex CLI 管理凭据、续期与退出。Vixaventora 不会读取或显示 OAuth 凭据。',
+  note: 'Sign in with a ChatGPT subscription. The official Codex CLI manages credentials, renewal, and logout; Vixaventora never reads or displays OAuth credentials.',
   fields: [
     {
-      name: 'CODEX_MODEL', label: 'Codex 模型', kind: 'text',
-      defaultLabel: 'Codex 默认模型', discoverableModel: true,
-      note: '登录后可读取当前账号可用的模型，也可以手动填写模型 ID。',
+      name: 'CODEX_MODEL', label: 'Codex model', kind: 'text',
+      defaultLabel: 'Codex default model', discoverableModel: true,
+      note: 'After signing in, load the models available to this account or enter a model ID manually.',
     },
     {
-      name: 'CODEX_REASONING_EFFORT', label: '推理强度', kind: 'select',
-      options: [{ value: '', label: '模型默认' }],
-      note: '读取模型后显示当前模型支持的档位；留空使用该模型的默认值。',
+      name: 'CODEX_REASONING_EFFORT', label: 'Reasoning effort', kind: 'select',
+      options: [{ value: '', label: 'Model default' }],
+      note: 'Load models to see the effort levels supported by the current model. Leave this unset to use the model default.',
     },
   ],
 };
@@ -79,14 +79,14 @@ const COPILOT_PAGE: SettingsVendorPage = {
     + '会话状态隔离在 ~/.vixaventora/copilot，不影响你自己的 ~/.copilot。',
   fields: [
     {
-      name: 'COPILOT_MODEL', label: 'Copilot 模型', kind: 'text',
-      defaultLabel: 'Copilot 默认模型', discoverableModel: true,
-      note: '登录后可读取当前订阅可用的模型，也可以手动填写模型 ID。仅支持工具调用的模型可用于编辑。',
+      name: 'COPILOT_MODEL', label: 'Copilot model', kind: 'text',
+      defaultLabel: 'Copilot default model', discoverableModel: true,
+      note: 'After signing in, load the models available to this subscription or enter a model ID manually. Only tool-calling models can be used for editing.',
     },
     {
-      name: 'COPILOT_REASONING_EFFORT', label: '推理强度', kind: 'select',
-      options: [{ value: '', label: '模型默认' }],
-      note: '读取模型后显示当前模型支持的档位；留空使用该模型的默认值。',
+      name: 'COPILOT_REASONING_EFFORT', label: 'Reasoning effort', kind: 'select',
+      options: [{ value: '', label: 'Model default' }],
+      note: 'Load models to see the effort levels supported by the current model. Leave this unset to use the model default.',
     },
   ],
 };
@@ -100,21 +100,21 @@ const CLAUDE_CODE_PAGE: SettingsVendorPage = {
     + '在终端运行 claude auth login（或 claude setup-token 获取长期令牌）完成登录后，点击“重新检测”。',
   fields: [
     {
-      name: 'CLAUDE_CODE_MODEL', label: 'Claude Code 模型', kind: 'text',
-      defaultLabel: 'Claude Code 默认模型', discoverableModel: true,
-      note: '登录后可从可用模型中选择，也可以手动填写别名（如 sonnet / opus / haiku）。',
+      name: 'CLAUDE_CODE_MODEL', label: 'Claude Code model', kind: 'text',
+      defaultLabel: 'Claude Code default model', discoverableModel: true,
+      note: 'After signing in, choose from the available models or enter an alias manually (e.g. sonnet / opus / haiku).',
     },
   ],
 };
 
 const XAI_OAUTH_PAGE: SettingsVendorPage = {
-  key: 'llm/xai-oauth', vendor: 'xai-oauth', title: 'xAI · Grok (订阅登录)',
+  key: 'llm/xai-oauth', vendor: 'xai-oauth', title: 'xAI · Grok (Subscription sign-in)',
   connection: 'xai-oauth',
-  note: '使用 SuperGrok 或 X Premium+ 订阅登录：官方 Grok CLI 管理登录与凭据（终端运行 grok login），Vixaventora 导入会话并自动续期，不会读取或显示 OAuth 凭据。',
+  note: 'Sign in with your SuperGrok or X Premium+ subscription: the official Grok CLI owns login and credentials (run grok login in a terminal); Vixaventora imports the session and refreshes it automatically, and never reads or displays OAuth credentials.',
   fields: [{
-    name: 'LLM_XAI_OAUTH_MODEL', label: '模型', kind: 'text', defaultLabel: 'grok-4.6',
+    name: 'LLM_XAI_OAUTH_MODEL', label: 'Model', kind: 'text', defaultLabel: 'grok-4.6',
     discoverableModel: true,
-    note: '测试连接后可直接选择接口返回的模型，也可以手动填写模型 ID。',
+    note: 'After testing, choose a returned model or enter a model ID manually.',
     options: [{ value: 'grok-4.6', label: 'grok-4.6' }],
   }],
 };
@@ -134,16 +134,16 @@ const AGENT_VENDOR_PAGES: readonly SettingsVendorPage[] = LLM_PROVIDER_PRESETS.f
 });
 
 const VISION_PAGE: SettingsVendorPage = {
-  key: 'llm/vision', vendor: 'vision', title: '视觉理解', fields: [],
+  key: 'llm/vision', vendor: 'vision', title: 'Vision understanding', fields: [],
 };
 
 export const PROXY_PAGE: SettingsVendorPage = {
-  key: 'agent/proxy', vendor: 'proxy', title: '网络代理', kind: 'settings',
+  key: 'agent/proxy', vendor: 'proxy', title: 'Network proxy', kind: 'settings',
   note: '国内网络访问海外模型（Gemini / OpenAI / Anthropic / Mistral 等）失败时，'
     + '可在此填写本地代理地址（如 http://127.0.0.1:7890）。'
     + '留空则使用系统环境变量（HTTPS_PROXY / HTTP_PROXY）。'
     + '生效范围：Agent 模型、AI 生成、模型下载、R2 云同步。',
-  fields: [text('PROXY_URL', '代理地址', '例如 http://127.0.0.1:7890')],
+  fields: [text('PROXY_URL', 'Proxy URL', 'Example: http://127.0.0.1:7890')],
 };
 
 export const AGENT_VENDOR_PAGES_WITH_VISION: readonly SettingsVendorPage[] = [

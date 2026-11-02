@@ -42,9 +42,9 @@ function CaptionTrackBar({ options, track, onChange }: { options: Props['caption
   const t = useT();
   return (
     <div className="vx-captions-sourcebar">
-      <label htmlFor="vx-caption-track">{t('字幕轨道')}</label>
+      <label htmlFor="vx-caption-track">{t('Caption track')}</label>
       <select id="vx-caption-track" className="vx-cap-select" value={track ?? ''} disabled={!options.length} onChange={(event) => onChange(event.target.value)}>
-        {!options.length && <option value="">{t('请先新建字幕轨道')}</option>}
+        {!options.length && <option value="">{t('Create a caption track first')}</option>}
         {options.map((option) => <option key={option.id} value={option.id}>{trackTitle(option)}</option>)}
       </select>
     </div>

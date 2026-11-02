@@ -51,7 +51,7 @@ export const CJK_PARTICLES = [
  * Pull words from the previous page and merge them into this page. */
 export const NO_LINE_START = [
   '的', '地', '得', '了', '着', '过', '个', '些', '们', '吗', '呢', '吧', '啊', '呀', '哦', '哇', '嘛',
-  '呐', '下',
+  '呐', 'Down',
   'は', 'が', 'を', 'に', 'で', 'と', 'の', 'へ', 'も', 'や',
   '은', '는', '이', '가', '을', '를', '에', '의', '도', '만',
 ] as const;

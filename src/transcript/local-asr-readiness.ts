@@ -74,14 +74,14 @@ function browserEngineMissingDetail(
   native: { readonly enabled: boolean; readonly failure?: Error },
 ): string {
   if (native.failure) {
-    return t('桌面原生推理（whisper.cpp）未能完成转写：{reason}。回退到浏览器引擎需要 {model} 的 ONNX 模型文件，但尚未下载完整。请到 设置 → 本地模型 → 本地转写 下载该模型后重试。', {
+    return t('Native desktop inference (whisper.cpp) could not finish the transcription: {reason}. Falling back to the browser engine needs the ONNX model files of {model}, which are not fully downloaded. Download the model in Settings → Local models → Local transcription, then try again.', {
       reason: native.failure.message, model,
     });
   }
   if (native.enabled && !asrEngineReady(status, 'native')) {
-    return t('本地转写模型 {model} 尚未下载：桌面引擎需要的 whisper.cpp 模型文件（GGML）和浏览器引擎需要的 ONNX 模型文件都未就绪。请到 设置 → 本地模型 → 本地转写 下载该模型后再试。', { model });
+    return t('The local transcription model {model} is not downloaded: neither the whisper.cpp model file (GGML) the desktop engine needs nor the ONNX model files the browser engine needs are ready. Download the model in Settings → Local models → Local transcription, then try again.', { model });
   }
-  return t('本地转写模型 {model} 的浏览器引擎文件（ONNX）未下载完整或校验失败。请到 设置 → 本地模型 → 本地转写 下载该模型后再试。', { model });
+  return t('The browser-engine files (ONNX) of the local transcription model {model} are incomplete or failed verification. Download the model in Settings → Local models → Local transcription, then try again.', { model });
 }
 
 /**

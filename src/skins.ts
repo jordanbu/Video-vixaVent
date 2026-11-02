@@ -84,10 +84,10 @@ const VIXAVENTORA: SkinTokens = {
 };
 
 export const SKINS: readonly SkinDef[] = [
-  { id: 'vixaventora', nameZh: '维萨文托拉', tokens: VIXAVENTORA },
-  { id: 'graphite', nameZh: '石墨', tokens: GRAPHITE },
+  { id: 'vixaventora', nameZh: 'Vixaventora', tokens: VIXAVENTORA },
+  { id: 'graphite', nameZh: 'Graphite', tokens: GRAPHITE },
   {
-    id: 'midnight', nameZh: '墨黑',
+    id: 'midnight', nameZh: 'Midnight',
     tokens: {
       ...GRAPHITE,
       bg: '#000000', inset: '#070707', panel: '#0b0b0b', panelAlt: '#161616', hover: '#212121',
@@ -98,7 +98,7 @@ export const SKINS: readonly SkinDef[] = [
   },
   // Catppuccin Mocha:crust/mantle/base/surface level,accent = peach color (warm tone)
   {
-    id: 'mocha', nameZh: '摩卡',
+    id: 'mocha', nameZh: 'Mocha',
     tokens: {
       ...GRAPHITE,
       bg: '#11111b', inset: '#181825', panel: '#1e1e2e', panelAlt: '#313244', hover: '#45475a',
@@ -111,7 +111,7 @@ export const SKINS: readonly SkinDef[] = [
   },
   // Nord: polar night level, accent = frost ice blue
   {
-    id: 'nord', nameZh: '北极',
+    id: 'nord', nameZh: 'Nord',
     tokens: {
       ...GRAPHITE,
       bg: '#252b37', inset: '#2a2f3b', panel: '#2e3440', panelAlt: '#3b4252', hover: '#434c5e',
@@ -124,7 +124,7 @@ export const SKINS: readonly SkinDef[] = [
   },
   // Tokyo Night:night level (storm as card surface), accent = logo blue
   {
-    id: 'tokyo', nameZh: '东京夜',
+    id: 'tokyo', nameZh: 'Tokyo Night',
     tokens: {
       ...GRAPHITE,
       bg: '#16161e', inset: '#1a1a22', panel: '#1a1b26', panelAlt: '#24283b', hover: '#292e42',
@@ -137,7 +137,7 @@ export const SKINS: readonly SkinDef[] = [
   },
   // Catppuccin Latte: official light color (blue-gray neutral, non-cream beige), accent = peach orange
   {
-    id: 'latte', nameZh: '拿铁(浅色)',
+    id: 'latte', nameZh: 'Latte (Light)',
     tokens: {
       ...GRAPHITE,
       bg: '#dce0e8', inset: '#d3d7df', panel: '#eff1f5', panelAlt: '#e6e9ef', hover: '#d8dce4',

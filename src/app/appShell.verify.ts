@@ -5,7 +5,7 @@ import { getActiveAgentModelChoice, getAgentModelSnapshot, subscribeAgentModels 
 import type { ProjectMeta } from '../persist/projectStoreCoordinators';
 import { syncDesktopNativeInferenceEnabled } from '../transcript/desktop-inference-preference';
 
-const demo = { id: 'demo', name: '示例工程', updatedAt: 1 };
+const demo = { id: 'demo', name: 'Example project', updatedAt: 1 };
 
 function source(options: {
   projects?: ProjectMeta[];

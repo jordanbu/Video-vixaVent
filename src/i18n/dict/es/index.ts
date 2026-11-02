@@ -1,5 +1,5 @@
 // ES dictionary assembly: one file per domain, mirroring the EN layout.
-// key = Chinese original text, value = Spanish. Missing keys fall back to English.
+// key = English source text, value = Spanish (specs/11). Missing keys show the English key.
 import catalog from './catalog';
 import audio from './audio';
 import captions from './captions';
@@ -17,8 +17,12 @@ import settingsProviders from './settingsProviders';
 import timeline from './timeline';
 import topbar from './topbar';
 import transcript from './transcript';
+import sinchinoAgent from './sinchino-agent';
+import sinchinoUi from './sinchino-ui';
+import sinchinoData from './sinchino-data';
 
 export const ES: Record<string, string> = Object.assign(
   {},
   catalog, audio, captions, chat, components, editor, exportPanel, extra, fx, library, media, review, settings, settingsProviders, timeline, topbar, transcript,
+  sinchinoAgent, sinchinoUi, sinchinoData,
 );

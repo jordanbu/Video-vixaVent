@@ -14,7 +14,7 @@ export function SourceQualityStatus({ issue }: { issue: QualityIssue | null }) {
       borderRadius: 4, color: theme.text, background: theme.panelAlt, fontSize: 10.5, lineHeight: 1.35,
     }}>
       <span aria-hidden="true" style={{ width: 6, height: 6, marginTop: 4, borderRadius: '50%', flex: '0 0 auto', background: alert ? theme.danger : theme.gold }} />
-      <span>{t('放大到 {pct}%，可能会模糊。请降低缩放或比例，或换用更高分辨率的素材。', { pct: qualityPercent(issue.factor) })}</span>
+      <span>{t('Upscaled to {pct}%: may look blurry. Lower the zoom or scale, or use a higher-resolution source.', { pct: qualityPercent(issue.factor) })}</span>
     </div>
   );
 }

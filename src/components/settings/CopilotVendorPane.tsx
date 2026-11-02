@@ -16,11 +16,11 @@ export function CopilotVendorPane({ page, hint, ctx, children, rawOverrides, onO
 }) {
   const t = useT();
   const status = ctx.copilot.status;
-  const statusLabel = !status ? t('状态未知')
-    : !status.installed ? t('CLI 未安装')
-      : !status.supported ? t('版本过低')
-        : status.authenticated ? t('已登录')
-          : status.error || ctx.copilot.error ? t('连接异常') : t('未登录');
+  const statusLabel = !status ? t('Status unknown')
+    : !status.installed ? t('CLI not installed')
+      : !status.supported ? t('Version too old')
+        : status.authenticated ? t('Signed in')
+          : status.error || ctx.copilot.error ? t('Connection error') : t('Signed out');
   const on = vendorConfigured(ctx.status, page, ctx.codex.status, status);
   const capabilityModelId = (ctx.values.COPILOT_MODEL ?? modelValue(ctx.status, 'COPILOT_MODEL'))
     || ctx.copilot.models.find((model) => model.isDefault)?.id

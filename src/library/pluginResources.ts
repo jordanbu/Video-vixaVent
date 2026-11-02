@@ -32,7 +32,7 @@ export function pluginResourceItems(
       out.push({
         id: pluginAssetId(pack.id, item.id),
         name: item.name,
-        badge: '扩展',
+        badge: 'Extension',
         ...(item.thumb ? { thumb: item.thumb } : {}),
         ...(item.type === 'zoom'
           ? { data: {

@@ -1,25 +1,12 @@
-// EN dictionary assembly (single source of truth): files are divided into fields, key=Chinese original text, value=English.
-// Each field file is filled exclusively by the corresponding scanning and swapping work line and does not touch each other to avoid merge conflicts.
-import audio from './audio';
-import captions from './captions';
-import chat from './chat';
-import components from './components';
-import editor from './editor';
-import exportPanel from './exportPanel';
-import fx from './fx';
-import generate from './generate';
-import library from './library';
-import media from './media';
-import progress from './progress';
-import review from './review';
-import script from './script';
-import settings from './settings';
-import timeline from './timeline';
-import topbar from './topbar';
-import transcript from './transcript';
-
-export const EN: Record<string, string> = Object.assign(
-  {},
-  audio, captions, chat, components, editor, exportPanel, fx, generate,
-  library, media, progress, review, script, settings, timeline, topbar, transcript,
-);
+// EN dictionary (specs/11). Translation keys are the English source text, so English needs no
+// table: t() returns the key. The only entries are keys that carry a context suffix because
+// Spanish tells them apart (gender or number) while English does not.
+export const EN: Record<string, string> = {
+  "Off·2": "Off",
+  "Cut·2": "Cut",
+  "On·2": "On",
+  "Disabled·2": "Disabled",
+  "Fade·2": "Fade",
+  "Clear·2": "Clear",
+  "Light·2": "Light",
+};

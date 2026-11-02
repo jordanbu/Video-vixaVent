@@ -110,7 +110,7 @@ export async function submitVoice(args: SubmitVoiceArgs, state: TimelineState): 
   const props = result.subtitlePath ? { minimaxSubtitlePath: result.subtitlePath, minimaxSubtitleType: args.subtitleType ?? 'sentence' } : undefined;
   return {
     id: newId(),
-    name: args.name?.trim() || (args.provider === 'system' ? t('系统语音（临时）') : `Voice · ${voiceId || args.provider}`),
+    name: args.name?.trim() || (args.provider === 'system' ? t('System voice (draft)') : `Voice · ${voiceId || args.provider}`),
     kind: 'audio',
     src: result.path,
     durationInFrames,

@@ -4,7 +4,7 @@ const FIRST_MESSAGE_OVERFLOW = 'The current request is too large for this model 
 const POST_COMPACTION_OVERFLOW = 'The recent conversation is still too large after context compaction.';
 
 export const CONTEXT_OVERFLOW_GUIDANCE_ZH =
-  '当前请求的上下文超出了模型限制，系统已自动压缩并重试但仍放不下。换个更短的问法或新开一个聊天继续即可。';
+  'The current request exceeds the model context limit; automatic compaction and retry already ran but it still does not fit. Try a shorter prompt or continue in a new chat.';
 
 const GUIDANCE_SEPARATOR = '\n\n';
 
