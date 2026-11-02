@@ -37,6 +37,9 @@ ordenado y fácil de leer.
 - **Títulos en serif, como en la web, solo en lo grande**: "Proyectos" en el panel (28 px, 400)
   y el encabezado del chat vacío (21 px, 400), con el sobretítulo de marca encima ("EMPIEZA
   AQUÍ": 11 px, mayúsculas, 600, +0,14 em, clay).
+- **Menú contextual del clip** (`clipMenuVisibility.ts`): un ítem que nunca aplica al tipo
+  de clip se oculta; uno que aplica pero hoy le falta algo queda visible y deshabilitado.
+  El menú se arma por grupos y solo pone separador entre grupos con contenido.
 - **Piso de tamaño**: los textos de 9 y 9,5 px pasan a 10,5 px (50 lugares: 26 en CSS y 24 en
   componentes). En el escritorio, con la base de 110 %, se ven de ~11,5 px.
 
@@ -71,6 +74,7 @@ ordenado y fácil de leer.
 | Alojar Instrument Sans, Source Serif 4 y JetBrains Mono (decidido con el equipo el 2026-11-01) | Seguir con Geist | La interfaz queda igual que la web. Alojadas en `public/fonts/` no se contacta a Google (specs/01); el subconjunto latin pesa 30 + 122 + 31 KB |
 | Las capas de texto del video siguen en Geist (`TimelineGraphicLayers.tsx`) y el logo no cambia | Cambiar también la letra por defecto del contenido | Cambiaría la letra de proyectos existentes y de sus exportaciones; la marca es para la interfaz |
 | Fuentes de marca primero y Geist de respaldo en cada pila | Reemplazar Geist por completo | Si falta un glifo fuera del subconjunto latin, cae en una letra parecida en vez de en la del sistema |
+| Menú del clip: ocultar lo que nunca aplica y deshabilitar lo que hoy no se puede (decidido con el equipo) | Ocultar también lo deshabilitado | Un ítem gris que se va a poder usar ("Dividir" con el cabezal afuera, "Pegar efectos" sin copiar) enseña que existe; uno que nunca va a servir en ese clip solo alarga el menú |
 | Subir solo los textos de 9–9,5 px (decidido con el equipo) | Subir todo o subir el zoom a 120 % | Lo ilegible desaparece sin cambiar la densidad; en el escritorio ya hay una base de 110 % y subir todo la duplicaría |
 | No usar la guía genérica de la skill (rosa/azul, Inter, patrón landing) | Aplicarla tal cual | La marca ya existe; la skill aporta las reglas de contraste, foco, tamaños mínimos y movimiento |
 
@@ -97,9 +101,15 @@ Resultados del 2026-11-01, con Node 24.22.1:
   Capturas del chat, la regla, los cabezales de pista y las insignias de duración sin
   desbordes.
 
+- Menú del clip: `clipMenuVisibility.verify.tsx` (en `verify:components`) → la regla por
+  tipo (video, audio, gráfico, texto, imagen, secuencia, sin archivo, con grupo existente) y
+  el menú renderizado: gráfico animado 12 ítems (antes 16; sin "Velocidad", "Volver a
+  vincular archivo", multicámara ni vincular audio/video), audio 12 (sin efectos ni
+  convertir), video 15; "Dividir" y "Pegar efectos" siguen deshabilitados cuando corresponde;
+  ningún separador doble. En Chromium, clic derecho sobre un clip del proyecto de ejemplo
+  muestra el menú corto.
+
 ## Pendiente
 
 - Los números de la regla del timeline siguen en 10 px (19 en pantalla): no estaban en el
   rango acordado (9–9,5 px).
-- Menú contextual del clip: ocultar los ítems que no aplican al tipo de clip (siguiente
-  cambio de este spec).

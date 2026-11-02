@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { theme, themeAlpha } from '../../theme';
 import type { EditorCommands } from '../../editor/store';
 import { removeItemsFromState } from '../../editor/multiSelect';
@@ -9,6 +9,7 @@ import { ALL_FX, LUT_EFFECTS } from '../../gl/fx/effects';
 import { Icon, type IconName } from '../icons';
 import { useT } from '../../i18n/locale';
 import { contextReferenceItems } from './clipContextSelection';
+import { clipMenuVisibility } from './clipMenuVisibility';
 
 // speed presets for the variable speed submenu
 const SPEED_PRESETS = [0.25, 0.5, 1, 1.5, 2, 4] as const;
@@ -177,10 +178,11 @@ export function ClipContextMenu({ item, transitions, x, y, playhead, commands, t
     })),
   ];
   const inside = playhead > item.startFrame && playhead < item.startFrame + item.durationInFrames;
-  const isVisual = item.kind !== 'audio';
-  const isDom = item.kind === 'motion-graphic' || item.kind === 'text'; // DOM clips → alpha MG export
-  const canSpeed = item.kind === 'video' || item.kind === 'audio' || item.kind === 'sequence';
-  const canRelink = !timeline.tracks?.[item.track]?.locked && !!item.src && ['video', 'audio', 'image', 'gif', 'svg'].includes(item.kind);
+  // Entries that never apply to this kind of clip are hidden; ones that apply but are
+  // missing something now stay visible and disabled (clipMenuVisibility.ts, specs/09).
+  const show = clipMenuVisibility(item, { inMulticamGroup: !!multicamGroup, linked: !!linkedGroup });
+  const canSpeed = show.speed;
+  const canRelink = show.relink && !timeline.tracks?.[item.track]?.locked;
   const rate = item.playbackRate ?? 1;
   const displayedRate = displaySpeedRate(rate);
   const reviewFrame = Math.max(item.startFrame, Math.min(playhead, item.startFrame + item.durationInFrames - 1));
@@ -204,114 +206,140 @@ export function ClipContextMenu({ item, transitions, x, y, playhead, commands, t
     borderRadius: 5, boxShadow: `0 12px 36px ${themeAlpha.shadow(0.55)}`, padding: 5, fontSize: 12.5, color: theme.text,
   };
 
-  return (
-    <div ref={ref} style={style}>
-      <Item label={t('添加评论')} icon="clipboard" onClick={run(() => onAddComment(item, reviewFrame, x, y))} />
-      <Sep />
+  const commentGroup: ReactNode[] = [
+    <Item key="comment" label={t('添加评论')} icon="clipboard" onClick={run(() => onAddComment(item, reviewFrame, x, y))} />,
+  ];
+  const relationGroup: ReactNode[] = [
+    show.multicam && (
       <Item
+        key="multicam"
         label={syncBusy ? t('多机位同步中…') : t('AI 多机位同步')}
         icon="users"
         disabled={!multicamReady || syncBusy}
         onClick={() => { void runMulticam(); }}
       />
-      {syncMsg && (
-        <div style={{ padding: '4px 9px 6px', fontSize: 11, color: theme.textMuted, lineHeight: 1.35 }}>
-          {syncMsg}
-        </div>
-      )}
-      {!multicamReady && !syncMsg && (
-        <div style={{ padding: '0 9px 6px', fontSize: 10.5, color: theme.textDim, lineHeight: 1.3 }}>
-          {multicamHint}
-        </div>
-      )}
-      {multicamGroup && (
-        <div style={{ padding: '0 9px 6px', fontSize: 10.5, color: theme.textDim, lineHeight: 1.3 }}>
-          {t('多机位组 · {n} 机位 · {method}', {
-            n: multicamGroup.angles.length,
-            method: multicamGroup.syncMethod,
-          })}
-        </div>
-      )}
+    ),
+    show.multicam && syncMsg && (
+      <div key="multicam-msg" style={{ padding: '4px 9px 6px', fontSize: 11, color: theme.textMuted, lineHeight: 1.35 }}>
+        {syncMsg}
+      </div>
+    ),
+    show.multicam && !multicamReady && !syncMsg && (
+      <div key="multicam-hint" style={{ padding: '0 9px 6px', fontSize: 10.5, color: theme.textDim, lineHeight: 1.3 }}>
+        {multicamHint}
+      </div>
+    ),
+    multicamGroup && (
+      <div key="multicam-group" style={{ padding: '0 9px 6px', fontSize: 10.5, color: theme.textDim, lineHeight: 1.3 }}>
+        {t('多机位组 · {n} 机位 · {method}', {
+          n: multicamGroup.angles.length,
+          method: multicamGroup.syncMethod,
+        })}
+      </div>
+    ),
+    show.linkAudioVideo && (
       <Item
+        key="link"
         label={linkedGroup ? t('取消链接音视频') : t('链接所选音视频')}
         icon={linkedGroup ? 'unlock' : 'users'}
         disabled={!linkedGroup && batchN < 2}
         onClick={run(() => toggleRelationship('linked'))}
       />
-      <Item
-        label={syncLockGroup ? t('取消同步锁定') : t('同步锁定所选片段')}
-        icon={syncLockGroup ? 'unlock' : 'lock'}
-        disabled={!syncLockGroup && batchN < 2}
-        onClick={run(() => toggleRelationship('sync-lock'))}
-      />
-      <Sep />
-      <Item label={t('复制')} icon="copy" shortcut="⌘C" onClick={run(() => commands.duplicateItem(item.id))} />
-      <Item label={t('切分')} icon="scissors" shortcut="C" disabled={!inside} onClick={run(() => commands.splitItem(item.id, playhead))} />
-      <Sep />
-      <Item label={applied.length ? t('已应用效果（{n}）', { n: applied.length }) : t('已应用效果')} icon="filter" chevron disabled={applied.length === 0}
-        onClick={applied.length ? () => setShowApplied((v) => !v) : undefined} />
-      {showApplied && applied.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '0 6px 6px 35px' }}>
-          {applied.map((a) => (
-            <button key={a.key} title={t('点击移除')} onClick={run(a.remove)} style={appliedRow}
-              onMouseEnter={(e) => { e.currentTarget.style.background = theme.bg; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}>
-              <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left' }}>{a.label}</span>
-              <span style={{ color: theme.textDim, flexShrink: 0 }}>×</span>
-            </button>
-          ))}
-        </div>
-      )}
-      <Item label={t('复制效果')} icon="sparkles" disabled={!isVisual} onClick={run(copyFx)} />
-      <Item label={t('粘贴效果')} icon="clipboard" shortcut={PASTE_HINT} disabled={!isVisual || !fxClip} onClick={run(pasteFx)} />
-      <Item label={!matchesSpeedPreset(rate, 1) ? t('变速（{rate}×）', { rate: displayedRate }) : t('变速')} icon="clock" chevron disabled={!canSpeed}
-        onClick={canSpeed ? () => setShowSpeed((v) => !v) : undefined} />
-      {showSpeed && canSpeed && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, padding: '2px 9px 6px 35px' }}>
-          {SPEED_PRESETS.map((s) => {
-            const active = matchesSpeedPreset(rate, s);
-            return (
-              <button key={s} onClick={run(() => commands.setItemSpeed(item.id, s))}
-                style={{
-                  cursor: 'pointer', fontSize: 11, padding: '3px 8px', borderRadius: 5,
-                  border: `0.5px solid ${active ? theme.accent : theme.border}`,
-                  background: active ? theme.accent : 'none', color: active ? theme.onAccent : theme.text,
-                }}>{s}×</button>
-            );
-          })}
-        </div>
-      )}
-      <Sep />
-      <Item
-        label={batchN > 1 ? t('添加到 AI 对话框（{n}）', { n: batchN }) : t('添加到 AI 对话框')}
-        icon="sparkles"
-        onClick={run(() => onAddToChat(referenceItems))}
-      />
-      <Item label={t('重新链接文件')} icon="folder" disabled={!canRelink} onClick={run(() => onRelinkFile(item))} />
-      <Sep />
-      <Item label={t('导出 MG 动画')} icon="download" disabled={!isDom} onClick={run(() => onExportMg(item))} />
-      <Item label={t('转为视频')} icon="film" disabled={item.kind === 'audio'} onClick={run(() => onConvertToVideo(item))} />
-      <Sep />
-      <Item
-        label={batchN > 1 ? t('删除（{n}）', { n: batchN }) : t('删除')}
-        icon="trash"
-        danger
-        shortcut="⌫"
-        onClick={run(() => {
-          if (batchN === 1) commands.removeItem(batchIds[0]!);
-          else commands.applyState(removeItemsFromState(timeline, batchIds, false));
+    ),
+    <Item
+      key="sync-lock"
+      label={syncLockGroup ? t('取消同步锁定') : t('同步锁定所选片段')}
+      icon={syncLockGroup ? 'unlock' : 'lock'}
+      disabled={!syncLockGroup && batchN < 2}
+      onClick={run(() => toggleRelationship('sync-lock'))}
+    />,
+  ].filter(Boolean);
+  const editGroup: ReactNode[] = [
+    <Item key="duplicate" label={t('复制')} icon="copy" shortcut="⌘C" onClick={run(() => commands.duplicateItem(item.id))} />,
+    <Item key="split" label={t('切分')} icon="scissors" shortcut="C" disabled={!inside} onClick={run(() => commands.splitItem(item.id, playhead))} />,
+  ];
+  const effectsGroup: ReactNode[] = [
+    <Item key="applied" label={applied.length ? t('已应用效果（{n}）', { n: applied.length }) : t('已应用效果')} icon="filter" chevron disabled={applied.length === 0}
+      onClick={applied.length ? () => setShowApplied((v) => !v) : undefined} />,
+    showApplied && applied.length > 0 && (
+      <div key="applied-list" style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '0 6px 6px 35px' }}>
+        {applied.map((a) => (
+          <button key={a.key} title={t('点击移除')} onClick={run(a.remove)} style={appliedRow}
+            onMouseEnter={(e) => { e.currentTarget.style.background = theme.bg; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}>
+            <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left' }}>{a.label}</span>
+            <span style={{ color: theme.textDim, flexShrink: 0 }}>×</span>
+          </button>
+        ))}
+      </div>
+    ),
+    show.effects && <Item key="copy-fx" label={t('复制效果')} icon="sparkles" onClick={run(copyFx)} />,
+    show.effects && <Item key="paste-fx" label={t('粘贴效果')} icon="clipboard" shortcut={PASTE_HINT} disabled={!fxClip} onClick={run(pasteFx)} />,
+    canSpeed && <Item key="speed" label={!matchesSpeedPreset(rate, 1) ? t('变速（{rate}×）', { rate: displayedRate }) : t('变速')} icon="clock" chevron
+      onClick={() => setShowSpeed((v) => !v)} />,
+    showSpeed && canSpeed && (
+      <div key="speed-presets" style={{ display: 'flex', flexWrap: 'wrap', gap: 4, padding: '2px 9px 6px 35px' }}>
+        {SPEED_PRESETS.map((s) => {
+          const active = matchesSpeedPreset(rate, s);
+          return (
+            <button key={s} onClick={run(() => commands.setItemSpeed(item.id, s))}
+              style={{
+                cursor: 'pointer', fontSize: 11, padding: '3px 8px', borderRadius: 5,
+                border: `0.5px solid ${active ? theme.accent : theme.border}`,
+                background: active ? theme.accent : 'none', color: active ? theme.onAccent : theme.text,
+              }}>{s}×</button>
+          );
         })}
-      />
-      <Item
-        label={batchN > 1 ? t('波纹删除（{n}）', { n: batchN }) : t('波纹删除（合缝）')}
-        icon="trash"
-        danger
-        shortcut="⇧⌫"
-        onClick={run(() => {
-          if (batchN === 1) commands.rippleDeleteItem(batchIds[0]!);
-          else commands.applyState(removeItemsFromState(timeline, batchIds, true));
-        })}
-      />
+      </div>
+    ),
+  ].filter(Boolean);
+  const chatGroup: ReactNode[] = [
+    <Item
+      key="chat"
+      label={batchN > 1 ? t('添加到 AI 对话框（{n}）', { n: batchN }) : t('添加到 AI 对话框')}
+      icon="sparkles"
+      onClick={run(() => onAddToChat(referenceItems))}
+    />,
+    show.relink && <Item key="relink" label={t('重新链接文件')} icon="folder" disabled={!canRelink} onClick={run(() => onRelinkFile(item))} />,
+  ].filter(Boolean);
+  const convertGroup: ReactNode[] = [
+    show.exportMg && <Item key="export-mg" label={t('导出 MG 动画')} icon="download" onClick={run(() => onExportMg(item))} />,
+    show.convertToVideo && <Item key="to-video" label={t('转为视频')} icon="film" onClick={run(() => onConvertToVideo(item))} />,
+  ].filter(Boolean);
+  const deleteGroup: ReactNode[] = [
+    <Item
+      key="delete"
+      label={batchN > 1 ? t('删除（{n}）', { n: batchN }) : t('删除')}
+      icon="trash"
+      danger
+      shortcut="⌫"
+      onClick={run(() => {
+        if (batchN === 1) commands.removeItem(batchIds[0]!);
+        else commands.applyState(removeItemsFromState(timeline, batchIds, false));
+      })}
+    />,
+    <Item
+      key="ripple-delete"
+      label={batchN > 1 ? t('波纹删除（{n}）', { n: batchN }) : t('波纹删除（合缝）')}
+      icon="trash"
+      danger
+      shortcut="⇧⌫"
+      onClick={run(() => {
+        if (batchN === 1) commands.rippleDeleteItem(batchIds[0]!);
+        else commands.applyState(removeItemsFromState(timeline, batchIds, true));
+      })}
+    />,
+  ];
+  const groups = [commentGroup, relationGroup, editGroup, effectsGroup, chatGroup, convertGroup, deleteGroup];
+
+  return (
+    <div ref={ref} style={style}>
+      {groups.filter((group) => group.length > 0).map((group, index) => (
+        <Fragment key={index}>
+          {index > 0 && <Sep />}
+          {group}
+        </Fragment>
+      ))}
     </div>
   );
 }
