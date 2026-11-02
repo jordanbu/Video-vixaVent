@@ -1,6 +1,6 @@
 # 07 — Proyecto abierto en varias pestañas
 
-> Estado: implementado · Última actualización: 2026-10-26
+> Estado: implementado · Última actualización: 2026-11-01
 
 ## Problema
 
@@ -73,9 +73,11 @@ Flujo con dos pestañas, A (vieja) y B (nueva):
    vivo, el navegador recibe `blocked` como antes.
 6. El chequeo de `displaced` va antes que el de revisión: mientras el otro editor esté vivo,
    la pestaña desplazada ve "abierto en otra pestaña" aunque su documento ya esté viejo.
-7. Un `stale` solo se muestra como "recarga" si la pestaña ya estaba desplazada o el usuario
-   acaba de pedir el proyecto. En uso normal sigue siendo un reintento silencioso (un
-   guardado propio en curso también da `stale` por un momento).
+7. Un `stale` se muestra como "recarga" si la pestaña ya estaba desplazada, si el usuario
+   acaba de pedir el proyecto o si llegan **5 seguidos** (`staleRefusalsBeforeReload`, unos
+   5 s de reintentos). Uno o dos aislados siguen siendo un reintento silencioso: un guardado
+   propio en curso también da `stale` por un momento. Un registro exitoso, un `displaced` o
+   cualquier otra respuesta reinicia la cuenta.
 8. Una pestaña desplazada con el documento viejo muestra "recarga", nunca "Usar en esta
    pestaña"; una vez en "recarga" no vuelve al otro aviso.
 9. La señal es del servidor, así que funciona entre navegadores distintos.
@@ -91,6 +93,7 @@ Flujo con dos pestañas, A (vieja) y B (nueva):
 | Aviso fijo arriba al centro, sin cerrar | Mostrarlo dentro de la lista de mensajes del chat, como los errores del puente | Con el chat cerrado o con mucho historial no se vería, y el usuario que trabaja desde Claude Code tiene que enterarse de que los cambios no llegan a esta pestaña |
 | Textos nuevos para el aviso | Reusar "工程已在其他窗口编辑或版本已变化，请关闭其他窗口后手动刷新页面。" | Ese texto pide cerrar la otra ventana y recargar "a mano"; ahora no hace falta cerrar nada y el botón hace la acción |
 | Si el documento quedó viejo, pedir recargar con un botón | Recargar solo al tocar "Usar en esta pestaña" | El editor evita navegar por su cuenta (el aviso de `beforeunload` con un guardado pendiente); que el usuario apriete "Recargar" deja la decisión de su lado |
+| "Recarga" tras 5 `stale` seguidos (2026-11-01) | Reintentar en silencio para siempre | Si el store avanzó sin esta pestaña (un MCP sin navegador guardó mientras dormía), la pestaña nunca vuelve a registrarse y los cambios del agente no llegan; el usuario no veía nada. Cinco intentos (~5 s) dejan de sobra el margen de un autosave propio |
 | **Cambio al implementar:** el 409 `displaced` dice si la pestaña quedó vieja (`reloadRequired`, comparando con el `baseRevision` de la fila) | Que el clic en "Usar en esta pestaña" lo descubra con un `stale` | En la prueba e2e, después de una edición del agente el botón llevaba a "recarga" y a los 3 s el chequeo volvía a mostrar el botón. La fila ya trae la revisión del dueño, así que no hace falta leer el proyecto en cada chequeo |
 
 ## Verificación
@@ -139,6 +142,11 @@ Resultados del 2026-10-26, con Node 24.22.1:
   - Cada aumento de epoch corresponde a una acción (abrir, clic, otro navegador, cerrar,
     recargar). Respuestas de `/register`: A 3 OK / 25 `displaced`, B 1 OK / 28 `displaced`.
 
+- Recarga tras `stale` seguidos (2026-11-01): `external-bridge-ownership.verify.ts` → 4
+  `stale` seguidos siguen en silencio, el 5.º muestra "recarga"; un registro exitoso u otra
+  respuesta en el medio reinicia la cuenta; el umbral se configura como los otros tiempos.
+  `npm run verify:mcp` → OK, con `project-edit-ownership.verify.ts` igual que antes.
+
 ## Pendiente
 
 - Si la pestaña desplazada editó algo mientras no era dueña, su documento ya no coincide
@@ -147,6 +155,3 @@ Resultados del 2026-10-26, con Node 24.22.1:
 - Después de dormir la computadora vencen los leases de las dos pestañas; la que se
   reconecte primero se queda con el proyecto, que puede ser la más vieja. La otra muestra
   el aviso con el botón; no hay ping-pong, pero el ganador no es siempre la más reciente.
-- Fuera de este caso, un `stale` que no se resuelve (por ejemplo, un MCP offline guardó
-  mientras la pestaña dormía) sigue reintentando en silencio. Mostrar "recarga" tras varios
-  `stale` seguidos queda para otro cambio.

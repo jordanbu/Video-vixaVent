@@ -24,6 +24,38 @@ tab.refused(STALE);
 assert.equal(tab.current(), null);
 assert.deepEqual(notices, []);
 
+// …but a stale that never clears asks for a reload instead of retrying silently forever.
+{
+  const seen: BridgeOwnershipNotice[] = [];
+  const stuck = new BridgeOwnershipState((notice) => seen.push(notice));
+  stuck.registered(3);
+  for (let attempt = 1; attempt <= 4; attempt += 1) {
+    stuck.intent();
+    stuck.refused(STALE);
+  }
+  assert.equal(stuck.current(), null, 'four stale refusals in a row are still routine');
+  stuck.intent();
+  stuck.refused(STALE);
+  assert.equal(stuck.current(), 'reload-required', 'the fifth in a row asks to reload');
+  assert.deepEqual(seen, ['reload-required']);
+
+  // Anything in between resets the count: a success, a displacement or another refusal.
+  const reset = new BridgeOwnershipState();
+  for (const between of [() => reset.registered(4), () => reset.refused({ displaced: false, reloadRequired: false })]) {
+    for (let attempt = 1; attempt <= 4; attempt += 1) reset.refused(STALE);
+    between();
+    for (let attempt = 1; attempt <= 4; attempt += 1) reset.refused(STALE);
+    assert.equal(reset.current(), null, 'the count restarts after a non-stale outcome');
+    reset.registered(5);
+  }
+
+  // The threshold is configurable like the other timings.
+  const quick = new BridgeOwnershipState(() => undefined, { retryMs: 1, displacedRecheckMs: 1, staleRefusalsBeforeReload: 2 });
+  quick.refused(STALE);
+  quick.refused(STALE);
+  assert.equal(quick.current(), 'reload-required');
+}
+
 // Displaced by another tab: notice, no takeover, slow re-check.
 tab.intent();
 tab.refused(DISPLACED);

@@ -28,15 +28,23 @@ export interface BridgeOwnershipTiming {
   retryMs: number;
   /** Delay between checks of a displaced tab; it never takes the project from a live owner. */
   displacedRecheckMs: number;
+  /**
+   * Plain stale refusals in a row before an owning tab asks to reload. One or two are
+   * routine (this tab's own autosave in flight); five, about five seconds of retries,
+   * mean the stored project moved on without this tab, for example an offline MCP
+   * writer saved while the tab slept.
+   */
+  staleRefusalsBeforeReload?: number;
 }
 
-const DEFAULT_TIMING: BridgeOwnershipTiming = { retryMs: 1_000, displacedRecheckMs: 3_000 };
+const DEFAULT_TIMING: BridgeOwnershipTiming = { retryMs: 1_000, displacedRecheckMs: 3_000, staleRefusalsBeforeReload: 5 };
 
 export class BridgeOwnershipState {
   private heldEpoch: number | undefined;
   private takeoverRequested = false;
   private takeoverInFlight = false;
   private notice: BridgeOwnershipNotice = null;
+  private consecutiveStale = 0;
   private wake: (() => void) | null = null;
   private readonly onNotice: (notice: BridgeOwnershipNotice) => void;
   private readonly timing: BridgeOwnershipTiming;
@@ -66,6 +74,7 @@ export class BridgeOwnershipState {
     this.heldEpoch = epoch;
     this.takeoverRequested = false;
     this.takeoverInFlight = false;
+    this.consecutiveStale = 0;
     this.setNotice(null);
   }
 
@@ -75,6 +84,7 @@ export class BridgeOwnershipState {
     // A click that arrived while a plain attempt was in flight still counts.
     if (tookOver) this.takeoverRequested = false;
     if (refusal.displaced) {
+      this.consecutiveStale = 0;
       // An outdated tab cannot take the project back without reloading; once it
       // knows that, a later plain "displaced" answer must not offer the button again.
       this.setNotice(refusal.reloadRequired || this.notice === 'reload-required'
@@ -82,9 +92,16 @@ export class BridgeOwnershipState {
         : 'displaced');
       return;
     }
+    if (!refusal.reloadRequired) {
+      this.consecutiveStale = 0;
+      return;
+    }
     // A stale revision is routine while this tab's own autosave is in flight, so it
-    // only means "reload" once the tab lost the project or the user asked for it.
-    if (refusal.reloadRequired && (this.notice || tookOver)) this.setNotice('reload-required');
+    // means "reload" once the tab lost the project, the user asked for it, or it keeps
+    // coming back: retrying silently forever left the agent's edits nowhere (spec 07).
+    this.consecutiveStale += 1;
+    const limit = this.timing.staleRefusalsBeforeReload ?? DEFAULT_TIMING.staleRefusalsBeforeReload!;
+    if (this.notice || tookOver || this.consecutiveStale >= limit) this.setNotice('reload-required');
   }
 
   requestTakeover(): void {
