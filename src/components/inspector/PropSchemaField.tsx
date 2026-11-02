@@ -113,7 +113,8 @@ function MediaField({ spec, value, onChange }: PropSchemaFieldProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <input type="text" placeholder={spec.type === 'video' ? t('视频 URL 或 /media/uploads/…') : t('图片 URL 或 /media/uploads/…')} value={source} onChange={(event) => onChange(event.target.value)} style={FIELD_STYLE} />
-      <input type="file" accept={spec.type === 'video' ? 'video/*' : 'image/*,.svg,.gif'} onChange={(event) => {
+      {/* The wrapping <label> only names the first control (the URL field), so the picker names itself. */}
+      <input type="file" aria-label={t('选择文件')} accept={spec.type === 'video' ? 'video/*' : 'image/*,.svg,.gif'} onChange={(event) => {
         void importFieldMedia(event.target.files?.[0], onChange);
         event.target.value = '';
       }} style={{ fontSize: 11, color: theme.textDim }} />
