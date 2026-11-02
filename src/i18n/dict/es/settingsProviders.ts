@@ -117,6 +117,7 @@ export default {
   "从清单选择字体": "Elige una fuente de la lista",
   "皮肤": "Tema",
   "石墨": "Grafito",
+  "维萨文托拉": "Vixaventora",
   "墨黑": "Medianoche",
   "摩卡": "Moca",
   "北极": "Nord",

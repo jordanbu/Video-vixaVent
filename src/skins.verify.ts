@@ -3,7 +3,7 @@
 // textMuted/panel ≥ 4.5, onAccent/accent ≥ 4.5 (WCAG AA).
 // `npx tsx src/skins.verify.ts`
 import assert from 'node:assert/strict';
-import { DEFAULT_SKIN, SKINS, buildSkinsCss } from './skins';
+import { DEFAULT_SKIN, SKINS, buildSkinsCss, migrateSkinPreference } from './skins';
 
 function luminance(hex: string): number {
   const f = (c: number): number => {
@@ -73,5 +73,39 @@ for (const s of SKINS) {
 assert.ok(css.includes('--vx-on-accent:'), 'on-accent 变量输出');
 assert.ok(css.includes('--vx-shadow-rgb:'), 'shadow-rgb 变量输出');
 assert.ok(css.includes('body { background: var(--vx-bg)'), 'body 跟随皮肤');
+
+// ── Brand skin is the default (specs/09) and reads as well as any skin ──
+assert.equal(DEFAULT_SKIN, 'vixaventora');
+{
+  const brand = SKINS.find((s) => s.id === 'vixaventora')!.tokens;
+  const graphite = SKINS.find((s) => s.id === 'graphite')!.tokens;
+  assert.ok(contrast(brand.onAccent, brand.accent) >= 4.5, 'brand: dark text on clay reaches AA (white would not)');
+  assert.ok(contrast(brand.textDim, brand.panelAlt) >= 4.5, 'brand: dim text stays AA on cards too');
+  for (const key of ['select', 'success', 'danger', 'trackVideo', 'trackAudioA1', 'trackAudioA2', 'trackCaption', 'clipVideo', 'clipAudio', 'clipMg', 'clipText'] as const) {
+    assert.equal(brand[key], graphite[key], `brand keeps the shared semantic color ${key}`);
+  }
+}
+
+// ── Preference migration: an old auto-saved 'graphite' was the default, not a choice ──
+{
+  const store = (entries: Record<string, string>) => {
+    const map = new Map(Object.entries(entries));
+    return {
+      map,
+      getItem: (key: string) => map.get(key) ?? null,
+      setItem: (key: string, value: string) => { map.set(key, value); },
+      removeItem: (key: string) => { map.delete(key); },
+    };
+  };
+  const old = store({ 'vx.skin': 'graphite' });
+  migrateSkinPreference(old);
+  assert.equal(old.map.get('vx.skin'), undefined, 'a pre-brand graphite moves to the new default');
+  old.setItem('vx.skin', 'graphite');
+  migrateSkinPreference(old);
+  assert.equal(old.map.get('vx.skin'), 'graphite', 'picking graphite after the move is kept');
+  const chosen = store({ 'vx.skin': 'mocha' });
+  migrateSkinPreference(chosen);
+  assert.equal(chosen.map.get('vx.skin'), 'mocha', 'any other saved skin is a real choice');
+}
 
 process.stdout.write(`skins.verify: ok (${SKINS.length} skins, 对比度门全过)\n`);

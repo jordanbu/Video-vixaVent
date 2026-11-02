@@ -70,7 +70,21 @@ const GRAPHITE: SkinTokens = {
 // success is **semantic color**, unified across skins (inherited from graphite); text comparison text/panel ≥ 7,
 // textDim/panel ≥ 4.5, onAccent/accent ≥ 4.5 (script skin-by-skin assertion, individual official grayscale
 // Fine-tune L to meet the standard). Pastel accent skin (Mocha/Arctic/Tokyo Night/Latte) onAccent uses dark fonts.
+// Vixaventora = the brand (vixaventora.com, dark sections): warm "ink" surfaces and the clay
+// accent with dark text, like the site's warm CTA. Semantic colors (tracks, clips, selection,
+// success, danger) stay Graphite's so a clip looks the same in every skin. See specs/09.
+const VIXAVENTORA: SkinTokens = {
+  ...GRAPHITE,
+  bg: '#0d0c0b', inset: '#121110', panel: '#161513', panelAlt: '#1f1e1b', hover: '#2a2925',
+  border: '#33322e', borderLight: '#4a4843',
+  text: '#e9e7e1', textMuted: '#b0aca3', textDim: '#8a867d', textStrong: '#fbfaf6',
+  accent: '#d57a57', accentDeep: '#c4613c', accentRgb: '213,122,87', onAccent: '#161513',
+  gold: '#d6a03e',
+  tlTrack: '#24231f', tlSidePanel: '#1d1c19',
+};
+
 export const SKINS: readonly SkinDef[] = [
+  { id: 'vixaventora', nameZh: '维萨文托拉', tokens: VIXAVENTORA },
   { id: 'graphite', nameZh: '石墨', tokens: GRAPHITE },
   {
     id: 'midnight', nameZh: '墨黑',
@@ -139,7 +153,12 @@ export const SKINS: readonly SkinDef[] = [
 ];
 
 const STORAGE_KEY = 'vx.skin';
-export const DEFAULT_SKIN = 'graphite';
+export const DEFAULT_SKIN = 'vixaventora';
+/**
+ * Set once the brand skin became the default. Before that, every start saved the skin
+ * in use, so a stored 'graphite' says nothing about a choice: it was the old default.
+ */
+const BRAND_DEFAULT_KEY = 'vx.skin.brand-default';
 
 const kebab = (name: string): string => name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
 
@@ -160,6 +179,13 @@ export function buildSkinsCss(): string {
     'body { background: var(--vx-bg); color-scheme: var(--vx-color-scheme); }\n';
 }
 
+/** One-time move to the brand default: a 'graphite' saved before it was only the old default. */
+export function migrateSkinPreference(storage: Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>): void {
+  if (storage.getItem(BRAND_DEFAULT_KEY)) return;
+  if (storage.getItem(STORAGE_KEY) === 'graphite') storage.removeItem(STORAGE_KEY);
+  storage.setItem(BRAND_DEFAULT_KEY, '1');
+}
+
 export function getSkin(): string {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -168,10 +194,16 @@ export function getSkin(): string {
   return DEFAULT_SKIN;
 }
 
-export function applySkin(id: string): void {
+function showSkin(id: string): string {
   const skin = SKINS.some((s) => s.id === id) ? id : DEFAULT_SKIN;
   if (skin === DEFAULT_SKIN) delete document.documentElement.dataset.vxSkin;
   else document.documentElement.dataset.vxSkin = skin;
+  return skin;
+}
+
+/** The user picked a skin: show it and remember the choice. */
+export function applySkin(id: string): void {
+  const skin = showSkin(id);
   try { localStorage.setItem(STORAGE_KEY, skin); } catch { /* neglect*/ }
 }
 
@@ -183,5 +215,7 @@ export function initSkins(): void {
     style.textContent = buildSkinsCss();
     document.head.appendChild(style);
   }
-  applySkin(getSkin());
+  try { migrateSkinPreference(localStorage); } catch { /* storage unavailable: default skin */ }
+  // Only show it: saving here would freeze today's default as if the user had chosen it.
+  showSkin(getSkin());
 }
