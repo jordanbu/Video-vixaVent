@@ -14,6 +14,8 @@ import { ToolGroupRow } from './ToolGroupRow';
 import { groupMessages } from './message-groups';
 import { EMPTY_PROJECT_STARTERS, QUICK_ACTIONS } from './chatPanelPresets';
 import type { DisplayMessage } from '../../agent/agent-session';
+import type { AgentContext, AgentReference } from '../../agent/context';
+import { itemRef } from '../../agent/selection-refs';
 import { readStoredServerRun } from '../../agent/serverRunSessionStorage';
 import type { ChatPanelController } from './chatPanelController';
 import { CapabilityBanner } from './CapabilityGapBanner';
@@ -120,6 +122,22 @@ function lastUserTurn(messages: readonly DisplayMessage[]): number {
   return -1;
 }
 
+/** Select the clips of an end-of-run card that still exist in the open sequence. */
+function selectExistingClips(ctx: AgentContext, ids: readonly string[]): void {
+  const present = new Set(ctx.getState().items.map((item) => item.id));
+  const existing = ids.filter((id) => present.has(id));
+  if (existing.length) ctx.commands.selectItems(existing);
+}
+
+/** Item references for a fix request, so the agent knows exactly which clips the card meant. */
+function clipReferences(ctx: AgentContext, ids: readonly string[]): AgentReference[] {
+  const state = ctx.getState();
+  return ids.flatMap((id) => {
+    const item = state.items.find((candidate) => candidate.id === id);
+    return item ? [itemRef(item, state)] : [];
+  });
+}
+
 function MessageEntries({ controller }: { controller: ChatPanelController }) {
   const { agent, composer, props, visibleMessages, visibleFrom } = controller;
   // Retry re-runs the turn instead of asking again after it: the failed attempt is rewound
@@ -149,7 +167,11 @@ function MessageEntries({ controller }: { controller: ChatPanelController }) {
           ? () => { void agent.send('继续'); } : null}
         onWidgetSubmit={(answer) => {
           if (!agent.running) void agent.send(answer, { askOnly: composer.mode === 'ask' });
-        }} />
+        }}
+        onSelectClips={item.msg.role === 'summary' ? (ids) => selectExistingClips(props.ctx, ids) : null}
+        onFixIssue={item.msg.role === 'summary' ? (issue, prompt) => {
+          if (!agent.running) void agent.send(prompt, { references: clipReferences(props.ctx, issue.itemIds) });
+        } : null} />
     ))}
   </>;
 }

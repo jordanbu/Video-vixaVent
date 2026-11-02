@@ -3,10 +3,12 @@ import type { AgentContext } from '../context';
 import type { MediaAsset, TimelineItem } from '../../editor/types';
 import { isSourceClockMetadata } from '../../editor/timecode';
 import { prepareTemplate } from '../../template-host';
+import { timelineItemUsesAsset } from '../../editor/mediaAssetUsage';
 
 // edit_asset: Change/delete "library assets" (assets in the media pool, non-timeline clips).
 // - update: rename / change props / change the source code of the code class asset (MG) - changing the code must first go through the MG sandbox.
-// If it fails, it will not be dropped into the library. MediaAsset does not store thumbnails (MG preview is rendered according to code), no need to invalidate.
+// If it fails, it will not be dropped into the library. New code also replaces the code copy of every placed clip of
+// the asset (their props stay), so the timeline shows the change (specs/10). MediaAsset does not store thumbnails (MG preview is rendered according to code), no need to invalidate.
 // - delete: Remove from the pool. confirmImpact: If a fragment refers to it (MG presses templateId, media presses src),
 // Report the count first and delete after confirm:true (the fragment itself has copied the code/holds src, and deleting the pool entries will not destroy them).
 // manage_media_pool.rename_asset also supports rename; edit_asset retains the same capability.
@@ -20,6 +22,14 @@ function referencingItems(items: TimelineItem[], asset: MediaAsset): number {
   return items.filter((it) =>
     (asset.kind === 'motion-graphic' && it.templateId === asset.id) || (!!asset.src && it.src === asset.src),
   ).length;
+}
+
+/** Placed motion-graphic clips of this asset, in every sequence, whose code copy differs from `code`. */
+function staleMotionGraphicClips(ctx: AgentContext, asset: MediaAsset, code: string): number {
+  const doc = ctx.getDoc();
+  return doc.timelines.reduce((count, timeline) => count + timeline.items.filter((item) => (
+    item.kind === 'motion-graphic' && item.code !== code && timelineItemUsesAsset(item, asset, doc.assets)
+  )).length, 0);
 }
 
 async function update(asset: MediaAsset, args: Args, ctx: AgentContext): Promise<unknown> {
@@ -55,8 +65,10 @@ async function update(asset: MediaAsset, args: Args, ctx: AgentContext): Promise
   }
 
   if (Object.keys(patch).length === 0) return { error: 'nothing to update; pass name / code / props / favorite / sourceTimecode / captureClock' };
+  // New code also reaches the clips already placed (pool.updateAsset, specs/10); report how many.
+  const updatedClips = patch.code === undefined ? 0 : staleMotionGraphicClips(ctx, asset, patch.code);
   ctx.commands.editMediaAsset(asset.id, patch);
-  return { ok: true, updated: Object.keys(patch), assetId: asset.id };
+  return { ok: true, updated: Object.keys(patch), assetId: asset.id, ...(patch.code === undefined ? {} : { updatedClips }) };
 }
 
 function remove(asset: MediaAsset, args: Args, ctx: AgentContext): unknown {

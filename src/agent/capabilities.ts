@@ -173,7 +173,7 @@ function providerSuffix(cap: CapabilityKey, mode: ApprovalMode): string {
 // label + the primary tool + a fallback hint when the capability is off.
 const CAP_ROWS: { key: CapabilityKey; label: string; tool: string; fallback: string }[] = [
   { key: 'image', label: 'Image generation', tool: 'submit_image', fallback: 'use push_asset/import_url_asset for a public image, or ask the user to upload/paste one' },
-  { key: 'voice', label: 'Voice/TTS', tool: 'submit_voice', fallback: 'ask the user to provide and upload/paste audio' },
+  { key: 'voice', label: 'Voice/TTS', tool: 'submit_voice', fallback: 'on macOS, submit_voice provider=system (built-in voice, no key, draft quality) still works: offer it as a provisional narration; otherwise ask the user to provide and upload/paste audio or configure a voice provider' },
   { key: 'video', label: 'Video generation', tool: 'submit_video', fallback: 'use push_asset for a public video, or ask the user to upload one' },
   { key: 'music', label: 'Music generation', tool: 'submit_music', fallback: 'use list_audio/add_audio from the library, or ask the user to upload audio' },
   { key: 'sound', label: 'Sound generation', tool: 'submit_sound', fallback: 'use list_audio/add_audio from the sound-effects library' },

@@ -130,6 +130,7 @@ const VOICE_STRATEGIES = {
   gemini: (args) => genericVoice(args, 'gemini'),
   mistral: (args) => genericVoice(args, 'mistral'),
   cartesia: (args) => genericVoice(args, 'cartesia'),
+  system: (args) => ({ ...voiceBase(args, 'system'), speed: num(args.speed), languageCode: str(args.languageCode) }),
 } satisfies Record<VoiceProvider, (args: GenerateArgs) => SubmitVoiceArgs>;
 
 export function buildSubmitVoiceArgs(args: GenerateArgs): SubmitVoiceArgs {

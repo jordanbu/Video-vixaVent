@@ -14,6 +14,7 @@ import { appendAgentChange, createAgentChangeSession, extendAgentChangeSession }
 import { settleServerRun } from './serverRunSettleClient';
 import type { AgentRunStatus } from '../persist/agentRuntimeStore';
 import type { AgentHookState } from './useAgentState';
+import { appendRunSummary } from './runSummary';
 
 export type AgentSendOptions = AgentRetryOptions;
 export type AgentSend = (text: string, opts?: AgentSendOptions) => Promise<void>;
@@ -189,6 +190,12 @@ export function finalizeRunSession(turn: AgentTurn): void {
   turn.state.setChangeLog((current) => current.map((session) => (
     session.id === id && session.summary === RUN_SESSION_PLACEHOLDER ? { ...session, summary } : session
   )));
+}
+
+/** End-of-run card (specs/10): what the run changed since it started, its exports and the review. */
+export function appendRunSummaryCard(turn: AgentTurn): void {
+  const after = turn.state.ctxRef.current.getDoc();
+  turn.state.setMessages((messages) => appendRunSummary(messages, turn.baseDoc, after));
 }
 
 export async function discardUnexposedProposal(projectId: string, proposal: Proposal): Promise<void> {

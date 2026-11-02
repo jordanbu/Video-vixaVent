@@ -69,7 +69,9 @@ const submitVoiceHandler: Handler = async (args, ctx) => {
   addAsset(ctx, asset);
   return {
     ok: true, provider: input.provider, voiceId: input.voiceId, assetId: asset.id,
-    name: asset.name, src: asset.src, subtitlePath: asset.props?.minimaxSubtitlePath, addedTo: 'media-pool',
+    name: asset.name, src: asset.src, durationInFrames: asset.durationInFrames,
+    subtitlePath: asset.props?.minimaxSubtitlePath, addedTo: 'media-pool',
+    ...(input.provider === 'system' ? { note: 'Draft system voice: fine for timing; offer a configured provider for the final narration.' } : {}),
   };
 };
 

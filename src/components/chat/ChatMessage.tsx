@@ -6,6 +6,8 @@ import type { AgentRetry, DisplayMessage } from '../../agent/agent-session';
 import { parseWidgets } from './widget-parse';
 import { WidgetCard } from './WidgetCard';
 import { Markdown } from './Markdown';
+import { RunSummaryCard } from './RunSummaryCard';
+import type { ReviewIssue } from '../../editor/timelineReview';
 
 const GREEN = theme.success;
 
@@ -61,6 +63,10 @@ interface ChatMessageProps {
   onContinue?: (() => void) | null;
   /** Open settings, optionally on a specific vendor page (used by the missing-model-pack action button). */
   onOpenSettings?: ((route?: string) => void) | null;
+  /** End-of-run card: select clips on the timeline. */
+  onSelectClips?: ((ids: string[]) => void) | null;
+  /** End-of-run card: send an issue's fix request to the agent. */
+  onFixIssue?: ((issue: ReviewIssue, prompt: string) => void) | null;
 }
 
 function isMissingModelPacksResult(result: unknown): boolean {
@@ -73,7 +79,7 @@ function missingPacksSettingsRoute(result: unknown): string | undefined {
   return typeof route === 'string' ? route : undefined;
 }
 
-export function ChatMessage({ msg, streaming, running = false, retry, onRetry, onWidgetSubmit, widgetSubmitted, onContinue, onOpenSettings }: ChatMessageProps) {
+export function ChatMessage({ msg, streaming, running = false, retry, onRetry, onWidgetSubmit, widgetSubmitted, onContinue, onOpenSettings, onSelectClips, onFixIssue }: ChatMessageProps) {
   const t = useT();
   const [copied, setCopied] = useState(false);
   const copy = () => {
@@ -124,9 +130,16 @@ overflowWrap:anywhere breaks long tokens - long errors/summaries are wrapped in 
   if (msg.role === 'error') {
     return (
       <div style={{ color: theme.danger, fontSize: 12.5, margin: '8px 0', overflowWrap: 'anywhere' }}>
-        ⚠ {msg.text}
+        ⚠ {t(msg.text)}
       </div>
     );
+  }
+
+  // End-of-run card: what the run changed and the timeline review (specs/10).
+  if (msg.role === 'summary') {
+    return msg.summary
+      ? <RunSummaryCard summary={msg.summary} running={running} onSelectClips={onSelectClips} onFixIssue={onFixIssue} />
+      : null;
   }
 
   // Quiet system line (which tool calls failed in a run that still completed).

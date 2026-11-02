@@ -6,7 +6,9 @@ export const EDIT_ASSET_TOOL_SCHEMAS: AgentToolSchema[] = [
     description: [
       'Update or delete media-pool assets, not timeline clips; use move_item/remove_item for clips.',
       'action=update changes name, props, or exact sourceTimecode/captureClock metadata; code assets such as generated motion graphics may receive new code,',
-      'which must pass sandbox compilation before any change is saved. Clock metadata uses normalized frameCount + rational frameRate + dropFrame.',
+      'which must pass sandbox compilation before any change is saved. New code also replaces the code of every clip of that asset already on the timeline',
+      '(each clip keeps its own props, timing, transitions and effects; the result reports updatedClips), so do not delete and re-place clips to refresh them.',
+      'Clock metadata uses normalized frameCount + rational frameRate + dropFrame.',
     ].join(' '),
     input_schema: {
       type: 'object',
@@ -14,8 +16,8 @@ export const EDIT_ASSET_TOOL_SCHEMAS: AgentToolSchema[] = [
         action: { type: 'string', enum: ['update', 'delete'] },
         assetId: { type: 'string', description: 'Target asset id or unique prefix.' },
         name: { type: 'string', description: 'update: new display name.' },
-        code: { type: 'string', description: 'update: new source for a code asset such as motion graphics; sandbox-validated.' },
-        props: { type: 'object', description: 'update: merge into asset props to change defaults.' },
+        code: { type: 'string', description: 'update: new source for a code asset such as motion graphics; sandbox-validated; also applied to its placed clips.' },
+        props: { type: 'object', description: 'update: merge into asset props to change defaults for new placements; placed clips keep their own props (use update_item_props for those).' },
         favorite: { type: 'boolean', description: 'update: favorite flag.' },
         sourceTimecode: {
           type: 'object',

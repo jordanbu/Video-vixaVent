@@ -291,6 +291,11 @@ Edit what is there — never regenerate to restructure. The author has already a
   `create_motion_graphic_from_code`: that throws away the approved design and ships a different one.
 - **Change text, colour or timing:** edit the existing clip's props or asset (`edit_asset`) and say
   what changed.
+- **Redesign or animate the scene** ("add illustrations", "give it more life"): rewrite the asset
+  code with `edit_asset` (action `update`, full `code`). The new code reaches every clip of that
+  asset already on the timeline (`updatedClips` in the result); each clip keeps its own props,
+  timing, transitions and effects, so never delete and re-place the clips to refresh them. Keep the
+  same prop keys so the per-clip texts still apply.
 - Generate a new graphic only when the author asks for a new or different design.
 
 ## Implementation Rules

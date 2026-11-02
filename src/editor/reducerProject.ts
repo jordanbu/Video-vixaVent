@@ -124,13 +124,23 @@ export function projectReduce(p: ProjectDoc, a: AnyAction): ProjectDoc {
         const updated = sourceChanged
           ? { ...next, sourceRevision: revisionAfterRelink(asset, { ...next, sourceRevision: undefined }) }
           : next;
-        const timelines = a.patch.name === undefined || a.patch.name === asset.name
+        const renamed = a.patch.name !== undefined && a.patch.name !== asset.name;
+        // A new motion-graphic source reaches every placed clip (specs/10): each clip keeps a
+        // copy of the code, and leaving the old copy made "improve this scene" change nothing on
+        // the timeline. Only `code` moves; each clip keeps its own props, timing and effects.
+        const recoded = asset.kind === 'motion-graphic' && typeof a.patch.code === 'string' && a.patch.code !== asset.code;
+        const timelines = !renamed && !recoded
           ? p.timelines
           : p.timelines.map((timeline) => mapTimelineAssetItems(
               timeline,
               asset,
               p.assets,
-              (item) => ({ ...item, sourceAssetId: asset.id, name: a.patch.name! }),
+              (item) => {
+                let next = item;
+                if (renamed) next = { ...next, sourceAssetId: asset.id, name: a.patch.name! };
+                if (recoded && item.kind === 'motion-graphic' && item.code !== a.patch.code) next = { ...next, code: a.patch.code };
+                return next;
+              },
             ));
         return {
           ...p,

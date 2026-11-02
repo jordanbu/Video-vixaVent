@@ -1,6 +1,7 @@
 import type * as AgentRuntime from './runtime';
 import type { LLMMessage } from './runtime';
 import type { AgentReference } from './context';
+import type { RunSummaryData } from './runSummary';
 import { getLocale, localeLanguageName } from '../i18n/locale';
 
 export interface AgentRetryOptions {
@@ -13,9 +14,14 @@ export interface AgentRetry extends AgentRetryOptions {
 }
 
 export interface DisplayMessage {
-  /** `note`: a muted system line (e.g. which tool calls failed in a completed run); never sent to the model. */
-  role: 'user' | 'assistant' | 'tool' | 'error' | 'continue' | 'note';
+  /**
+   * `note`: a muted system line (e.g. which tool calls failed in a completed run); never sent to the model.
+   * `summary`: the end-of-run card — what the run changed and the timeline review (specs/10); never sent to the model.
+   */
+  role: 'user' | 'assistant' | 'tool' | 'error' | 'continue' | 'note' | 'summary';
   text: string;
+  /** `summary` only. */
+  summary?: RunSummaryData;
   thinking?: string;
   retry?: AgentRetry;
   tool?: { name: string; args: unknown; result: unknown };

@@ -13,6 +13,7 @@ import {
   createPendingProposal,
   discardUnexposedProposal,
   exposePendingProposal,
+  appendRunSummaryCard,
   finalizeRunSession,
   landProposedOperations,
   type AgentTurn,
@@ -346,6 +347,7 @@ async function finalizeCompletedTurn(
   turn.persistentBeforeDoc = null;
   if (turn.liveEdits && turn.ops.length) await landProposedOperations(turn);
   finalizeRunSession(turn);
+  if (!turn.ops.length && turn.toolCallCount === 0) appendRunSummaryCard(turn); // specs/10; proposals get it when applied
   if (!turn.ops.length) {
     // A run may legitimately end with no proposed edits (pure reads, or only
     // pool imports committed above). toolCallCount counts only tools that

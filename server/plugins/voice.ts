@@ -4,6 +4,7 @@ import type { Plugin } from 'vite';
 import { generateAiVoice, isAiVoiceProvider } from './voice-ai-sdk.ts';
 import { saveVoiceAudio, saveVoiceSubtitle } from './voice-media.ts';
 import { doubaoVoice, elevenLabsVoice, fishAudioVoice, inworldVoice, minimaxVoice, speechifyVoice } from './voice-providers.ts';
+import { systemVoice } from './voice-system.ts';
 import type { VoiceOptions, VoiceProvider, VoiceRequest } from './voice-types.ts';
 import { validateVoiceRequest } from './voice-validation.ts';
 
@@ -44,6 +45,11 @@ export function voiceGenerationPlugin(options: VoiceOptions): Plugin {
         if (req.method !== 'POST') { sendJson(res, 405, { error: 'method not allowed — use POST' }); return; }
         try {
           const input = validateVoiceRequest(await readJson(req));
+          if (input.provider === 'system') {
+            const audio = await systemVoice(input);
+            sendJson(res, 200, await saveVoiceAudio(audio.bytes, audio.codec, audio.sampleRate));
+            return;
+          }
           if (isAiVoiceProvider(input.provider)) {
             const audio = await generateAiVoice(options, input);
             const saved = await saveVoiceAudio(audio.bytes, audio.codec, audio.sampleRate);

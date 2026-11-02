@@ -1,5 +1,6 @@
 import type { MediaAsset, TimelineState } from '../editor/types';
 import type { MinimaxLanguageBoost } from '../../shared/media-provider-params';
+import { t } from '../i18n/locale';
 
 export type VoiceProvider =
   | 'elevenlabs'
@@ -11,7 +12,9 @@ export type VoiceProvider =
   | 'openai'
   | 'gemini'
   | 'mistral'
-  | 'cartesia';
+  | 'cartesia'
+  /** macOS built-in voice: no key, no network, draft quality (specs/10). */
+  | 'system';
 
 export interface SubmitVoiceArgs {
   provider: VoiceProvider;
@@ -90,7 +93,7 @@ export async function submitVoice(args: SubmitVoiceArgs, state: TimelineState): 
   const text = args.text.trim();
   const voiceId = args.voiceId.trim();
   if (!text) throw new Error('text is required');
-  if (!voiceId && !args.timbreWeights?.length && args.provider !== 'doubao') {
+  if (!voiceId && !args.timbreWeights?.length && args.provider !== 'doubao' && args.provider !== 'system') {
     throw new Error('voiceId is required unless MiniMax timbreWeights are provided');
   }
   const response = await fetch('/generate/voice', {
@@ -107,7 +110,7 @@ export async function submitVoice(args: SubmitVoiceArgs, state: TimelineState): 
   const props = result.subtitlePath ? { minimaxSubtitlePath: result.subtitlePath, minimaxSubtitleType: args.subtitleType ?? 'sentence' } : undefined;
   return {
     id: newId(),
-    name: args.name?.trim() || `Voice · ${voiceId || args.provider}`,
+    name: args.name?.trim() || (args.provider === 'system' ? t('系统语音（临时）') : `Voice · ${voiceId || args.provider}`),
     kind: 'audio',
     src: result.path,
     durationInFrames,

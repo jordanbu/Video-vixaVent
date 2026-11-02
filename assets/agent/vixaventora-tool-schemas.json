@@ -1335,7 +1335,7 @@
     },
     {
       "name": "submit_voice",
-      "description": "Generate one TTS audio asset with ElevenLabs, Doubao, MiniMax, Inworld, Fish Audio, Speechify, OpenAI, Gemini, Mistral, or Cartesia. Creates a media-pool asset only; it does not place or replace timeline items. Confirm a configured provider and concrete provider-specific voice; MiniMax timbreWeights may mix voices with an empty voiceId.",
+      "description": "Generate one TTS audio asset with ElevenLabs, Doubao, MiniMax, Inworld, Fish Audio, Speechify, OpenAI, Gemini, Mistral, Cartesia, or the macOS system voice (provider=system: no key, offline, draft quality — use it for a provisional narration to time against the edit, or when no voice provider is configured and the user accepts a draft; prefer a configured provider for final narration). Returns durationInFrames, so narration can be generated line by line and placed at each scene start. Creates a media-pool asset only; it does not place or replace timeline items. Confirm a configured provider and concrete provider-specific voice; MiniMax timbreWeights may mix voices with an empty voiceId.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -1351,9 +1351,10 @@
               "openai",
               "gemini",
               "mistral",
-              "cartesia"
+              "cartesia",
+              "system"
             ],
-            "description": "Required opt-in provider. Use only a provider listed as configured in capabilities. Voice IDs and catalogs are never interchangeable."
+            "description": "Required opt-in provider. Use only a provider listed as configured in capabilities, or system (macOS voice, always available there, draft quality; voiceId optional: Paulina for es, Samantha for en, or another installed macOS voice name). Voice IDs and catalogs are never interchangeable."
           },
           "text": {
             "type": "string",
@@ -1378,7 +1379,7 @@
             "type": "number",
             "minimum": 0.5,
             "maximum": 2,
-            "description": "ElevenLabs (0.7–1.2), MiniMax (0.5–2), OpenAI, or Cartesia only. Defaults to 1; provider/model support is validated server-side."
+            "description": "ElevenLabs (0.7–1.2), MiniMax (0.5–2), OpenAI, Cartesia, or system (0.5–2) only. Defaults to 1; provider/model support is validated server-side."
           },
           "similarityBoost": {
             "type": "number",
@@ -1398,7 +1399,7 @@
           },
           "languageCode": {
             "type": "string",
-            "description": "ElevenLabs or Cartesia only. Provider/model support is validated server-side."
+            "description": "ElevenLabs, Cartesia, or system (picks the default voice: es → Paulina, en → Samantha). Provider/model support is validated server-side."
           },
           "seed": {
             "type": "integer",
@@ -3616,7 +3617,7 @@
     },
     {
       "name": "edit_asset",
-      "description": "Update or delete media-pool assets, not timeline clips; use move_item/remove_item for clips. action=update changes name, props, or exact sourceTimecode/captureClock metadata; code assets such as generated motion graphics may receive new code, which must pass sandbox compilation before any change is saved. Clock metadata uses normalized frameCount + rational frameRate + dropFrame.",
+      "description": "Update or delete media-pool assets, not timeline clips; use move_item/remove_item for clips. action=update changes name, props, or exact sourceTimecode/captureClock metadata; code assets such as generated motion graphics may receive new code, which must pass sandbox compilation before any change is saved. New code also replaces the code of every clip of that asset already on the timeline (each clip keeps its own props, timing, transitions and effects; the result reports updatedClips), so do not delete and re-place clips to refresh them. Clock metadata uses normalized frameCount + rational frameRate + dropFrame.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -3637,11 +3638,11 @@
           },
           "code": {
             "type": "string",
-            "description": "update: new source for a code asset such as motion graphics; sandbox-validated."
+            "description": "update: new source for a code asset such as motion graphics; sandbox-validated; also applied to its placed clips."
           },
           "props": {
             "type": "object",
-            "description": "update: merge into asset props to change defaults."
+            "description": "update: merge into asset props to change defaults for new placements; placed clips keep their own props (use update_item_props for those)."
           },
           "favorite": {
             "type": "boolean",

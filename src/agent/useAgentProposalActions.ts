@@ -10,6 +10,7 @@ import {
 import { saveAutomaticVersion } from '../persist/versionStore';
 import { saveProject } from '../persist/projectStore';
 import { appendAgentChange, createAgentChangeSession } from './changeLog';
+import { appendRunSummary } from './runSummary';
 import { isProposalStale, type Proposal } from './proposal';
 import { appendRejectedProposal } from './agent-session';
 import { recordProposalOutcome } from './useAgentPersistence';
@@ -73,6 +74,8 @@ function commitAppliedUi(
   state.ctxRef.current.commands.applyDoc(result);
   const session = createAgentChangeSession(proposal.summary, chosen, currentDoc, result);
   state.setChangeLog((current) => appendAgentChange(current, session));
+  // End-of-run card for an approved proposal (specs/10).
+  state.setMessages((current) => appendRunSummary(current, currentDoc, result));
   state.llmRef.current.push({
     role: 'user',
     content: `（已应用提案：${chosen.length}/${proposal.options[0].operations.length} 项操作。）`,

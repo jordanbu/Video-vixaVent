@@ -125,8 +125,29 @@ function validateAiProvider(input: VoiceRequest, provider: 'openai' | 'gemini' |
   `${provider} only accepts text, voiceId, modelId, speed, languageCode, outputFormat, and instructions`);
 }
 
+/** System voice (macOS `say`): text, an optional installed voice name, speed and language. */
+function validateSystemVoice(input: VoiceRequest): ValidVoiceRequest {
+  const text = String(input.text ?? '').trim();
+  if (!text) throw new Error('text is required');
+  range(input.speed, 0.5, 2, 'speed');
+  if (input.languageCode != null && !/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(input.languageCode)) {
+    throw new Error('languageCode must be an ISO language code');
+  }
+  reject([input.stability, input.similarityBoost, input.style, input.useSpeakerBoost, input.seed, input.modelId,
+    input.optimizeStreamingLatency, input.enableLogging, input.applyTextNormalization, input.applyLanguageTextNormalization,
+    input.pronunciationDictionaryLocators, input.previousText, input.nextText, input.previousRequestIds, input.nextRequestIds,
+    input.speedRatio, input.emotion, input.loudnessRatio, input.pitch, input.volume, input.instructions, input.outputFormat,
+    input.sampleRate, input.bitrate, input.audioFormat, input.channel,
+    input.forceCbr, input.stream, input.excludeAggregatedAudio, input.languageBoost, input.textNormalization,
+    input.latexRead, input.pronunciations, input.timbreWeights, input.voiceModify, input.subtitleEnable, input.subtitleType],
+  'the system voice only accepts text, voiceId, speed, and languageCode');
+  return { ...input, provider: 'system', text, voiceId: String(input.voiceId ?? '').trim(),
+    outputFormat: 'wav', sampleRate: 48_000, audioFormat: 'wav', channel: 1 };
+}
+
 export function validateVoiceRequest(input: VoiceRequest): ValidVoiceRequest {
   const provider = input.provider;
+  if (provider === 'system') return validateSystemVoice(input);
   if (provider !== 'elevenlabs' && provider !== 'doubao' && provider !== 'minimax'
     && provider !== 'inworld' && provider !== 'fishaudio' && provider !== 'speechify' && !isAiProvider(provider)) {
     throw new Error('unsupported voice provider');
