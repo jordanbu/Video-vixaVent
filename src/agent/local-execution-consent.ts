@@ -4,7 +4,9 @@
 // install_skill downloads a GitHub repo there. The agent can also write that directory's
 // SKILL.md (manage_skill), so `bash SKILL.md` runs text the model wrote: no binary
 // whitelist can contain that. One prompt injection was enough. The user now sees the exact
-// skill and command and says yes or no to each call. External MCP agents keep their own
+// skill and command and decides each call — or allows one skill for the rest of the
+// session. The editor shows a card (local-execution-prompts.ts + LocalExecutionPrompt.tsx);
+// without one mounted, a native confirm asks instead. External MCP agents keep their own
 // one-shot approval card (external-bridge-runtime.ts) and never reach this prompt.
 // See specs/08-confirmar-ejecucion-local.md.
 import { t } from '../i18n/locale';
@@ -16,19 +18,48 @@ export const LOCAL_EXECUTION_TOOLS: ReadonlySet<string> = new Set(['run_skill_sc
 export const LOCAL_EXECUTION_DECLINED =
   'The user did not allow this to run on their machine. Do not retry it unless they ask; continue without it or explain what it would have done.';
 
-export type LocalExecutionConfirmer = (message: string) => boolean | Promise<boolean>;
+export type LocalExecutionTool = 'run_skill_script' | 'install_skill';
+
+/** What the user is asked about. `message` is the full question, for a plain dialog. */
+export interface LocalExecutionRequest {
+  readonly id: string;
+  readonly tool: LocalExecutionTool;
+  /** run_skill_script: the skill slug and the command line. */
+  readonly skill?: string;
+  readonly command?: string;
+  /** install_skill: the GitHub repo. */
+  readonly repo?: string;
+  readonly message: string;
+}
+
+/** `allow-skill-session`: this call and every later script of the same skill until reload. */
+export type LocalExecutionDecision = 'allow' | 'allow-skill-session' | 'deny';
+
+/** Booleans are accepted for plain dialogs and verification seams (true = allow once). */
+export type LocalExecutionConfirmer = (
+  request: LocalExecutionRequest,
+  signal?: AbortSignal,
+) => LocalExecutionDecision | boolean | Promise<LocalExecutionDecision | boolean>;
 
 /** Native dialog, like the app's other destructive confirmations. No window → no. */
-const browserConfirm: LocalExecutionConfirmer = (message) =>
-  typeof window !== 'undefined' && typeof window.confirm === 'function' ? window.confirm(message) : false;
+export const browserLocalExecutionConfirmer: LocalExecutionConfirmer = (request) =>
+  typeof window !== 'undefined' && typeof window.confirm === 'function' ? window.confirm(request.message) : false;
 
-let confirmer: LocalExecutionConfirmer = browserConfirm;
+let confirmer: LocalExecutionConfirmer = browserLocalExecutionConfirmer;
 
-/** Verification seam. Returns the previous confirmer so a check can restore it. */
+/** Skills the user allowed for this session. In memory only: a reload asks again. */
+const allowedSkills = new Set<string>();
+
+/** Verification and UI seam. Returns the previous confirmer so the caller can restore it. */
 export function setLocalExecutionConfirmer(next: LocalExecutionConfirmer): LocalExecutionConfirmer {
   const previous = confirmer;
   confirmer = next;
   return previous;
+}
+
+/** Forget every "allow for this session" (verification seam; a reload does the same). */
+export function resetLocalExecutionSession(): void {
+  allowedSkills.clear();
 }
 
 const MAX_SHOWN_CHARS = 600;
@@ -37,29 +68,58 @@ const shown = (value: unknown): string => {
   return text.length > MAX_SHOWN_CHARS ? `${text.slice(0, MAX_SHOWN_CHARS)}…` : text;
 };
 
-/** The question shown to the user, or null when the tool runs nothing locally. */
-export function localExecutionPrompt(name: string, args: Readonly<Record<string, unknown>>): string | null {
+let nextId = 0;
+
+/** The question for a tool call, or null when the tool runs nothing locally. */
+export function localExecutionRequest(name: string, args: Readonly<Record<string, unknown>>): LocalExecutionRequest | null {
+  nextId += 1;
+  const id = `local-exec-${nextId}`;
   if (name === 'run_skill_script') {
-    return t('智能体想在这台电脑上运行技能「{skill}」的命令：\n\n{command}\n\n只有信任这个技能时才允许。要允许吗？', {
-      skill: shown(args.skill),
-      command: shown(args.command),
-    });
+    const skill = shown(args.skill);
+    const command = shown(args.command);
+    return {
+      id, tool: name, skill, command,
+      message: t('智能体想在这台电脑上运行技能「{skill}」的命令：\n\n{command}\n\n只有信任这个技能时才允许。要允许吗？', { skill, command }),
+    };
   }
   if (name === 'install_skill') {
-    return t('智能体想从 GitHub 安装技能：{repo}\n\n安装后，它的脚本可以在这台电脑上运行。只有信任来源时才允许。要允许吗？', {
-      repo: shown(args.repo),
-    });
+    const repo = shown(args.repo);
+    return {
+      id, tool: name, repo,
+      message: t('智能体想从 GitHub 安装技能：{repo}\n\n安装后，它的脚本可以在这台电脑上运行。只有信任来源时才允许。要允许吗？', { repo }),
+    };
   }
   return null;
 }
 
-/** True when the tool may run: it runs nothing locally, or the user said yes. */
-export async function confirmLocalExecution(name: string, args: Readonly<Record<string, unknown>>): Promise<boolean> {
-  const message = localExecutionPrompt(name, args);
-  if (message === null) return true;
+/** The plain-dialog question (kept for callers that only need the text). */
+export function localExecutionPrompt(name: string, args: Readonly<Record<string, unknown>>): string | null {
+  return localExecutionRequest(name, args)?.message ?? null;
+}
+
+const normalize = (answer: unknown): LocalExecutionDecision =>
+  answer === true || answer === 'allow' ? 'allow' : answer === 'allow-skill-session' ? 'allow-skill-session' : 'deny';
+
+/** True when the tool may run: it runs nothing locally, the skill is allowed for the session, or the user said yes. */
+export async function confirmLocalExecution(
+  name: string,
+  args: Readonly<Record<string, unknown>>,
+  signal?: AbortSignal,
+): Promise<boolean> {
+  const request = localExecutionRequest(name, args);
+  if (request === null) return true;
+  if (request.tool === 'run_skill_script' && request.skill && allowedSkills.has(request.skill)) return true;
+  if (signal?.aborted) return false;
+  let decision: LocalExecutionDecision;
   try {
-    return (await confirmer(message)) === true;
+    decision = normalize(await confirmer(request, signal));
   } catch {
     return false;
   }
+  if (signal?.aborted) return false;
+  // "This session" only widens a script grant: an install is a one-off by nature.
+  if (decision === 'allow-skill-session' && request.tool === 'run_skill_script' && request.skill) {
+    allowedSkills.add(request.skill);
+  }
+  return decision !== 'deny';
 }

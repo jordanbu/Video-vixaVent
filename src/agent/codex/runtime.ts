@@ -212,7 +212,7 @@ export async function executeVixaventoraTool(
     await prepareToolBoundary(schema, args, execution, state);
     throwIfToolAborted(execution.signal, state);
     // Code that runs on this machine needs the user's yes for this call (specs/08).
-    if (!(await confirmLocalExecution(schema.name, state.invocationArgs))) {
+    if (!(await confirmLocalExecution(schema.name, state.invocationArgs, execution.signal))) {
       throw new ToolBoundaryError(LOCAL_EXECUTION_DECLINED, {
         kind: 'denied', code: 'user_declined', summary: 'The user declined local execution.',
       });

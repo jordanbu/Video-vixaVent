@@ -420,6 +420,14 @@ export default {
   '模式标签·Agent': 'Agent',
   '模式标签·问答': 'Q&A',
   // Local-execution consent (src/agent/local-execution-consent.ts).
+  '智能体想在这台电脑上运行代码': 'The agent wants to run code on this computer',
+  '技能「{skill}」的命令：': 'Command from the skill “{skill}”:',
+  '从 GitHub 安装技能：': 'Install a skill from GitHub:',
+  '只有信任这个技能时才允许。': 'Only allow it if you trust this skill.',
+  '安装后，它的脚本可以在这台电脑上运行。只有信任来源时才允许。': 'Once installed, its scripts can run on this computer. Only allow it if you trust the source.',
+  '不允许': 'Don\'t allow',
+  '本次会话中始终允许这个技能': 'Always allow this skill this session',
+  '允许': 'Allow',
   '智能体想在这台电脑上运行技能「{skill}」的命令：\n\n{command}\n\n只有信任这个技能时才允许。要允许吗？': 'The agent wants to run this command from the skill “{skill}” on this computer:\n\n{command}\n\nOnly allow it if you trust this skill. Allow it?',
   '智能体想从 GitHub 安装技能：{repo}\n\n安装后，它的脚本可以在这台电脑上运行。只有信任来源时才允许。要允许吗？': 'The agent wants to install a skill from GitHub: {repo}\n\nOnce installed, its scripts can run on this computer. Only allow it if you trust the source. Allow it?',
 } as Record<string, string>;
