@@ -192,7 +192,7 @@ export async function materializeBlobMedia<T extends object>(
   if (failed.length > 0) {
     const detail = failed
       .map((item) => `${item.name ? `${item.name} (${item.source})` : item.source}: ${item.message}`)
-      .join('、');
+      .join(', ');
     throw new ExportFailureError(createExportFailure({
       stage: 'preflight',
       code: 'export_media_not_ready',

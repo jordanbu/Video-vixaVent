@@ -202,7 +202,7 @@ try {
   const browserOom = await outOfMemoryMessage();
   assert.match(browserOom, /Whisper Medium/, 'the message names the model the user sees in settings');
   assert.match(browserOom, /Settings → Local models → Local transcription/);
-  assert.match(browserOom, /桌面版/, 'a browser user is pointed at the desktop app');
+  assert.match(browserOom, /desktop app/, 'a browser user is pointed at the desktop app');
   assert.doesNotMatch(browserOom, /exhausted the wasm heap/, 'the raw worker text is replaced');
   Object.defineProperty(globalThis, 'window', {
     configurable: true, value: { vixaventoraDesktop: { inference: {} } },

@@ -17,28 +17,28 @@ invent a preset or `/voice-samples/...` URL.
 
 Use Doubao for Chinese-optimized narration.
 
-| Preset               | Official display | English display      | Tags                                                           | Selection hint                                                |
-| -------------------- | ---------------- | -------------------- | -------------------------------------------------------------- | ------------------------------------------------------------- |
-| `vivi`               | Vivi             | Vivi                 | female, young, friendly, general, short-explainer              | Everyday Chinese narration, product intros, short explainers  |
-| `xiaohe`             | 小何             | Xiaohe               | female, young, soft, calm, tutorial, walkthrough               | Calm tutorials, product walkthroughs, instructional narration |
-| `yunzhou`            | 云舟             | Yunzhou              | male, young, neutral, business, explainer                      | Business explainers, factual reads, product narration         |
-| `xiaotian`           | 小天             | Xiaotian             | male, young, bright, upbeat, casual                            | Casual creator-style videos and light social narration        |
-| `naiqimengwa`        | 奶气萌娃         | Childlike Boy        | male, child, cute, storybook, character                        | Cute boy character lines and children's stories               |
-| `yingtaowanzi`       | 樱桃丸子         | Cherry Voice         | female, child, cartoon, roleplay, character                    | Animated/kid-oriented character dialogue                      |
-| `wenroumama`         | 温柔妈妈         | Warm Mom             | female, middle-aged, warm, family, gentle                      | Family, lifestyle, parenting, gentle explanations             |
-| `zhixingnv`          | 知性女声         | Knowledgeable Female | female, middle-aged, calm, knowledge, explainer                | Education, culture, thoughtful explainers                     |
-| `dayi`               | 大壹             | Dayi                 | male, young, steady, formal, documentary, video-voiceover      | Formal voiceover, documentary, corporate narration            |
-| `jitangnv`           | 鸡汤女           | Inspirational Female | female, young, warm, inspirational, emotional, video-voiceover | Motivational, uplifting, emotional video narration            |
-| `liuchang`           | 流畅女声         | Smooth Female        | female, young, smooth, polished, video-voiceover, narration    | Clean product narration and polished video voiceover          |
-| `ruyayichen`         | 儒雅逸辰         | Yichen               | male, young, elegant, premium, culture, video-voiceover        | Cultural, premium, poetic, documentary-style narration        |
-| `morgan`             | Morgan           | Morgan               | male, middle-aged, deep, knowledge, explainer                  | Deep knowledge explainer, documentary, serious narration      |
-| `qingcang`           | 擎苍             | Qingcang             | male, old-like, authoritative, audiobook, character            | Weighty narration, dramatic reads, audiobook scenes           |
-| `huiben`             | 儿童绘本         | Storybook Voice      | female, young, gentle, storybook, audiobook                    | Gentle storybook or bedtime-style narration                   |
-| `popo`               | 婆婆             | Grandma              | female, old, warm, story, character                            | Grandmother characters, folk stories, nostalgic narration     |
-| `yuanboxiaoshu`      | 渊博小叔         | Erudite Uncle        | male, middle-aged, knowledge, calm, explainer                  | Calm explainers, cultural commentary, educational narration   |
-| `baqiqingshu`        | 霸气青叔         | Confident Uncle      | male, middle-aged, confident, audiobook, narrative             | Audiobook narration, long-form stories, dramatic reads        |
-| `shuanglangshaonian` | 爽朗少年         | Cheerful Teen        | male, young, cheerful, youthful, roleplay, character           | Bright roleplay, teen/creator dialogue, youthful scenes       |
-| `tangseng`           | 唐僧             | Tang Seng            | male, old-like, calm, roleplay, character                      | Monk-like dialogue, traditional stories, steady narration     |
+| Preset               | English display      | Tags                                                           | Selection hint                                                |
+| -------------------- | -------------------- | -------------------------------------------------------------- | ------------------------------------------------------------- |
+| `vivi`               | Vivi                 | female, young, friendly, general, short-explainer              | Everyday Chinese narration, product intros, short explainers  |
+| `xiaohe`             | Xiaohe               | female, young, soft, calm, tutorial, walkthrough               | Calm tutorials, product walkthroughs, instructional narration |
+| `yunzhou`            | Yunzhou              | male, young, neutral, business, explainer                      | Business explainers, factual reads, product narration         |
+| `xiaotian`           | Xiaotian             | male, young, bright, upbeat, casual                            | Casual creator-style videos and light social narration        |
+| `naiqimengwa`        | Childlike Boy        | male, child, cute, storybook, character                        | Cute boy character lines and children's stories               |
+| `yingtaowanzi`       | Cherry Voice         | female, child, cartoon, roleplay, character                    | Animated/kid-oriented character dialogue                      |
+| `wenroumama`         | Warm Mom             | female, middle-aged, warm, family, gentle                      | Family, lifestyle, parenting, gentle explanations             |
+| `zhixingnv`          | Knowledgeable Female | female, middle-aged, calm, knowledge, explainer                | Education, culture, thoughtful explainers                     |
+| `dayi`               | Dayi                 | male, young, steady, formal, documentary, video-voiceover      | Formal voiceover, documentary, corporate narration            |
+| `jitangnv`           | Inspirational Female | female, young, warm, inspirational, emotional, video-voiceover | Motivational, uplifting, emotional video narration            |
+| `liuchang`           | Smooth Female        | female, young, smooth, polished, video-voiceover, narration    | Clean product narration and polished video voiceover          |
+| `ruyayichen`         | Yichen               | male, young, elegant, premium, culture, video-voiceover        | Cultural, premium, poetic, documentary-style narration        |
+| `morgan`             | Morgan               | male, middle-aged, deep, knowledge, explainer                  | Deep knowledge explainer, documentary, serious narration      |
+| `qingcang`           | Qingcang             | male, old-like, authoritative, audiobook, character            | Weighty narration, dramatic reads, audiobook scenes           |
+| `huiben`             | Storybook Voice      | female, young, gentle, storybook, audiobook                    | Gentle storybook or bedtime-style narration                   |
+| `popo`               | Grandma              | female, old, warm, story, character                            | Grandmother characters, folk stories, nostalgic narration     |
+| `yuanboxiaoshu`      | Erudite Uncle        | male, middle-aged, knowledge, calm, explainer                  | Calm explainers, cultural commentary, educational narration   |
+| `baqiqingshu`        | Confident Uncle      | male, middle-aged, confident, audiobook, narrative             | Audiobook narration, long-form stories, dramatic reads        |
+| `shuanglangshaonian` | Cheerful Teen        | male, young, cheerful, youthful, roleplay, character           | Bright roleplay, teen/creator dialogue, youthful scenes       |
+| `tangseng`           | Tang Seng            | male, old-like, calm, roleplay, character                      | Monk-like dialogue, traditional stories, steady narration     |
 
 Important caveat: the current Doubao `seed-audio-1.0` endpoint does not expose
 emotion, performance-prompt, or dialect controls. `qingcang` and `tangseng` are
@@ -53,7 +53,7 @@ text; the speaker comes from `references[].speaker`.
 A raw Volcengine speaker ID the user supplies (for example `S_5wulnA7i2`, or an
 official `zh_female_..._bigtts` ID) is a valid `voiceId` and is sent verbatim as
 `references[].speaker`; it takes priority over curated aliases. When Settings →
-配音 / TTS → 豆包 TTS has a default 音色 ID, omitting `voiceId` uses that saved
+Voiceover / TTS → Doubao TTS has a default voice ID, omitting `voiceId` uses that saved
 speaker. Never shorten, translate, or alter a supplied speaker ID.
 
 ## ElevenLabs English / Multilingual Voices

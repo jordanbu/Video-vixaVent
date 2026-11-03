@@ -78,7 +78,7 @@ async function exportMgBatch(context: ArtifactExportContext, signal?: AbortSigna
   }
   const destinationId = exportHistoryDestinationId(context.destination);
   void recordExport({
-    name: `${mgItems.length} 个 MG · ProRes 4444`,
+    name: context.t('{n} MG layers · ProRes 4444', { n: mgItems.length }),
     format: 'video',
     codec: 'prores',
     createdAt: Date.now(),

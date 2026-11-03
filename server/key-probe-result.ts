@@ -53,7 +53,7 @@ export function minimaxPostCheck(bodyText: string): string | null {
   }
 }
 
-/** Doubao 音频生成新版接口：HTTP 200 也可能带业务 code，非 0 即失败。 */
+/** Doubao's new audio-generation API: even an HTTP 200 may carry a business code; anything non-zero is a failure. */
 export function doubaoPostCheck(bodyText: string): string | null {
   try {
     const body = JSON.parse(bodyText) as { code?: number; message?: string };

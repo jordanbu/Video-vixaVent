@@ -18,7 +18,7 @@ export function jianyingDraftTarget(
   return store === 'custom' ? { draftsDir: customDir.trim() } : { store, draftsDir: '' };
 }
 
-/** Where the Chinese JianYing (剪映专业版) app keeps drafts by default, as the
+/** Where the Chinese JianYing (JianYing Pro) app keeps drafts by default, as the
  * dialog shows it; drafts in 6.0+ are encrypted and capcut-cli cannot decrypt
  * them, hence the ≤5.9 note. */
 export function jianyingStoreHint(windows: boolean): string {

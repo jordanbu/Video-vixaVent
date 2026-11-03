@@ -20,7 +20,7 @@ const W: TranscriptWord[] = [
 const encodeWordRef = (scope: readonly string[], generationId: string, wordId: string): string =>
   `cw2.${encodeURIComponent(JSON.stringify([...scope, generationId, wordId]))}`;
 
-// ── edit 层:retimeWords 与 keptWordIndices 在 playOrder 下位置对齐 ─────────
+// ── edit layer: retimeWords and keptWordIndices stay aligned under playOrder ──
 {
   const playOrder = [2, 3, 0, 1]; // C D A B
   const words = retimeWords(W, new Set(), fps, 0, { playOrder });
@@ -33,7 +33,7 @@ const encodeWordRef = (scope: readonly string[], generationId: string, wordId: s
   console.log('retimeWords/keptWordIndices alignment: OK');
 }
 
-// ── resolve 层:单源音频 + playOrder,words/indices/refs 三方按位对齐 ────────
+// ── resolve layer: single-source audio + playOrder keep words/indices/refs aligned ──
 {
   const item = {
     id: 'clip1', track: 'A1', startFrame: 0, durationInFrames: 120, kind: 'audio',
@@ -57,7 +57,7 @@ const encodeWordRef = (scope: readonly string[], generationId: string, wordId: s
   console.log('resolveCaptionWords/Indices/Refs alignment: OK');
 }
 
-// ── wordTimelineFrame:音频删词流投影 ───────────────────────────────────────
+// ── wordTimelineFrame: projection of an audio stream with deleted words ──
 {
   const item = {
     id: 'clip1', track: 'A1', startFrame: 100, durationInFrames: 60, kind: 'audio',
@@ -69,13 +69,13 @@ const encodeWordRef = (scope: readonly string[], generationId: string, wordId: s
     'word after a deletion seeks to its EDITED position (not source position)');
   assert.equal(wordTimelineFrame(item, W[1]!, fps), 130,
     'deleted word at a cut seeks to the cut point where playback resumes');
-  // 与渲染层一致:retimeWords 的 start 换算成帧应与 seek 目标一致
+  // Same as the render layer: retimeWords' start converted to frames must match the seek target
   const projected = retimeWords(W.slice(0, 3), new Set([1]), fps, item.startFrame, {});
   assert.equal(Math.round((projected[1]!.start / 1000) * fps), 130, 'seek matches render projection');
   console.log('wordTimelineFrame audio: OK');
 }
 
-// ── wordTimelineFrame:视频窗口 + 变速投影 ─────────────────────────────────
+// ── wordTimelineFrame: video window + speed-change projection ──
 {
   const base = {
     id: 'v1', track: 'V1', startFrame: 10, durationInFrames: 100, kind: 'video',

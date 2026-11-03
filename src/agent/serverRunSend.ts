@@ -1,3 +1,4 @@
+import { t } from '../i18n/locale';
 import type { AgentContext } from './context';
 import { TOOL_SCHEMAS } from './tools';
 import { ASK_MODE_TOOL_SCHEMAS } from './ask-mode-tools';
@@ -362,7 +363,7 @@ async function confirmUncertainAdmission(
       if (!active.abort.signal.aborted) {
         surfaceAdmissionFailure(
           environment,
-          `服务端任务未能启动：${error instanceof Error ? error.message : String(error)}`,
+          t('The server task could not start: {error}', { error: error instanceof Error ? error.message : String(error) }),
         );
       }
       settleUnacceptedFailure(environment, active, true);
@@ -442,7 +443,7 @@ export async function sendServerRun(
   if (!await acquireServerRunOwnership(environment.projectId, prepared.payload.runId)) {
     environment.appendMessage({
       role: 'error',
-      text: '服务端任务已由另一个页面接管，本页不会重复执行。',
+      text: t('Another page took over the server task; this page will not run it again.'),
     });
     return;
   }

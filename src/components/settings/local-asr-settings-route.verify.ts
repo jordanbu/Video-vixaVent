@@ -1,5 +1,5 @@
-// #126: Settings → 转写 / 口播剪辑 → 本地模型（whisper） said the model list was
-// "below", but the list and its 下载 / 删除 buttons live on 本地模型 → 本地转写,
+// #126: Settings → Transcription / voiceover editing → Local model (whisper) said the model list was
+// "below", but the list and its Download / Delete buttons live on Local models → Local transcription,
 // and runtime errors sent users to the page without them. Pin the way there.
 import assert from 'node:assert/strict';
 import { bindAction } from '../../shortcuts/actionRegistry';
@@ -28,7 +28,7 @@ for (const page of pages) {
     `${page.key}: its note button opens ${action.route}, which is not a settings page`);
 }
 
-assert.doesNotMatch(localAsrPage.note ?? '', /见Down方列表/, 'the note must not promise a list the page lacks');
+assert.doesNotMatch(localAsrPage.note ?? '', /see the list below/i, 'the note must not promise a list the page lacks');
 assert.match(localAsrPage.note ?? '', /Local models → Local transcription/, 'the note names the page with the buttons');
 
 // Buttons that dispatch a global action keep doing so.

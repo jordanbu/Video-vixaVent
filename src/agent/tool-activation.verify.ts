@@ -32,7 +32,7 @@ const catalog = [
   schema('sync_cuts_to_music'),
 ];
 
-const neutral = new ToolActivation(catalog, [{ role: 'user', content: '你好' }]);
+const neutral = new ToolActivation(catalog, [{ role: 'user', content: 'Hola' }]);
 assert.deepEqual(neutral.names(), [
   'ToolSearch',
   'load_skill',
@@ -72,29 +72,29 @@ assert.deepEqual(
   'bare provider names do not activate speech tools without TTS/transcription intent',
 );
 
-const routed = new ToolActivation(catalog, [{ role: 'user', content: '把 V1 轨道Clip移动并剪辑一Down' }]);
+const routed = new ToolActivation(catalog, [{ role: 'user', content: 'Mueve el clip de la pista V1 y recórtalo' }]);
 assert.ok(routed.names().includes('edit_item'));
 assert.ok(routed.names().includes('edit_track'));
 assert.ok(routed.names().includes('ToolSearch'), 'routed requests keep ToolSearch available for deferred tools');
 assert.ok(!routed.names().includes('submit_export'));
 const backgroundFillRouted = new ToolActivation(catalog, [
-  { role: 'user', content: '把 V1 画面的BlurBackground fill intensity调到 70%' },
+  { role: 'user', content: 'Sube a 70% el desenfoque del relleno de fondo de V1' },
 ]);
 assert.ok(
   backgroundFillRouted.names().includes('edit_item'),
   'background-fill requests expose edit_item',
 );
 const captionEditRouted = new ToolActivation(catalog, [
-  { role: 'user', content: '多加一些Captions' },
+  { role: 'user', content: 'Agrega más subtítulos' },
 ]);
 assert.ok(
   captionEditRouted.names().includes('edit_item'),
   'caption requests expose the timeline text-item editor',
 );
 const routedAndExport = new ToolActivation(catalog, [
-  { role: 'user', content: '把 V1 轨道Clip移动并剪辑一Down' },
-  { role: 'assistant', content: 'Completed。' },
-  { role: 'user', content: '准备Export ProRes Final video' },
+  { role: 'user', content: 'Mueve el clip de la pista V1 y recórtalo' },
+  { role: 'assistant', content: 'Listo.' },
+  { role: 'user', content: 'Prepara la exportación en ProRes del video final' },
 ]);
 assert.ok(routedAndExport.names().includes('submit_export'));
 assert.equal(
@@ -103,8 +103,8 @@ assert.equal(
   'semantic routes follow only the current request',
 );
 const routedContinuation = new ToolActivation(catalog, [
-  { role: 'user', content: '把 V1 轨道Clip移动并剪辑一Down' },
-  { role: 'assistant', content: 'Completed。' },
+  { role: 'user', content: 'Mueve el clip de la pista V1 y recórtalo' },
+  { role: 'assistant', content: 'Listo.' },
   { role: 'user', content: 'Continue' },
 ]);
 assert.deepEqual(
@@ -113,7 +113,7 @@ assert.deepEqual(
   'a neutral continuation returns to the boot tool set',
 );
 const activePlanCrossesDomains = new ToolActivation(catalog, [
-  { role: 'user', content: '你联网Search啊' },
+  { role: 'user', content: 'Busca en internet' },
 ]);
 assert.ok(activePlanCrossesDomains.names().includes('ToolSearch'));
 const discoveredTimelineTools = activePlanCrossesDomains.withSearchResult({
@@ -124,13 +124,13 @@ assert.ok(
   'a web-routed request can discover a timeline tool after import completes',
 );
 const audioRouted = new ToolActivation(catalog, [
-  { role: 'user', content: '看看当前可用Audio条目有多少，只报数量' },
+  { role: 'user', content: '¿Cuántos audios hay disponibles? Dime solo el número' },
 ]);
 assert.ok(audioRouted.names().includes('list_audio'), 'natural-language audio requests expose the audio catalog');
 const stockMusicEdit = new ToolActivation(catalog, [
   {
     role: 'user',
-    content: '联网在 Pixabay SearchVideo，导入后按Music每 2 拍卡点剪辑',
+    content: 'En Pixabay, importa videos y córtalos al ritmo de la música cada 2 pulsos',
   },
 ]);
 assert.ok(
@@ -140,7 +140,7 @@ assert.ok(
 assert.ok(stockMusicEdit.names().includes('music_edit_plan'));
 assert.ok(stockMusicEdit.names().includes('sync_cuts_to_music'));
 const readOnlyTimeline = new ToolActivation(catalog, [
-  { role: 'user', content: '查看当前Timeline，只告诉我Clip信息，不要修改' },
+  { role: 'user', content: 'Mira la línea de tiempo actual y dime solo la información de los clips, no modifiques nada' },
 ]);
 assert.deepEqual(
   readOnlyTimeline.names(),
@@ -148,7 +148,7 @@ assert.deepEqual(
   'read-only timeline requests do not expose editing schemas',
 );
 for (const prompt of [
-  '只查看标题内容，不要修改',
+  'Solo dime qué dice el título, no lo modifiques',
   "Tell me what the title says; don't edit.",
 ]) {
   const readOnlyTitle = new ToolActivation(catalog, [{ role: 'user', content: prompt }]);
@@ -159,7 +159,7 @@ for (const prompt of [
   );
 }
 const naturalReadOnlyMusic = new ToolActivation(catalog, [
-  { role: 'user', content: '只读查看Music analysis，不要修改' },
+  { role: 'user', content: 'Solo lectura: revisa el análisis de la música, sin modificar nada' },
 ], ['sync_cuts_to_music']);
 assert.ok(naturalReadOnlyMusic.names().includes('music_edit_plan'));
 assert.equal(
@@ -176,10 +176,10 @@ assert.equal(
   'natural-language read-only hints cannot turn ToolSearch into mutation authority',
 );
 for (const prompt of [
-  '不要修改原片，只加标题',
-  '给原片加个标题，其他不要修改',
+  'No modifiques el video original, solo agrega un título',
+  'Agrega un título al video original y no cambies nada más',
   "Don't edit the footage; adding a title is okay.",
-  '不要修改其他内容，只Delete标题',
+  'No modifiques nada más, solo borra el título',
   "Don't edit the footage; removing the title is okay.",
 ]) {
   const mixedIntent = new ToolActivation(catalog, [{ role: 'user', content: prompt }]);
@@ -191,7 +191,7 @@ for (const prompt of [
 const askOnlyCatalog = catalog.filter((tool) => tool.name !== 'edit_item' && tool.name !== 'edit_track'
   && tool.name !== 'sync_cuts_to_music');
 const askOnlyMixedIntent = new ToolActivation(askOnlyCatalog, [
-  { role: 'user', content: '不要修改原片，只加标题' },
+  { role: 'user', content: 'No modifiques el video original, solo agrega un título' },
 ], ['edit_item', 'sync_cuts_to_music']);
 assert.equal(
   askOnlyMixedIntent.names().some((name) => name === 'edit_item' || name === 'sync_cuts_to_music'),
@@ -199,7 +199,7 @@ assert.equal(
   'askOnly catalog is the hard mutation-suppression authority',
 );
 const discoveryRouted = new ToolActivation(catalog, [
-  { role: 'user', content: '先看看有哪些Audio相关能力，只列出最匹配的三个能力Name' },
+  { role: 'user', content: 'Primero dime qué capacidades de audio hay; lista solo las tres que mejor encajen' },
 ]);
 assert.ok(
   discoveryRouted.names().includes('list_audio'),
@@ -289,7 +289,7 @@ assert.equal(zeroResultContinuation.names().includes('ToolSearch'), true,
   'a zero-match search survives follow-up clarification');
 
 const routedActivation = new ToolActivation(catalog, [
-  { role: 'user', content: '把 V1 Clip移动一Down' },
+  { role: 'user', content: 'Mueve un poco el clip de V1' },
 ]);
 const routedSearch = routedActivation.withSearchResult({
   results: [{ name: 'submit_export' }],
@@ -301,7 +301,7 @@ assert.deepEqual(
   'ToolSearch persists only schemas explicitly discovered by that result',
 );
 const neutralAfterRoutedSearch = new ToolActivation(catalog, [
-  { role: 'user', content: '把 V1 Clip移动一Down' },
+  { role: 'user', content: 'Mueve un poco el clip de V1' },
   {
     role: 'tool',
     content: [{
@@ -382,8 +382,8 @@ const restored = new ToolActivation(catalog, restoredMessages);
 assert.ok(restored.names().includes('web_crawl'));
 const expiredSearch = new ToolActivation(catalog, [
   ...restoredMessages,
-  { role: 'assistant', content: '网页能力已经列出。' },
-  { role: 'user', content: '查看当前Timeline，不要修改' },
+  { role: 'assistant', content: 'Ya listé las capacidades web.' },
+  { role: 'user', content: 'Mira la línea de tiempo actual, no modifiques nada' },
 ]);
 assert.equal(
   expiredSearch.names().includes('web_crawl'),
@@ -409,7 +409,7 @@ assert.equal(admitted.admit('web_crawl'), admitted,
 // available to the model on the next step without sending the full catalog.
 assert.equal(new Set(TOOL_SCHEMAS.map((tool) => tool.name)).size, TOOL_SCHEMAS.length,
   'canonical tool names are unique');
-const fullActivation = new ToolActivation(TOOL_SCHEMAS, [{ role: 'user', content: '你好' }]);
+const fullActivation = new ToolActivation(TOOL_SCHEMAS, [{ role: 'user', content: 'Hola' }]);
 for (const tool of TOOL_SCHEMAS) {
   if (tool.name === 'ToolSearch') continue;
   const result = await execCoreTool(

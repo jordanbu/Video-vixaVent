@@ -52,7 +52,7 @@ try {
   assert.equal(hasPendingComposerAttachment(false, 1), true, 'one pending attachment must close the submit gate');
   assert.equal(shouldSubmitComposerOnKeyDown('Enter', false, false), false, 'Enter must not submit while the gate is closed');
   pendingComposerMarkup = renderToStaticMarkup(createElement(ChatComposer, {
-    value: '请处理这个附件',
+    value: 'Please process this attachment',
     onChange: () => undefined,
     onSubmit: () => undefined,
     onStop: () => undefined,

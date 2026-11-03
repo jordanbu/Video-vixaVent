@@ -272,7 +272,8 @@ export const PROBES: Record<string, ProbeDef> = {
   'voice/gemini': geminiMediaProbe,
   'voice/mistral': mistralMediaProbe,
   'voice/cartesia': cartesiaProbe,
-  // Doubao 音频生成新版接口：X-Api-Key 单头鉴权；无免费探活端点，合成 1 个字做最小真实校验（成本可忽略）。
+  // Doubao's new audio-generation API: single-header X-Api-Key auth. There is no free health endpoint, so
+  // synthesizing a single character is the smallest real check (negligible cost).
   'voice/doubao': {
     needs: [['DOUBAO_TTS_API_KEY']],
     run: (get) => {
@@ -282,7 +283,7 @@ export const PROBES: Record<string, ProbeDef> = {
         headers: { 'Content-Type': 'application/json', 'X-Api-Key': get('DOUBAO_TTS_API_KEY') },
         body: JSON.stringify({
           model: get('DOUBAO_TTS_MODEL') || 'seed-audio-1.0',
-          text_prompt: '测',
+          text_prompt: '\u6d4b', // one CJK character ("test"): the cheapest real synthesis
           references: [{ speaker: resolveDoubaoSpeaker(get('DOUBAO_TTS_VOICE_ID')) || 'zh_female_vv_uranus_bigtts' }],
           audio_config: { format: 'mp3', sample_rate: 24_000 },
         }),
@@ -309,7 +310,8 @@ export const PROBES: Record<string, ProbeDef> = {
     run: (get) => fetch(`${base(get, 'SPEECHIFY_TTS_BASE_URL', 'https://api.sws.speechify.com')}/v1/audio/speech`, {
       method: 'POST', signal: t(),
       headers: { 'Content-Type': 'application/json', ...bearer(get('SPEECHIFY_TTS_API_KEY')) },
-      body: JSON.stringify({ input: '测', voice_id: 'george', audio_format: 'mp3', model: get('SPEECHIFY_TTS_MODEL') || 'simba-multilingual' }),
+      // One CJK character ("test"): the cheapest real synthesis.
+      body: JSON.stringify({ input: '\u6d4b', voice_id: 'george', audio_format: 'mp3', model: get('SPEECHIFY_TTS_MODEL') || 'simba-multilingual' }),
     }),
   },
   'video/seedance': {

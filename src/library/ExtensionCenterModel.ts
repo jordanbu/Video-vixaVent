@@ -30,13 +30,14 @@ const REGISTRY_CATEGORY_LABEL: Record<string, Exclude<Category, 'All'>> = {
   mg: 'MG',
   MG: 'MG',
   transition: 'Transitions',
-  转场: 'Transitions',
+  // Legacy registry entries may list the Chinese category names; read-only aliases, escaped (specs/11).
+  '\u8f6c\u573a': 'Transitions',
   fx: 'Effects',
-  特效: 'Effects',
+  '\u7279\u6548': 'Effects',
   lut: 'LUT',
   LUT: 'LUT',
   zoom: 'Zoom',
-  缩放: 'Zoom',
+  '\u7f29\u653e': 'Zoom',
 };
 
 export function parseRegistry(value: unknown): RegistryEntry[] {

@@ -13,7 +13,8 @@ const {
   resetLocalExecutionSession, setLocalExecutionConfirmer,
 } = await import('./local-execution-consent');
 type Request = NonNullable<ReturnType<typeof localExecutionRequest>>;
-const CJK = /[㐀-鿿]/;
+// CJK ideograph range, written as escapes (specs/11).
+const CJK = /[\u3400-\u9fff]/;
 const script = (skill: string, command = 'bash scripts/render.sh') => ({ skill, command });
 
 // Every local-execution tool has a question; other tools ask nothing.

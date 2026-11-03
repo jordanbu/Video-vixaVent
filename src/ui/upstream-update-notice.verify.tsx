@@ -5,13 +5,13 @@ import { DesktopWindowControlButtons } from '../components/DesktopWindowControls
 const moduleUrl = new URL('./UpstreamUpdateNoticeView.tsx', import.meta.url);
 const noticeModule = await import(moduleUrl.href).catch(() => null);
 
-assert.ok(noticeModule, 'Apply应提供非阻塞的Up游版本提示');
+assert.ok(noticeModule, 'the app must provide a non-blocking upstream version notice');
 
 const { UpstreamUpdateNoticeView } = noticeModule;
 const markup = renderToStaticMarkup(
   <div data-dashboard-chrome>
     <UpstreamUpdateNoticeView
-      message="Discover Vixaventora 新版本 V0.2.0，当前版本 V0.1.9。可以直接Download并Install。"
+      message="New Vixaventora version V0.2.0 found; current version V0.1.9. You can download and install it directly."
       actionLabel="Download update"
       closeLabel="Close"
       onAction={() => undefined}
@@ -24,16 +24,16 @@ const markup = renderToStaticMarkup(
   </div>,
 );
 
-assert.match(markup, /Discover Vixaventora 新版本 V0\.2\.0/, '新版提示必须明确给出官方产品与版本');
-assert.match(markup, />Download update<\/button>/, '桌面新版提示必须提供直接Download动作');
-assert.match(markup, /role="status"/, '非阻塞提示应使用状态语义');
-assert.doesNotMatch(markup, /<a\b/, 'Update入口必须走受控桌面 IPC 而不是任意链接');
-assert.match(markup, /top:50%/, 'Update提示应在首页Vertical居Center');
-assert.match(markup, /left:50%/, 'Update提示应在首页Horizontal居Center');
-assert.match(markup, /z-index:190/, 'Update提示必须位于Settings弹窗Down方，避免遮挡SettingsAction');
-assert.match(markup, /transform:translate\(-50%,\s*-50%\)/, 'Update提示应以自身Center心对准窗口Center心');
-assert.match(markup, /aria-label="Window controls"/, '桌面Window controls必须与首页Update提示在同一 dashboard chrome Center可渲染');
-assert.equal((markup.match(/class="vx-window-control /g) ?? []).length, 3, 'macOS 标题栏应保留三个Window controls按钮');
+assert.match(markup, /New Vixaventora version V0\.2\.0/, 'the notice must name the official product and version');
+assert.match(markup, />Download update<\/button>/, 'the desktop notice must offer a direct download action');
+assert.match(markup, /role="status"/, 'the non-blocking notice should use status semantics');
+assert.doesNotMatch(markup, /<a\b/, 'the update entry must go through controlled desktop IPC, not an arbitrary link');
+assert.match(markup, /top:50%/, 'the update notice should be vertically centered on the home screen');
+assert.match(markup, /left:50%/, 'the update notice should be horizontally centered on the home screen');
+assert.match(markup, /z-index:190/, 'the update notice must sit below the settings dialog so it does not cover its actions');
+assert.match(markup, /transform:translate\(-50%,\s*-50%\)/, 'the update notice should align its own center with the window center');
+assert.match(markup, /aria-label="Window controls"/, 'desktop window controls must render in the same dashboard chrome as the home update notice');
+assert.equal((markup.match(/class="vx-window-control /g) ?? []).length, 3, 'the macOS title bar should keep its three window control buttons');
 
 
 console.log('upstream-update-notice.verify: dashboard-only centered upstream update notice OK');

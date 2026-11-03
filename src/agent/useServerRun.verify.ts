@@ -151,14 +151,14 @@ assert(boundedPayload.messages.length <= 64, 'history plus the current input res
 assert.equal(boundedPayload.messages.at(-1)?.content, 'Continue after a long conversation');
 const multibytePayload = buildServerRunPayload(
   'project-1',
-  '续'.repeat(32_000),
+  '\u7eed'.repeat(32_000), // CJK filler, written as escapes (specs/11)
   {},
   {
     history: Array.from({ length: 20 }, (_, index) => ({
       role: index % 2 === 0 ? 'user' as const : 'assistant' as const,
-      content: '历'.repeat(32_000),
+      content: '\u5386'.repeat(32_000),
     })),
-    systemPrompt: '系'.repeat(160_000),
+    systemPrompt: '\u7cfb'.repeat(160_000),
     cacheMode: 'short',
     maxOutputTokens: 4_096,
   },

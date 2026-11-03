@@ -37,7 +37,8 @@ const options = (
   summarize,
 });
 
-assert.equal(estimateTextTokens('abcd中文'), 3, 'ASCII and CJK use separate conservative ratios');
+// "abcd" plus two CJK characters, written as escapes (specs/11).
+assert.equal(estimateTextTokens('abcd\u4e2d\u6587'), 3, 'ASCII and CJK use separate conservative ratios');
 assert.equal(estimateContextTokens([message('user', 'abcd')]), 5, 'message framing overhead is counted');
 
 let summaryCalls = 0;

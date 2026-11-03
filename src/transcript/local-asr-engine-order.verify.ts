@@ -104,7 +104,7 @@ try {
   const onnxOnlyDesktop = await transcribe();
   assert.equal(nativeRequests, 1, 'no desktop request without the companion it loads');
   assert.ok(reachedBrowserDecode(onnxOnlyDesktop), 'the browser engine must be allowed to start');
-  assert.ok(onnxOnlyDesktop.notes.some((note) => note.includes('浏览器引擎')), 'the user is told which engine runs');
+  assert.ok(onnxOnlyDesktop.notes.some((note) => note.includes('browser engine')), 'the user is told which engine runs');
 
   // Browser client: the ONNX export alone is enough...
   desktopShell(false);

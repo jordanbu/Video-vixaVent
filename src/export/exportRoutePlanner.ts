@@ -106,7 +106,7 @@ export function chooseSupportedRoute(
   // ratio (see serverScaledExportDimensions); a canvas whose grid has no size
   // near the preset must not be sent there, whatever the measured speeds say.
   if (!serverCanRender) {
-    return { route: 'browser' as const, engine: web, reason: '本机渲染器无法将此画布精确缩放到所选分辨率' };
+    return { route: 'browser' as const, engine: web, reason: 'The local renderer cannot scale this canvas exactly to the selected resolution' };
   }
   const measured = measuredRoute(web, server);
   if (measured === 'browser') return { route: measured, engine: web, reason: 'Previous local exports measured the browser path as faster' };
@@ -127,7 +127,7 @@ export async function planVideoExportRoute(options: BrowserExportOptions): Promi
   if (options.codec === 'prores') {
     const mezzanine = {
       id: 'prores-mezzanine',
-      label: 'ProRes 422 HQ · 本机母带',
+      label: 'ProRes 422 HQ · local master',
       hardware: false,
       transport: 'server' as const,
     };

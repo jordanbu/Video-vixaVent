@@ -137,7 +137,8 @@ export function TranscriptPanel({
     if (!hasOperationalTranscript(focusItem)) return;
     const w = focusItem.transcript;
     const { count, savedMs } = analyzeSilences(w, compressSec * 1000);
-    const fillers = w.filter((x) => /^[\s]*([uU][hm]+|[eE]r+m?|嗯|呃|啊|唔|额)[\s.,]*$/.test(x.text)).length;
+    // Chinese filler sounds are \u escapes (specs/11).
+    const fillers = w.filter((x) => /^[\s]*([uU][hm]+|[eE]r+m?|\u55ef|\u5443|\u554a|\u5514|\u989d)[\s.,]*$/.test(x.text)).length;
     onCleanScript(focusItem.id, { silenceFrames: Math.round(compressSec * fps), removeFillers });
     setPauseResult(
       t('Compressed {count} long pauses down to {sec}s (saving about {saved}s)', { count, sec: compressSec, saved: (savedMs / 1000).toFixed(1) })

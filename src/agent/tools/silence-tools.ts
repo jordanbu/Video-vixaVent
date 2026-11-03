@@ -31,7 +31,7 @@ export async function execSilenceTool(name: string, args: Args, ctx: AgentContex
     return {
       ok: true,
       edited: [],
-      note: 'VAD 静音删除未启用（设置 → 本地模型 → 本地转写 → 删除静音（本地 VAD））；为避免把音乐、噪声或低声讲话当静音，未执行删除。请告知用户在该开关启用后重试。',
+      note: 'VAD silence removal is off (Settings → Local models → Local transcription → Remove silence (local VAD)). Nothing was deleted, so music, noise, or quiet speech is not mistaken for silence. Tell the user to turn that switch on and retry.',
     };
   }
   const params = {
@@ -95,7 +95,7 @@ export async function execSilenceTool(name: string, args: Args, ctx: AgentContex
         })),
       });
     } catch (e) {
-      skipped.push({ itemId: item.id, note: `分析失败: ${e instanceof Error ? e.message : String(e)}` });
+      skipped.push({ itemId: item.id, note: `analysis failed: ${e instanceof Error ? e.message : String(e)}` });
     }
   }
 
@@ -107,6 +107,6 @@ export async function execSilenceTool(name: string, args: Args, ctx: AgentContex
     ok: true,
     edited,
     ...(skipped.length ? { skipped } : {}),
-    ...(edited.length ? {} : { note: '未发现可删的死气段(阈值内没有足够长的静音)' }),
+    ...(edited.length ? {} : { note: 'No dead air to remove (no silence long enough within the threshold)' }),
   };
 }

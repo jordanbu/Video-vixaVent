@@ -35,15 +35,15 @@ const tooMany = await readProjectDocumentFiles(Array.from(
   (_, index) => new File(['ok'], `${index}.txt`, { type: 'text/plain' }),
 ));
 assert.equal(tooMany.blocks.length, PROJECT_DOCUMENT_MAX_COUNT);
-assert.match(tooMany.errors[0] ?? '', /最多读取 8 个文档/);
+assert.match(tooMany.errors[0] ?? '', /Up to 8 documents can be read at a time/);
 const originalFetch = globalThis.fetch;
 globalThis.fetch = async () => new Response('shot list', { headers: { 'content-type': 'text/plain' } });
 const assetDocuments = await readProjectAssetDocuments([{
-  id: 'doc-1', name: '分镜.md', sourceFilename: 'storyboard.md', kind: 'document',
+  id: 'doc-1', name: 'guion-gráfico.md', sourceFilename: 'storyboard.md', kind: 'document',
   src: '/media/uploads/storyboard.md', durationInFrames: 1,
 }]);
 globalThis.fetch = originalFetch;
 assert.deepEqual(assetDocuments.errors, []);
-assert.match(assetDocuments.blocks[0] ?? '', /<imported_document name="分镜\.md">\nshot list/);
+assert.match(assetDocuments.blocks[0] ?? '', /<imported_document name="guion-gráfico\.md">\nshot list/);
 
 console.log('chatDocumentParse.verify: byte, page and extracted-text limits OK');

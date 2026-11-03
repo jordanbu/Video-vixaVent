@@ -27,7 +27,7 @@ Primera versión de Vixaventora.
 
 - Corregido: los paneles y menús se veían transparentes y se encimaban (variables de tema
   sin definir).
-- Corregido: el menú ＋ de la línea de tiempo y el menú "Más" no se cerraban con Escape ni
+- Corregido: el menú + de la línea de tiempo y el menú "Más" no se cerraban con Escape ni
   con clic afuera.
 - Columnas de Ajustes, etiquetas del inspector y pestañas del panel de media ajustadas a los
   textos en español.

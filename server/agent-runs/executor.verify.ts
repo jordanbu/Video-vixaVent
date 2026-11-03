@@ -288,7 +288,7 @@ const streamErrorRun = createRun({
   model: 'test-model',
 });
 const providerFailure = new APICallError({
-  message: 'DeepSeek 认证失败。请在“设置 → Agent 模型”中检查 API Key。',
+  message: 'Falló la autenticación de DeepSeek. Revisa la API Key en "Ajustes → Modelo del agente".',
   url: 'https://example.invalid/v1/chat',
   requestBodyValues: {},
   statusCode: 401,

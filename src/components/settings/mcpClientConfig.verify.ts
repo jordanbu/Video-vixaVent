@@ -1,4 +1,4 @@
-// Checks the 千问办公 paste-in snippet: it must be valid JSON, keep the bearer
+// Checks the Qwen Office paste-in snippet: it must be valid JSON, keep the bearer
 // token in a header rather than the URL, and use the type that app's importer
 // expects (which differs from the type the server-side writer emits).
 import assert from 'node:assert/strict';
@@ -22,4 +22,4 @@ assert.ok(!/access_token|token=/.test(json), 'no query-param auth fallback in th
 const other = JSON.parse(qwenWorkConnectJson('http://localhost:5200/api/external-mcp/mcp', 'tok_OTHER')) as ReturnType<typeof qwenWorkMcpConfig>;
 assert.notEqual(entry.url, (other.mcpServers.vixaventora as { url: string }).url);
 
-console.log('✓ mcpClientConfig: 千问办公 snippet is valid JSON with bearer header auth');
+console.log('✓ mcpClientConfig: Qwen Office snippet is valid JSON with bearer header auth');

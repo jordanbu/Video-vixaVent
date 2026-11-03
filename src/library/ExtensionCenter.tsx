@@ -86,7 +86,7 @@ function useExtensionActions(onInstalled: () => void) {
         onInstalled();
         return;
       }
-      setStatus({ ok: false, text: result.errors.slice(0, 3).join('；') });
+      setStatus({ ok: false, text: result.errors.slice(0, 3).join('; ') });
     }).catch((error) => {
       setBusyId(null);
       setStatus({ ok: false, text: error instanceof Error ? error.message : String(error) });

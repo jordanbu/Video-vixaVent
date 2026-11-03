@@ -52,39 +52,39 @@ try {
   assert.deepEqual(
     assetMenuSelectionIds('asset-b', new Set(['asset-a', 'asset-b']), ['asset-a', 'asset-b', 'asset-c']),
     ['asset-a', 'asset-b'],
-    'Right键已选素材必须保留整个多选集',
+    'right-clicking a selected asset must keep the whole multi-selection',
   );
-  assert.equal(duplicateAssetName('项目素材.mp4', 'copy'), '项目素材 copy.mp4');
-  assert.equal(duplicateAssetName('NoneExtension名', 'copy'), 'NoneExtension名 copy');
+  assert.equal(duplicateAssetName('Project clip.mp4', 'copy'), 'Project clip copy.mp4');
+  assert.equal(duplicateAssetName('No extension', 'copy'), 'No extension copy');
   assert.deepEqual(
     assetMenuSelectionIds('asset-c', new Set(['asset-a', 'asset-b']), ['asset-a', 'asset-b', 'asset-c']),
     ['asset-c'],
-    'Right键未选素材必须只Action当前素材',
+    'right-clicking an unselected asset must act only on that asset',
   );
   assert.equal(
     assetMenuFavoriteValue([{ favorite: true }, { favorite: false }]),
     true,
-    '批量Favorite只要其Center一个未Favorite，就应统一Favorite',
+    'a batch favorite should favorite all when any one is not a favorite',
   );
   assert.equal(
     assetMenuFavoriteValue([{ favorite: true }, { favorite: true }]),
     false,
-    '批量Unfavorite只在All已Favorite时发生',
+    'a batch unfavorite only happens when all are favorites',
   );
   assert.deepEqual(
     batchAssetRename([
-      { id: 'asset-a', name: '原片.mp4' },
-      { id: 'asset-b', name: '封面.png' },
-    ], '项目素材'),
+      { id: 'asset-a', name: 'Original.mp4' },
+      { id: 'asset-b', name: 'Cover.png' },
+    ], 'Project clip'),
     [
-      { id: 'asset-a', name: '项目素材.mp4' },
-      { id: 'asset-b', name: '项目素材 2.png' },
+      { id: 'asset-a', name: 'Project clip.mp4' },
+      { id: 'asset-b', name: 'Project clip 2.png' },
     ],
-    'Batch rename必须保留各素材Extension名，并给后续素材添加稳定序号',
+    'batch rename must keep each asset extension and add a stable number to the following assets',
   );
 
   const markup = renderToStaticMarkup(createElement(AssetMenuDestinations, {
-    assetName: '7月7日.mp4',
+    assetName: '7 de julio.mp4',
     onAddTimeline: () => undefined,
     onAddChat: () => undefined,
   }));
@@ -92,9 +92,9 @@ try {
   assert.match(markup, /Add to:/);
   assert.match(markup, />Timeline</);
   assert.match(markup, />AI chat</);
-  assert.ok(markup.indexOf('>AI chat<') < markup.indexOf('>Timeline<'), 'AI chat应位于Left侧，Timeline应位于Right侧');
-  assert.match(markup, /aria-label="添加 7月7日.mp4 到Timeline"/);
-  assert.match(markup, /aria-label="添加 7月7日.mp4 到 AI chat"/);
+  assert.ok(markup.indexOf('>AI chat<') < markup.indexOf('>Timeline<'), 'AI chat should be on the left and Timeline on the right');
+  assert.match(markup, /aria-label="Add 7 de julio\.mp4 to timeline"/);
+  assert.match(markup, /aria-label="Add 7 de julio\.mp4 to AI chat"/);
 
   const documentMarkup = renderToStaticMarkup(createElement(AssetMenuDestinations, {
     assetName: 'script.md',
@@ -130,8 +130,8 @@ try {
   assert.match(blankMenuMarkup, /aria-label="Filter media"/);
 
   const overlaySource = await readFile(new URL('./MediaPoolOverlays.tsx', import.meta.url), 'utf8');
-  assert.doesNotMatch(overlaySource, /className="vx-asset-menu-backdrop"/, '素材菜单不应使用Full screen遮罩阻断直接Right键另一素材');
-  assert.match(overlaySource, /document\.addEventListener\('pointerdown', closeOutside, true\)/, '素材菜单应通过外部点击Close');
+  assert.doesNotMatch(overlaySource, /className="vx-asset-menu-backdrop"/, 'the asset menu must not use a full-screen backdrop that blocks right-clicking another asset');
+  assert.match(overlaySource, /document\.addEventListener\('pointerdown', closeOutside, true\)/, 'the asset menu should close on an outside click');
 } finally {
   await vite.close();
 }

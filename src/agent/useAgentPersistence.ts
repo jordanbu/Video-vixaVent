@@ -1,3 +1,4 @@
+import { t } from '../i18n/locale';
 import { useEffect, useRef } from 'react';
 import type { ToolResultPart } from 'ai';
 import {
@@ -271,7 +272,7 @@ export async function hydrateAgentSession(
     // and surface the reason instead of silently showing an empty chat.
     state.setMessages([{
       role: 'error',
-      text: '聊天记录暂时无法读取，已停止加载以避免覆盖已保存的对话。请刷新页面重试。',
+      text: t('The chat history cannot be read right now; loading stopped so the saved conversation is not overwritten. Refresh the page to try again.'),
     }]);
     return;
   }
@@ -477,7 +478,7 @@ function persistAgentSession(state: AgentHookState, projectId: string): void {
       console.error('[agent] chat persistence failed:', error);
       if (chatSaveFailureShown) return;
       chatSaveFailureShown = true;
-      showAppToast('聊天记录保存失败，本次对话可能不会被保留。请检查存储后重试。', { error: true });
+      showAppToast(t('Could not save the chat history; this conversation may not be kept. Check storage and try again.'), { error: true });
     },
   );
 }

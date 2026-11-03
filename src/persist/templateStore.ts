@@ -3,6 +3,7 @@
 // carried media assets). Cross-project sharing (like the "My Design Style" collection, it is a global library and is not divided by project),
 // Share the local server KV with projectStore.
 // Always use migrateProjectDoc for verification when reading (persistent data is not trustworthy).
+import { t as translate } from '../i18n/locale';
 import { migrateProjectDoc } from './projectStore';
 import { kvGet as idbGet, kvSet as idbSet } from './sharedKv';
 import { partitionRecords, withPreservedRecords } from './recordPartition';
@@ -87,7 +88,7 @@ const newId = () =>
 /** Package a ProjectDoc into a template (remove duplication by name: overwrite with the same name, reuse the original id and keep the list in place).
  * assetIds = all ids of the document asset pool (the template carries the entire asset pool).*/
 export async function saveTemplate(name: string, doc: ProjectDoc): Promise<ProjectTemplate> {
-  const trimmed = name.trim() || '未命名模板';
+  const trimmed = name.trim() || translate('Untitled template');
   // ponytail: Carrying the entire asset pool instead of just selecting the referenced assets; tailoring to only referenced assets is additional logic, YAGNI.
   const portableDoc = sanitizePortableProjectDoc(doc);
   const assetIds = portableDoc.assets.map((asset) => asset.id);

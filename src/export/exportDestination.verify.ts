@@ -290,14 +290,14 @@ async function verifyEmptyOutputIsRejected(): Promise<void> {
     () => writeBlobToDestination(destination, 'empty.mp4', new Blob()),
     (error) => error instanceof ExportFailureError
       && error.failure.code === 'export_output_empty'
-      && error.message === 'Export文件为空',
+      && error.message === 'The export file is empty',
   );
   assert.equal(opens, 0, 'an empty blob is rejected before opening its destination');
 
   globalThis.fetch = (async () => new Response(new Uint8Array())) as typeof fetch;
   await assert.rejects(
     () => writeUrlToDestination(destination, 'empty.mp4', '/media/uploads/empty.mp4'),
-    /Export文件为空/,
+    /The export file is empty/,
   );
   assert.equal(opens, 1);
   assert.equal(aborts, 1, 'an empty response aborts its opened writable');

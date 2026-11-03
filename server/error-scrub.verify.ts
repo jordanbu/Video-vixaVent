@@ -29,7 +29,7 @@ import { clientErrorMessage, scrubInternalPaths } from './error-scrub.ts';
 {
   // Messages without paths must pass through untouched — these are the ones
   // the editor shows to the user verbatim.
-  const plain = '共享工程库只读，修改未同步';
+  const plain = 'La biblioteca de proyectos compartida es de solo lectura; los cambios no se sincronizaron';
   assert.equal(scrubInternalPaths(plain), plain, 'path-free messages are unchanged');
   assert.equal(clientErrorMessage(new Error(plain)), plain, 'clientErrorMessage unwraps Error');
   assert.equal(clientErrorMessage('raw string'), 'raw string', 'non-Error values are stringified');

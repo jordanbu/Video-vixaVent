@@ -404,7 +404,7 @@ export const PreviewPanel = memo(function PreviewPanel({
                 padding: '6px 10px', borderRadius: 6, background: themeAlpha.shadow(0.88),
                 border: `1px solid ${theme.accent}`, color: theme.text, fontSize: 11,
               }}>
-                {t('Offline media: {list}', { list: offlineNames.join('、') })}
+                {t('Offline media: {list}', { list: offlineNames.join(', ') })}
               </div>
             )}
             {(pendingProxies > 0 || failedProxies.length > 0) && (

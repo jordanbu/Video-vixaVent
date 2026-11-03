@@ -19,8 +19,8 @@ const doc = (width: number): ProjectDoc => ({
 const before = doc(1920);
 const after = doc(1080);
 const session = createAgentChangeSession(
-  '改成竖屏',
-  [{ action: '改画面比例', target: '9:16', impact: '1 处改动' }],
+  'Pasar a vertical',
+  [{ action: 'Change aspect ratio', target: '9:16', impact: '1 change' }],
   before,
   after,
 );
@@ -48,7 +48,7 @@ assert.equal(capped.length, 20);
 // operations, and only the latest document can roll it back.
 {
   const { extendAgentChangeSession, canRollbackAgentChange } = await import('./changeLog');
-  const first = createAgentChangeSession('素材入池', [{ action: 'download_media', target: 'a.mp4', impact: 'asset' }], session.beforeDoc, session.beforeDoc);
+  const first = createAgentChangeSession('Media added to the pool', [{ action: 'download_media', target: 'a.mp4', impact: 'asset' }], session.beforeDoc, session.beforeDoc);
   const grown = { ...session.beforeDoc, activeTimelineId: `${session.beforeDoc.activeTimelineId}-grown` };
   const extended = extendAgentChangeSession(first, [{ action: 'download_media', target: 'b.mp4', impact: 'asset' }], grown);
   assert.equal(extended.id, first.id, 'the session keeps its id');

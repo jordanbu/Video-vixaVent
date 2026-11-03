@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 import { ASR_MODELS } from '../../../shared/asr-models';
-import { EN } from '../../i18n/dict/en';
 import { ES } from '../../i18n/dict/es';
 import { localAsrPage, TRANSCRIPTION_SETTINGS_GROUP } from './settingsMediaProviders';
 
@@ -35,9 +34,9 @@ assert.ok(
 
 // Every transcription language name is translated in each interface language.
 for (const option of transcriptionLanguageOptions(localAsrPage.fields)) {
-  for (const [locale, dict] of [['en', EN], ['es', ES]] as const) {
-    assert.ok(dict[option.label], `${locale} dictionary must translate ${option.label}`);
-  }
+  // English shows the key itself (keys are English, specs/11); Spanish needs its entry.
+  assert.match(option.label, /^[\x20-\x7e\u00c0-\u024f]+$/, `the key is English text: ${option.label}`);
+  assert.ok(ES[option.label], `es dictionary must translate ${option.label}`);
 }
 
 for (const model of ASR_MODELS) {

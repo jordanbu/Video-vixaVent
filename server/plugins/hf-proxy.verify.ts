@@ -157,7 +157,8 @@ await assert.rejects(stat(`${cachedDownload}.part`), { code: 'ENOENT' });
 // A deterministic mirror-absence failure must be classified "source missing"
 // so the next file of the same model can skip that source wholesale.
 assert.equal(sourceMissingOnError(new Error('model download failed (curl exit 22): ... returned error: 404')), true);
-assert.equal(sourceMissingOnError(new Error('invalid content-range: {"Code":10990101007,"Message":"获取模型文件失败，文件内容为空"}')), true);
+// Real ModelScope payload; its message reads "failed to fetch the model file, the file is empty".
+assert.equal(sourceMissingOnError(new Error('invalid content-range: {"Code":10990101007,"Message":"\u83b7\u53d6\u6a21\u578b\u6587\u4ef6\u5931\u8d25\uff0c\u6587\u4ef6\u5185\u5bb9\u4e3a\u7a7a"}')), true);
 // Transient failures and unrelated HTTP errors must NOT be treated as absence
 // (a 502 makes curl exit 22 too, but it is not a 404; a timeout is exit 28).
 assert.equal(sourceMissingOnError(new Error('model download failed (curl exit 28): Operation timed out')), false);

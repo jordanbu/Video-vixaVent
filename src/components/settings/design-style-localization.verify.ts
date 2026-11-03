@@ -8,7 +8,7 @@ import {
 } from './designStyleLocalization';
 
 const modern = DESIGN_STYLE_PRESETS.find((preset) => preset.name === 'Modern Editorial');
-assert.ok(modern, '测试数据应包含 Modern Editorial');
+assert.ok(modern, 'the test data should include Modern Editorial');
 
 assert.equal(localizeDesignPresetName(modern.name, 'en'), modern.name);
 assert.equal(localizeDesignRole('background-chart', 'en'), 'background-chart');

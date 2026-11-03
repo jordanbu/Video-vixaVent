@@ -1,3 +1,4 @@
+import { t } from '../i18n/locale';
 import type { ProjectDoc } from '../editor/types';
 import { replayActions, type DraftEngine } from '../editor/store';
 import { saveProject } from '../persist/projectStore';
@@ -88,7 +89,7 @@ export async function commitPersistentOperations(
   await turn.persistentSnapshot;
   if (turn.abortController.signal.aborted) return false;
   if (turn.persistentSaveError) {
-    showRunError(turn, '无法创建修改前版本，Agent 改动未应用。请检查本地存储后重试。');
+    showRunError(turn, t('Could not create the pre-edit version; the Agent changes were not applied. Check local storage and try again.'));
     return false;
   }
   turn.state.llmProviderRef.current = PROVIDER;
@@ -140,14 +141,14 @@ async function landOperations(
     if (afterDoc === currentDoc) return currentDoc;
     const saved = await persist(turn.projectId, afterDoc).catch(() => null);
     if (!saved?.saved) {
-      showRunError(turn, '无法保存工程，Agent 改动未应用。请检查本地存储后重试。');
+      showRunError(turn, t('Could not save the project; the Agent changes were not applied. Check local storage and try again.'));
       return null;
     }
     const liveDoc = turn.state.ctxRef.current.getDoc();
     if (turn.abortController.signal.aborted || liveDoc !== currentDoc) {
       const restored = await persist(turn.projectId, liveDoc).catch(() => null);
       if (turn.abortController.signal.aborted) {
-        if (!restored?.saved) showRunError(turn, 'Agent 已停止，但无法恢复工程存储。请重新打开工程并检查内容。');
+        if (!restored?.saved) showRunError(turn, t('The Agent stopped, but the project storage could not be restored. Reopen the project and check its contents.'));
         return null;
       }
       continue;
@@ -156,7 +157,7 @@ async function landOperations(
     recordRunSession(turn, operations, currentDoc, afterDoc);
     return afterDoc;
   }
-  showRunError(turn, '保存期间工程持续发生其他修改，Agent 改动暂未应用；请稍后重试。');
+  showRunError(turn, t('The project kept changing while saving; the Agent changes were not applied yet. Try again in a moment.'));
   return null;
 }
 
@@ -174,13 +175,13 @@ function recordRunSession(
     return;
   }
   const session = createAgentChangeSession(
-    turn.assistantText || RUN_SESSION_PLACEHOLDER, operations, beforeDoc, afterDoc, true,
+    turn.assistantText || runSessionPlaceholder(), operations, beforeDoc, afterDoc, true,
   );
   turn.runSessionId = session.id;
   turn.state.setChangeLog((current) => appendAgentChange(current, session));
 }
 
-const RUN_SESSION_PLACEHOLDER = 'Agent 修改（进行中）';
+const runSessionPlaceholder = (): string => t('Agent edit (in progress)');
 
 /** The run is over: the row it grew during the run gets the model's own summary. */
 export function finalizeRunSession(turn: AgentTurn): void {
@@ -188,7 +189,7 @@ export function finalizeRunSession(turn: AgentTurn): void {
   const summary = turn.assistantText.trim();
   if (!id || !summary) return;
   turn.state.setChangeLog((current) => current.map((session) => (
-    session.id === id && session.summary === RUN_SESSION_PLACEHOLDER ? { ...session, summary } : session
+    session.id === id && session.summary === runSessionPlaceholder() ? { ...session, summary } : session
   )));
 }
 
@@ -218,7 +219,7 @@ export async function createPendingProposal(
     return null;
   }
   if (turn.draftInvalidated) {
-    showRunError(turn, '生成期间工程发生了其他修改；素材已保存到媒体池，请重新发送落轨请求。');
+    showRunError(turn, t('The project changed during generation; the media was saved to the media pool. Send the request to place it on the timeline again.'));
     return null;
   }
   if (!turn.runId) return null;

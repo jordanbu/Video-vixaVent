@@ -9,6 +9,12 @@ import type { InstalledPack } from '../plugins/store';
 import type { ZoomEffect } from '../editor/types';
 import type { PropSpec, Tpl } from '../types';
 
+/** Legacy category ids "plugins" / "extension" that older packs stored in Chinese (escaped, specs/11). */
+export const LEGACY_TEMPLATE_CATEGORY_LABELS: Readonly<Record<string, string>> = {
+  '\u63d2\u4ef6': 'Plugins',
+  '\u6269\u5c55': 'Extension',
+};
+
 /** Infer checker schema from props default values (fallback when no propSchema is available) */
 function inferPropSchema(props: Record<string, unknown>): PropSpec[] {
   const out: PropSpec[] = [];
@@ -63,7 +69,7 @@ export function pluginTemplates(packs: InstalledPack[]): Tpl[] {
         id: pluginAssetId(pack.id, item.id),
         name: item.name,
         category: 'Extension',
-        description: item.desc ?? `${pack.name} 扩展模板`,
+        description: item.desc ?? `${pack.name} extension template`,
         width: item.width ?? 1920,
         height: item.height ?? 1080,
         fps: 30,

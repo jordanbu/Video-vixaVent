@@ -54,7 +54,7 @@ const versionDoc = (name: string): ProjectDoc => ({
 resetProjectStoreMemory();
 assert.equal(await hasProjectHistory(), false, 'brand-new store has no project history');
 
-const project = await createProject('仅有工程', emptyDoc);
+const project = await createProject('Project only', emptyDoc);
 assert.equal(await hasProjectHistory(), true, 'creating a project initializes the store');
 await saveChat(project.id, {
   messages: [],
@@ -420,7 +420,7 @@ assert.equal(
     assets: [],
     mediaFolders: [],
     timelines: [{
-      id: 'tl1', name: '序列 1', fps: 30, width: 1920, height: 1080, selectedId: null, items: [],
+      id: 'tl1', name: 'Sequence 1', fps: 30, width: 1920, height: 1080, selectedId: null, items: [],
     }],
     activeTimelineId: 'tl1',
   } as unknown as ProjectDoc;

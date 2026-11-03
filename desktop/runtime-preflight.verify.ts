@@ -1,6 +1,6 @@
 // A packaged install that lost bundled files must say so. Before this, boot()
 // rejected on the first missing asset and main.ts exited with no window and no
-// dialog, which is the whole of issue #140: "双击没有反应".
+// dialog, which is the whole of issue #140: "double-clicking does nothing".
 // npx tsx desktop/runtime-preflight.verify.ts
 import assert from 'node:assert/strict';
 import { join } from 'node:path';

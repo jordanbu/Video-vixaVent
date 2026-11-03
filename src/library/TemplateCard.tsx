@@ -82,7 +82,7 @@ export const TemplateCard = memo(function TemplateCard({
               />
             </>
           ) : (
-            <span className="vx-template-thumb-missing">＋</span>
+            <span className="vx-template-thumb-missing">+</span>
           )}
         </div>
         <div className="vx-template-meta">

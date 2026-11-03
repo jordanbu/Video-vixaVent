@@ -9,6 +9,7 @@ import { TemplateCard } from './TemplateCard';
 import { loadRecentTemplateIds, pushRecentTemplateId } from '../persist/sessionPrefs';
 import { useFixedVirtualGrid } from '../hooks/useFixedVirtualGrid';
 import { LIBRARY_CARD_GRID_METRICS } from './libraryCardGrid';
+import { LEGACY_TEMPLATE_CATEGORY_LABELS } from './pluginTemplateCatalog';
 import {
   createHorizontalTabDrag,
   getHorizontalTabRevealDirection,
@@ -37,8 +38,7 @@ const CAT_LABEL: Record<string, string> = {
   'social-media': 'Social Media',
   'social-shorts': 'Vertical / Shorts',
   'koubo-scenes': 'Talking-Head Scenes',
-  插件: 'Plugins',
-  扩展: 'Extension',
+  ...LEGACY_TEMPLATE_CATEGORY_LABELS,
   uncategorized: 'Uncategorized',
 };
 const catLabel = (id: string) => CAT_LABEL[id] ?? id.replace(/-/g, ' ');

@@ -78,7 +78,7 @@ function AssetDeleteDialog(props: Pick<MediaPoolDialogsProps,
     <div className="vx-modal" onClick={stop}>
       <strong>{props.assetDeleteTitle}</strong>
       <p className="vx-asset-delete-detail">{detail}</p>
-      <p className="vx-asset-delete-detail" title={state.names.join('\n')}>{state.names.join('、')}</p>
+      <p className="vx-asset-delete-detail" title={state.names.join('\n')}>{state.names.join(', ')}</p>
       <div><button type="button" onClick={props.onCloseAssetDelete}>{t('Cancel')}</button><button type="button" className="danger" onClick={() => props.onDeleteAssets(state.ids)}>{t('Confirm Delete')}</button></div>
     </div>
   </div>;

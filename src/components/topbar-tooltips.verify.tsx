@@ -6,12 +6,12 @@ const exportHistory = await readFile(new URL('./ExportHistory.tsx', import.meta.
 assert.match(
   exportHistory,
   /<TopBarIconButton[\s\S]*?icon="download"[\s\S]*?label=\{t\('Export History'\)\}/,
-  'Export History按钮应复用顶部栏图标按钮',
+  'the Export History button should reuse the top bar icon button',
 );
 assert.doesNotMatch(
   exportHistory,
   /<button title=\{t\('Export History'\)\}/,
-  'Export History按钮不应使用Styles不可控的原生 title',
+  'the Export History button must not use the unstyleable native title',
 );
 
 console.log('top bar immediate tooltips verified');

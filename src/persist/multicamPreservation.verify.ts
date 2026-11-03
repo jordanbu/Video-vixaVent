@@ -16,7 +16,7 @@ const angle = (id: string, over: Record<string, unknown> = {}) => ({
 });
 
 const groupWith = (angles: unknown[], evidence: unknown[]): Timeline => ({
-  id: 'tl1', name: '序列 1', fps: 30, width: 1920, height: 1080, selectedId: null,
+  id: 'tl1', name: 'Sequence 1', fps: 30, width: 1920, height: 1080, selectedId: null,
   items: [item('a'), item('b')],
   multicamGroups: [{
     id: 'g1', angles, referenceAngleId: 'a', masterAngleId: 'a', syncMethod: 'audio', evidence,
@@ -27,7 +27,7 @@ const evidenceFor = (angleId: string, confidence = 0.8) => ({
   angleId, method: 'audio', confidence, offsetFrames: 0,
 });
 
-// ── 完整数据保持不变 ──────────────────────────────────────────────────────
+// ── Complete data stays unchanged ─────────────────────────────────────────
 {
   const out = normalizeTimelineGroups(groupWith(
     [angle('a'), angle('b')],
@@ -37,7 +37,7 @@ const evidenceFor = (angleId: string, confidence = 0.8) => ({
   assert.equal(out.multicamGroups?.[0]?.angles.length, 2);
 }
 
-// ── confidence 浮点越界:clamp 而非丢组 ────────────────────────────────────
+// ── confidence float out of range: clamp instead of dropping the group ───────
 {
   const out = normalizeTimelineGroups(groupWith(
     [angle('a', { confidence: 1.0000000000000002 }), angle('b')],
@@ -54,7 +54,7 @@ const evidenceFor = (angleId: string, confidence = 0.8) => ({
   assert.equal(negative.multicamGroups?.[0]?.angles[0]?.confidence, 0, 'clamped to 0 below range');
 }
 
-// ── evidence 越界同样 clamp ───────────────────────────────────────────────
+// ── out-of-range evidence is clamped too ────────────────────────────────────
 {
   const out = normalizeTimelineGroups(groupWith(
     [angle('a'), angle('b')],
@@ -65,7 +65,7 @@ const evidenceFor = (angleId: string, confidence = 0.8) => ({
   assert.equal(clamped?.confidence, 1, 'evidence confidence is clamped');
 }
 
-// ── 某个 angle 缺 evidence:保留分组(evidence 是溯源,不是结构要求) ───────────
+// ── an angle missing evidence: keep the group (evidence is provenance, not structure) ──
 {
   const out = normalizeTimelineGroups(groupWith(
     [angle('a'), angle('b')],
@@ -77,7 +77,7 @@ const evidenceFor = (angleId: string, confidence = 0.8) => ({
   assert.equal(out.multicamGroups?.[0]?.evidence.length, 1, 'only real evidence is kept — never synthesized');
 }
 
-// ── 真正的结构性损坏仍然被拒 ──────────────────────────────────────────────
+// ── real structural damage is still rejected ────────────────────────────────
 {
   const brokenAngle = normalizeTimelineGroups(groupWith(
     [angle('a'), { id: 'b', label: 'b' }],

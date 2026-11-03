@@ -2,7 +2,7 @@
 name: batch-montage-variants
 description: |
   Turn one pool of existing project media into a batch of distinct, publishable montage cuts instead of a single hero edit.
-  Use for batch montage, one-source-many-outputs, 一源多出, 批量混剪, 批量出片, 矩阵号, 多账号分发, variant batches, deduped cuts, 去重变体, 防搬运, or when the user asks for N different versions of the same footage.
+  Use for batch montage, one-source-many-outputs, batch remixes, batch output, matrix accounts, multi-account distribution, variant batches, deduped cuts, dedup variants, anti-repost variants, or when the user asks for N different versions of the same footage.
 ---
 
 # Batch Montage Variants

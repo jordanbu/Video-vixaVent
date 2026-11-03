@@ -1,4 +1,5 @@
 export { loadProjectThumb, saveProjectThumb } from './projectThumbStore';
+import { getLocale, t } from '../i18n/locale';
 import type { ProjectDoc, TimelineState } from '../editor/types';
 import type { LlmProvider } from '../../shared/llm-providers';
 import { CURRENT_PROJECT_VERSION } from '../../shared/project-version';
@@ -79,7 +80,7 @@ export function resetProjectStoreMemory(): void {
 const tlId = () => `tl_${newId()}`;
 
 /** wrap a single timeline into a one-sequence project (new projects + migration). */
-export function docFromTimeline(ts: TimelineState, name = '序列 1'): ProjectDoc {
+export function docFromTimeline(ts: TimelineState, name = t('Sequence {n}', { n: 1 })): ProjectDoc {
   const id = tlId();
   const { assets = [], ...state } = ts;
   const timeline = normalizeTimelineTracks({ ...state, id, name, order: 0 });
@@ -486,10 +487,13 @@ const newId = () =>
     ? crypto.randomUUID()
     : `p_${now().toString(36)}_${Math.floor(Math.random() * 1e6).toString(36)}`;
 
-// Auto-name new empty projects with a generated adjective/noun combination.
-const ADJ = ['流光', '静默', '暖阳', '深蓝', '轻盈', '锋利', 'Softness', '斑斓', '清冽', '灼热', '朦胧', '澄澈'];
-const NOUN = ['序曲', '航迹', '棱镜', '潮汐', '织机', '回响', '飞羽', '砂丘', '苔原', '穹顶', '流域', '星图'];
+// Auto-name new empty projects with a generated adjective/noun combination in the interface language.
+// Spanish adjectives are gender-invariant so any pair agrees.
+const ADJ_EN = ['Shimmering', 'Silent', 'Sunlit', 'Deep Blue', 'Weightless', 'Sharp', 'Soft', 'Vivid', 'Crisp', 'Blazing', 'Hazy', 'Clear'];
+const NOUN_EN = ['Overture', 'Wake', 'Prism', 'Tide', 'Loom', 'Echo', 'Feather', 'Dune', 'Tundra', 'Dome', 'Basin', 'Star Map'];
+const ADJ_ES = ['brillante', 'silente', 'azul', 'leve', 'veloz', 'fugaz', 'vibrante', 'celeste', 'sutil', 'ardiente', 'tenue', 'audaz'];
+const NOUN_ES = ['Obertura', 'Estela', 'Prisma', 'Marea', 'Telar', 'Eco', 'Pluma', 'Duna', 'Tundra', 'Cúpula', 'Cuenca', 'Brújula'];
 export function randomProjectName(): string {
   const pick = (a: string[]) => a[Math.floor(Math.random() * a.length)];
-  return `${pick(ADJ)}${pick(NOUN)}`;
+  return getLocale() === 'en' ? `${pick(ADJ_EN)} ${pick(NOUN_EN)}` : `${pick(NOUN_ES)} ${pick(ADJ_ES)}`;
 }

@@ -41,7 +41,7 @@ const PROVIDER_LABELS: Record<LlmProvider, string> = {
   xiaomi: 'Xiaomi',
   mistral: 'Mistral',
   xai: 'xAI',
-  'xai-oauth': 'xAI (订阅登录)',
+  'xai-oauth': 'xAI (subscription sign-in)',
   openrouter: 'OpenRouter',
   ofox: 'OFox',
   orcarouter: 'OrcaRouter',
@@ -152,7 +152,7 @@ export function VisionModelPane(): React.JSX.Element {
                     {providerChoices.length === 0 && <option value="">{t('No provider available (configure an API key first)')}</option>}
                     {providerChoices.map((entry) => (
                       <option key={entry.provider} value={entry.provider}>
-                        {PROVIDER_LABELS[entry.provider]}
+                        {t(PROVIDER_LABELS[entry.provider])}
                       </option>
                     ))}
                   </select>

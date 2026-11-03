@@ -38,7 +38,7 @@ try {
   // otherwise win; without a browser it still has to go to the server.
   const unrepresentable = chooseSupportedRoute(compatible, hardware, false);
   assert.equal(unrepresentable.route, 'browser');
-  assert.equal(unrepresentable.reason, '本机渲染器无法将此画布精确缩放到所选分辨率');
+  assert.equal(unrepresentable.reason, 'The local renderer cannot scale this canvas exactly to the selected resolution');
   assert.equal(chooseSupportedRoute(unsupported, hardware, false).route, 'server');
 
   values.set('vx.exportPerformance.v1', JSON.stringify({

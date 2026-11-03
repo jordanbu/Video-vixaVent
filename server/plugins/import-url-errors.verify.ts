@@ -75,7 +75,8 @@ try {
   assert.ok(english);
   assert.match(english.message, /Could not connect to commondatastorage\.googleapis\.com \(ETIMEDOUT\)/);
   assert.match(english.message, /Settings → Agent model/);
-  assert.doesNotMatch(english.message, /[一-龥]/, 'no Chinese leaks into the English message');
+  // CJK unified ideographs range, written as escapes (specs/11).
+  assert.doesNotMatch(english.message, /[\u4e00-\u9fa5]/, 'no Chinese leaks into the English message');
   process.env.HTTPS_PROXY = 'http://127.0.0.1:7890';
   const englishProxied = unreachableImportError(withCode('ECONNRESET'), REMOTE);
   delete process.env.HTTPS_PROXY;

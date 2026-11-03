@@ -6,17 +6,17 @@ const word = (text: string, start: number, end: number) => ({ text, start, end }
 
 // Continuous speech stays in one paragraph.
 assert.deepEqual(
-  transcriptParagraphs([word('你', 0, 200), word('好', 200, 400), word('啊', 400, 600)]),
-  [{ start: 0, text: '你好啊' }],
+  transcriptParagraphs([word('\u4f60', 0, 200), word('\u597d', 200, 400), word('\u554a', 400, 600)]),
+  [{ start: 0, text: '\u4f60\u597d\u554a' }],
   'no gap keeps one paragraph',
 );
 
 // A gap > 0.8s opens a new paragraph carrying its own start time.
 assert.deepEqual(
-  transcriptParagraphs([word('第一句', 0, 800), word('第二句', 2500, 3100)]),
+  transcriptParagraphs([word('First line', 0, 800), word('Second line', 2500, 3100)]),
   [
-    { start: 0, text: '第一句' },
-    { start: 2500, text: '第二句' },
+    { start: 0, text: 'First line' },
+    { start: 2500, text: 'Second line' },
   ],
   'gap > 800ms splits paragraphs',
 );
@@ -33,8 +33,8 @@ assert.deepEqual(transcriptParagraphs([]), [], 'empty transcript');
 
 // Chinese text concatenates without spaces; mixed text preserves word text.
 assert.equal(
-  transcriptParagraphs([word('我', 0, 300), word('们', 300, 600)])[0]?.text,
-  '我们',
+  transcriptParagraphs([word('\u6211', 0, 300), word('\u4eec', 300, 600)])[0]?.text,
+  '\u6211\u4eec',
   'concatenation is verbatim',
 );
 

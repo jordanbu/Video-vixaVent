@@ -9,6 +9,7 @@
 // selection-mode flag (isSelectionMode) so panels deep inside other
 // panels (transcript lives in LibraryPanel) need no prop drilling.
 
+import { t } from '../i18n/locale';
 import { useSyncExternalStore } from 'react';
 import {
   trackAlias, trackKind,
@@ -144,7 +145,7 @@ export function timepointRef(frame: number, state: TimelineState): SelectionRefe
   const f = Math.max(0, Math.round(frame));
   return {
     id: `time:${f}`,
-    name: `${formatFrameTime(f, state.fps)} 时间点`,
+    name: t('Time point {time}', { time: formatFrameTime(f, state.fps) }),
     kind: 'timepoint',
     metadata: { fps: state.fps, timelineId: timelineIdOf(state), timelineFrameStart: f },
   };
@@ -302,7 +303,9 @@ export function canvasRegionRef(region: RegionRect, frame: number, state: Timeli
   const f = Math.max(0, Math.round(frame));
   return {
     id: `region:${region.x},${region.y},${region.width},${region.height}@${f}`,
-    name: contained.length ? `画面区域（${contained.length} 个片段）` : '画面区域',
+    name: contained.length === 0 ? t('Canvas region')
+      : contained.length === 1 ? t('Canvas region (1 clip)')
+        : t('Canvas region ({n} clips)', { n: contained.length }),
     kind: 'canvas-region',
     metadata: {
       fps: state.fps,
@@ -351,7 +354,7 @@ export function transcriptSelectionRef(
   const label = text.length > TRANSCRIPT_LABEL_MAX ? `${text.slice(0, TRANSCRIPT_LABEL_MAX)}…` : text;
   return {
     id: `transcript:${item.id}:${gis[0]}-${gis[gis.length - 1]}`,
-    name: `“${label}”（${gis.length} 词）`,
+    name: gis.length === 1 ? t('“{text}” (1 word)', { text: label }) : t('“{text}” ({n} words)', { text: label, n: gis.length }),
     kind: 'transcript-selection',
     metadata: {
       fps,

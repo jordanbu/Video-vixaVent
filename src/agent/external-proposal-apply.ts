@@ -1,3 +1,4 @@
+import { t } from '../i18n/locale';
 import type { AgentContext } from './context';
 import {
   ExternalEditSessionOutcomeError,
@@ -145,7 +146,7 @@ export async function commitExternalProposal(
     projectId: input.projectId,
     before: currentDoc,
     result,
-    versionLabel: '外部 Agent 修改前',
+    versionLabel: t('Before external Agent edit'),
     signal: input.signal,
   }, {
     saveVersion: input.persistence.saveAutomaticVersion,

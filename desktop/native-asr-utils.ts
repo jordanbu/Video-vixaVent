@@ -42,7 +42,7 @@ export function whisperLanguage(language: string | undefined): string {
 // Myanmar, Khmer) carry no such whitespace, so each token opens a chunk;
 // transformers.js splits the browser ONNX path the same way for its space-less
 // language list (Chinese, Japanese, Thai, Lao, Myanmar). Korean uses spaces
-// (whisper.cpp splits 안녕하세요 into 안녕 + 하세요), so Hangul joins like
+// (whisper.cpp splits one Korean word, "annyeonghaseyo", into two tokens), so Hangul joins like
 // Russian instead of fragmenting.
 const NO_SPACE_SCRIPT_TOKEN =
   /[\u0E00-\u0E7F\u0E80-\u0EFF\u1000-\u109F\u1780-\u17FF\u3040-\u30FF\u3400-\u4DBF\u4E00-\u9FFF\u{20000}-\u{2FA1F}]/u;

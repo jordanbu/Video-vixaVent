@@ -89,7 +89,7 @@ const localTranscriptionPage = transcriptionPage('local', 'localasr', 'Local mod
 /** The page with the local Whisper model list (download / delete). */
 export const LOCAL_ASR_SETTINGS_ROUTE = 'local/asr';
 
-// The model list lives on 本地模型 → 本地转写. This page used to promise it
+// The model list lives on Local models → Local transcription. This page used to promise it
 // "below" with no way to get there, while runtime errors sent users here (#126).
 export const localAsrPage: SettingsVendorPage = {
   ...localTranscriptionPage,

@@ -82,7 +82,7 @@ ordenado y fácil de leer.
 
 Resultados del 2026-11-01, con Node 24.22.1:
 
-- `tsx src/skins.verify.ts` → `ok (7 skins, 对比度门全过)`. Para la marca además: texto
+- `tsx src/skins.verify.ts` → `ok (7 skins, todas pasan el umbral de contraste)` (salida traducida del chino). Para la marca además: texto
   oscuro sobre clay ≥ 4,5 (blanco no llegaba), textDim sobre tarjetas ≥ 4,5, y los 11
   colores semánticos iguales a Graphite. Migración: un `graphite` guardado antes pasa al
   nuevo predeterminado una sola vez; elegir Graphite después se respeta; cualquier otro

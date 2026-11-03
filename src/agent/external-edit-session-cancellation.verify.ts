@@ -46,7 +46,8 @@ assert.throws(
     __images: [{
       base64: 'jpeg-data',
       mimeType: 'image/jpeg',
-      note: '图'.repeat(5 * 1024 * 1024),
+      // A 3-byte UTF-8 character, so the payload size matches the original fixture.
+      note: '€'.repeat(5 * 1024 * 1024),
     }],
   }),
   /image payload exceeds/i,

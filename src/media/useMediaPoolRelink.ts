@@ -60,10 +60,10 @@ function relinkResultMessage(
   if (relinked > 0) {
     return t('Relinked {n} assets; no matching files found: {list}', {
       n: relinked,
-      list: unmatched.join('、'),
+      list: unmatched.join(', '),
     });
   }
-  return t('No files matching the lost assets: {list}', { list: unmatched.join('、') });
+  return t('No files matching the lost assets: {list}', { list: unmatched.join(', ') });
 }
 
 async function relinkMatches(

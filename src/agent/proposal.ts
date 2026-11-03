@@ -5,6 +5,7 @@
 // Option{id,label,recommended,summary,totalImpact,operations[]} →
 // Operation{tool,args,action,target,impact,risk,rationale}); we additionally
 // carry the store actions per operation so approve can replay them atomically.
+import { t } from '../i18n/locale';
 import type { AnyAction } from '../editor/store';
 import type { ProjectDoc, TimelineState } from '../editor/types';
 import { migrateProjectDoc } from '../persist/projectStore';
@@ -51,31 +52,37 @@ export interface BuiltProposal extends Proposal {
 }
 
 // map an agent tool call + the store actions it produced into a display Operation.
+// Values are i18n keys: they are translated when the operation is built, in the interface language.
 const VERB: Record<string, string> = {
-  add_motion_graphic: '添加动画',
-  create_motion_graphic: '生成动画',
-  add_audio: '添加音频',
-  update_item_props: '改属性',
-  move_item: '移动片段',
-  set_item_timing: '改时长/位置',
+  add_motion_graphic: 'Add animation',
+  create_motion_graphic: 'Generate animation',
+  add_audio: 'Add audio',
+  update_item_props: 'Change properties',
+  move_item: 'Move clip',
+  set_item_timing: 'Change duration/position',
   duplicate_item: 'Duplicate',
-  remove_item: '删除片段',
-  split_item: '切分片段',
-  clear_timeline: '清空时间线',
-  set_aspect_ratio: '改画面比例',
-  set_item_transcript: '挂转写',
-  delete_text: '删文字=删视频',
-  clean_script: '清理口播',
-  edit_captions: '编辑字幕',
-  manage_timelines: '管理序列',
-  edit_track: '管理轨道',
-  manage_media_pool: '整理素材池',
+  remove_item: 'Delete clip',
+  split_item: 'Split clip',
+  clear_timeline: 'Clear timeline',
+  set_aspect_ratio: 'Change aspect ratio',
+  set_item_transcript: 'Attach transcript',
+  delete_text: 'Delete text = delete video',
+  clean_script: 'Clean up voiceover',
+  edit_captions: 'Edit captions',
+  manage_timelines: 'Manage sequences',
+  edit_track: 'Manage tracks',
+  manage_media_pool: 'Organize media pool',
   isolate_voice: 'Voice Isolation',
-  apply_script: '改稿应用',
+  apply_script: 'Apply script edits',
   manage_effects: 'Effects',
-  edit_item: '编辑片段',
-  browse_library: '浏览资源库',
+  edit_item: 'Edit clip',
+  browse_library: 'Browse library',
 };
+
+/** "1 change" / "4 changes": the singular has its own key. */
+function countLabel(n: number, one: string, many: string): string {
+  return n === 1 ? t(one) : t(many, { n });
+}
 
 function targetOf(args: Record<string, unknown>, actions: AnyAction[]): string {
   const name = args.name ?? args.query ?? args.template ?? args.ratio;
@@ -88,7 +95,7 @@ function targetOf(args: Record<string, unknown>, actions: AnyAction[]): string {
     if (a.type === 'tl.create') return a.timeline.name;
     if (a.type === 'tl.duplicate' || a.type === 'tl.rename') return a.name;
   }
-  return 'Timeline';
+  return t('Timeline');
 }
 
 function impactOf(actions: AnyAction[]): string {
@@ -102,12 +109,12 @@ function impactOf(actions: AnyAction[]): string {
     else mod++;
   }
   const parts: string[] = [];
-  if (addSeq) parts.push(`+${addSeq} 序列`);
-  if (delSeq) parts.push(`−${delSeq} 序列`);
-  if (add) parts.push(`+${add} 片段`);
-  if (del) parts.push(`−${del} 片段`);
-  if (mod) parts.push(`${mod} 处改动`);
-  return parts.join(' · ') || '无变化';
+  if (addSeq) parts.push(countLabel(addSeq, '+1 sequence', '+{n} sequences'));
+  if (delSeq) parts.push(countLabel(delSeq, '−1 sequence', '−{n} sequences'));
+  if (add) parts.push(countLabel(add, '+1 clip', '+{n} clips'));
+  if (del) parts.push(countLabel(del, '−1 clip', '−{n} clips'));
+  if (mod) parts.push(countLabel(mod, '1 change', '{n} changes'));
+  return parts.join(' · ') || t('No changes');
 }
 
 export function buildOperation(tool: string, args: Record<string, unknown>, actions: AnyAction[]): Operation {
@@ -115,7 +122,7 @@ export function buildOperation(tool: string, args: Record<string, unknown>, acti
     tool,
     args,
     actions,
-    action: VERB[tool] ?? tool,
+    action: VERB[tool] ? t(VERB[tool]) : tool,
     target: targetOf(args, actions),
     impact: impactOf(actions),
     rationale: typeof args.rationale === 'string' ? args.rationale : undefined,
@@ -165,13 +172,13 @@ export function buildProposal(
 ): BuiltProposal {
   const compacted = compactOperations(operations);
   const totalImpact = impactOf(compacted.flatMap((o) => o.actions));
-  const summary = assistantText.trim() || `${compacted.length} 项编辑`;
+  const summary = assistantText.trim() || countLabel(compacted.length, '1 edit', '{n} edits');
   return {
     id: crypto.randomUUID(),
-    title: 'Agent 编辑提案',
+    title: t('Agent edit proposal'),
     summary,
     totalImpact,
-    options: [{ id: 'opt-1', label: '应用全部', recommended: true, summary, totalImpact, operations: compacted }],
+    options: [{ id: 'opt-1', label: t('Apply all'), recommended: true, summary, totalImpact, operations: compacted }],
     baseDoc,
     resultState,
     ...(agentRunId ? { agentRunId } : {}),

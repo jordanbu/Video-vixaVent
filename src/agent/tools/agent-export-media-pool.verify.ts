@@ -27,7 +27,7 @@ const project = docFromTimeline({
   assets: [sourceAsset],
   items: [{
     id: 'source-range',
-    name: '产品痛点',
+    name: 'Problema del producto',
     kind: 'video',
     track: 'V1',
     src: sourceAsset.src,
@@ -38,7 +38,7 @@ const project = docFromTimeline({
     playbackRate: 2,
   }],
 });
-project.timelines[0] = { ...project.timelines[0]!, id: 'clip-01', name: '01-产品痛点-3秒-9:16' };
+project.timelines[0] = { ...project.timelines[0]!, id: 'clip-01', name: '01-problema-del-producto-3s-9:16' };
 project.activeTimelineId = 'clip-01';
 const draft = makeDraft(project);
 const ctx: AgentContext = {
@@ -89,7 +89,7 @@ try {
         result: {
           assetId: 'derived-video',
           path: '/media/uploads/vixaventora-export-job-derived-video.mp4',
-          name: '01-产品痛点.mp4',
+          name: '01-problema-del-producto.mp4',
           durationSeconds: 3,
           width: 1080,
           height: 1920,
@@ -102,7 +102,7 @@ try {
       return Response.json({
         assetId: 'derived-video',
         path: '/media/uploads/vixaventora-derived-derived-video.mp4',
-        name: '01-产品痛点.mp4',
+        name: '01-problema-del-producto.mp4',
         durationSeconds: 3,
         width: 1080,
         height: 1920,
@@ -114,7 +114,7 @@ try {
 
   const submitted = await execExportTool('submit_render_job', {
     format: 'video',
-    name: '01-产品痛点.mp4',
+    name: '01-problema-del-producto.mp4',
     saveToMediaPool: true,
   }, ctx) as { ok?: boolean; renderId?: string; mediaPoolStatus?: string };
   assert.equal(submitted.ok, true);
@@ -147,7 +147,7 @@ try {
   assert.deepEqual(saved?.props?.vixaventoraDerivedFrom, {
     kind: 'sequence-export',
     timelineId: 'clip-01',
-    timelineName: '01-产品痛点-3秒-9:16',
+    timelineName: '01-problema-del-producto-3s-9:16',
     renderId: 'render-save',
     sourceAssetIds: ['source-long'],
     sourceRanges: [{

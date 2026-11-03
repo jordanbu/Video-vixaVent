@@ -65,8 +65,8 @@ function openDatabase(): Promise<IDBDatabase> {
       }
     };
     request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error ?? new Error('无法打开导出恢复存储'));
-    request.onblocked = () => reject(new Error('导出恢复存储被其他页面占用'));
+    request.onerror = () => reject(request.error ?? new Error('Could not open the export recovery storage'));
+    request.onblocked = () => reject(new Error('The export recovery storage is in use by another page'));
   });
 }
 
@@ -175,7 +175,7 @@ export async function readLocalRecords(): Promise<PersistedServerExportJob[]> {
     return await new Promise<unknown[]>((resolve, reject) => {
       const request = database.transaction(STORE_NAME, 'readonly').objectStore(STORE_NAME).getAll();
       request.onsuccess = () => resolve(request.result as unknown[]);
-      request.onerror = () => reject(request.error ?? new Error('无法读取导出恢复记录'));
+      request.onerror = () => reject(request.error ?? new Error('Could not read the export recovery record'));
     }).then((values) => values.filter(validRecord));
   } finally {
     database.close();
@@ -189,7 +189,7 @@ export async function readLocalRecord(renderId: string): Promise<PersistedServer
     const value = await new Promise<unknown>((resolve, reject) => {
       const request = database.transaction(STORE_NAME, 'readonly').objectStore(STORE_NAME).get(renderId);
       request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error ?? new Error('无法读取导出恢复记录'));
+      request.onerror = () => reject(request.error ?? new Error('Could not read the export recovery record'));
     });
     return validRecord(value) ? value : null;
   } finally {
@@ -208,8 +208,8 @@ export async function writeLocalRecord(record: PersistedServerExportJob): Promis
       const transaction = database.transaction(STORE_NAME, 'readwrite');
       transaction.objectStore(STORE_NAME).put(record);
       transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error ?? new Error('无法保存导出恢复记录'));
-      transaction.onabort = () => reject(transaction.error ?? new Error('导出恢复记录写入已取消'));
+      transaction.onerror = () => reject(transaction.error ?? new Error('Could not save the export recovery record'));
+      transaction.onabort = () => reject(transaction.error ?? new Error('Writing the export recovery record was cancelled'));
     });
   } finally {
     database.close();
@@ -227,8 +227,8 @@ export async function removeLocalRecord(renderId: string): Promise<void> {
       const transaction = database.transaction(STORE_NAME, 'readwrite');
       transaction.objectStore(STORE_NAME).delete(renderId);
       transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error ?? new Error('无法删除导出恢复记录'));
-      transaction.onabort = () => reject(transaction.error ?? new Error('导出恢复记录删除已取消'));
+      transaction.onerror = () => reject(transaction.error ?? new Error('Could not delete the export recovery record'));
+      transaction.onabort = () => reject(transaction.error ?? new Error('Deleting the export recovery record was cancelled'));
     });
   } finally {
     database.close();

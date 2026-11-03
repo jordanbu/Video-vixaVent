@@ -72,7 +72,8 @@ function isOtherOption(option: NormalizedOption): boolean {
   const value = option.value.toLowerCase();
   const display = option.display.toLowerCase();
   return value === '__other__' || value === 'other' || value === 'custom'
-    || display.startsWith('其他') || display.startsWith('other');
+    // Model-written labels such as "Other..." / "Otro..." / "Otra..." (the app runs in English and Spanish).
+    || display.startsWith('other') || display.startsWith('otro') || display.startsWith('otra');
 }
 
 function attrs(values: Record<string, string | boolean | undefined>): string {

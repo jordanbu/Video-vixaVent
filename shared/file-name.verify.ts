@@ -17,7 +17,7 @@ assert.equal(sanitizeFileName(`x${ctrl(31)}y`, 'fallback'), 'x_y', '0x1f is the 
 assert.equal(sanitizeFileName(`x${ctrl(32)}y`, 'fallback'), 'x y', '0x20 is a space and is kept');
 
 // Unicode survives — the whole point of not falling back to an ASCII allowlist.
-assert.equal(sanitizeFileName('导出视频 v2.mp4', 'fallback'), '导出视频 v2.mp4');
+assert.equal(sanitizeFileName('Exportación de vídeo v2.mp4', 'fallback'), 'Exportación de vídeo v2.mp4');
 assert.equal(sanitizeFileName('café ☕.mov', 'fallback'), 'café ☕.mov');
 
 // The fallback covers every way a name can end up empty.

@@ -4,13 +4,22 @@ import { updateManualCue } from './manualCaptions';
 
 export const CAPTION_CUE_TRANSLATION_LANGS = [
   { label: 'English', flag: '🇺🇸' },
-  { label: '日本語', flag: '🇯🇵' },
-  { label: '한국어', flag: '🇰🇷' },
+  // Japanese and Korean by their English names (specs/11): the label is also the translation target.
+  { label: 'Japanese', flag: '🇯🇵' },
+  { label: 'Korean', flag: '🇰🇷' },
   { label: 'Español', flag: '🇪🇸' },
   { label: 'Français', flag: '🇫🇷' },
   { label: 'Deutsch', flag: '🇩🇪' },
   { label: 'Português', flag: '🇵🇹' },
 ] as const;
+
+// Projects saved before specs/11 stored the native names of Japanese and Korean as the translation
+// target (escaped: no CJK in the source). Map them to the English names used now.
+const LEGACY_CAPTION_LANGS: Readonly<Record<string, string>> = { '\u65e5\u672c\u8a9e': 'Japanese', '\ud55c\uad6d\uc5b4': 'Korean' };
+
+export function normalizeCaptionLang(lang: string): string {
+  return LEGACY_CAPTION_LANGS[lang] ?? lang;
+}
 
 export interface CaptionCueTextTarget {
   laneId: string;

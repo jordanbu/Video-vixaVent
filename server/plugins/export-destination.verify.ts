@@ -108,7 +108,7 @@ try {
     'an empty request must not replace the previous target',
   );
   const source = join(directory, 'source.mp4');
-  const localizedName = '狗零食嘎嘎棒mini.mp4';
+  const localizedName = 'Galletas para perro ñandú mini.mp4';
   await writeFile(source, 'server-side export copy');
   await handleExportDestinationPut(
     sourceRequest(`/${grant.grantId}/${encodeURIComponent(localizedName)}`, '/media/uploads/source.mp4'),

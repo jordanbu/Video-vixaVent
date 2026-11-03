@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { EN } from '../i18n/dict/en';
+import { ES } from '../i18n/dict/es';
 
 const component = await readFile(new URL('./GenerationActivity.tsx', import.meta.url), 'utf8');
 const topBarButton = await readFile(new URL('./TopBarIconButton.tsx', import.meta.url), 'utf8');
@@ -8,18 +8,18 @@ const topBarButton = await readFile(new URL('./TopBarIconButton.tsx', import.met
 assert.match(
   component,
   /<TopBarIconButton[\s\S]*?icon="sparkles"[\s\S]*?label=\{t\('Generation Tasks'\)\}/,
-  'Generation Tasks按钮应复用顶部栏图标按钮',
+  'the Generation Tasks button should reuse the top bar icon button',
 );
 assert.doesNotMatch(
   component,
   /title=\{t\('Generation Tasks'\)\}/,
-  'Generation Tasks按钮不应使用Styles不可控的原生 title',
+  'the Generation Tasks button must not use the unstyleable native title',
 );
-assert.match(topBarButton, /className="vx-tip vx-tip-r"/, '共享按钮应使用即时 tooltip');
-assert.match(topBarButton, /data-tip=\{label\}/, '共享按钮应将本地化标签用于 tooltip');
-assert.match(topBarButton, /onMouseEnter=/, '共享按钮应提供统一的 hover 反馈');
-assert.match(topBarButton, /onMouseLeave=/, '共享按钮应在离开 hover 后RestoreStyles');
-assert.equal(component.match(/retryClassLabel\(job\.retryClass, t\)/g)?.length, 1, '每个任务应只计算一次Retry标签');
+assert.match(topBarButton, /className="vx-tip vx-tip-r"/, 'the shared button should use the instant tooltip');
+assert.match(topBarButton, /data-tip=\{label\}/, 'the shared button should use the localized label for the tooltip');
+assert.match(topBarButton, /onMouseEnter=/, 'the shared button should give consistent hover feedback');
+assert.match(topBarButton, /onMouseLeave=/, 'the shared button should restore its styles after hover ends');
+assert.equal(component.match(/retryClassLabel\(job\.retryClass, t\)/g)?.length, 1, 'each task should compute its retry label only once');
 
 const generationActivityKeys = [
   'Generation Tasks',
@@ -47,11 +47,12 @@ const generationActivityKeys = [
 ] as const;
 
 for (const key of generationActivityKeys) {
-  assert.notEqual(EN[key], undefined, `Englishwords典应包含“${key}”`);
+  // Keys are the English text (specs/11): English needs no entry, Spanish must have one.
+  assert.notEqual(ES[key], undefined, `the Spanish dictionary should include "${key}"`);
 }
 
-assert.match(component, /t\('\{n\} min ago'/, '相对分钟数应通过 i18n Format化');
-assert.match(component, /t\('\{n\} hr ago'/, '相对小时数应通过 i18n Format化');
-assert.match(component, /t\('\{n\} d ago'/, '相对天数应通过 i18n Format化');
+assert.match(component, /t\('\{n\} min ago'/, 'relative minutes should be formatted through i18n');
+assert.match(component, /t\('\{n\} hr ago'/, 'relative hours should be formatted through i18n');
+assert.match(component, /t\('\{n\} d ago'/, 'relative days should be formatted through i18n');
 
 console.log('generation activity hover and localization verified');

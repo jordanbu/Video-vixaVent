@@ -6,7 +6,7 @@
 // build (a version snapshot carrying a future ProjectDoc, an export record
 // with a field this build predates). Reading with a filter and then writing
 // the filtered array back destroys those entries permanently, which the
-// release data-safety rule forbids ("新写旧读必须安全降级 … 不允许覆盖旧数据").
+// release data-safety rule forbids ("data written by a newer build must degrade safely when read by an older one … never overwrite old data").
 //
 // So: filter for DISPLAY, and carry the unparsed entries through every write.
 

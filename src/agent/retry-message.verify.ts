@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { createAgentRetry, ensureAgentRetryMetadata } from './agent-session';
 import type { AgentReference } from './context';
 
-const reference: AgentReference = { id: 'asset-1', name: '素材', kind: 'video' };
+const reference: AgentReference = { id: 'asset-1', name: 'Material', kind: 'video' };
 const options = { askOnly: true, references: [reference] };
 const retry = createAgentRetry('  Generate captions  ', options);
 assert.deepEqual(retry, {
@@ -13,18 +13,18 @@ assert.deepEqual(retry, {
 assert.notEqual(retry?.references, options.references, 'retry payload owns its reference array');
 assert.equal(createAgentRetry('   '), undefined, 'empty prompts cannot be retried');
 
-const existing = createAgentRetry('已经带元数据', { askOnly: true });
+const existing = createAgentRetry('Ya trae metadatos', { askOnly: true });
 const hydrated = ensureAgentRetryMetadata([
-  { role: 'user', text: 'History用户消息' },
-  { role: 'assistant', text: 'History回答' },
-  { role: 'user', text: '已经带元数据', retry: existing },
+  { role: 'user', text: 'Mensaje anterior del usuario' },
+  { role: 'assistant', text: 'Respuesta anterior' },
+  { role: 'user', text: 'Ya trae metadatos', retry: existing },
 ]);
 assert.deepEqual(hydrated[0], {
   role: 'user',
-  text: 'History用户消息',
-  retry: { text: 'History用户消息' },
+  text: 'Mensaje anterior del usuario',
+  retry: { text: 'Mensaje anterior del usuario' },
 }, 'legacy user messages receive retry metadata during hydration');
-assert.deepEqual(hydrated[1], { role: 'assistant', text: 'History回答' }, 'assistant messages are unchanged');
+assert.deepEqual(hydrated[1], { role: 'assistant', text: 'Respuesta anterior' }, 'assistant messages are unchanged');
 assert.equal(hydrated[2].retry, existing, 'existing retry metadata is preserved');
 
 console.log('retry-message.verify: ok');

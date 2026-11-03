@@ -22,16 +22,16 @@ function openDestinationDatabase(): Promise<IDBDatabase> {
     }
   };
   request.onsuccess = () => resolve(request.result);
-  request.onerror = () => reject(request.error ?? new Error('无法打开导出目录存储'));
-  request.onblocked = () => reject(new Error('导出目录存储被其他页面占用'));
+  request.onerror = () => reject(request.error ?? new Error('Could not open the export folder storage'));
+  request.onblocked = () => reject(new Error('The export folder storage is in use by another page'));
   return promise;
 }
 
 function transactionComplete(transaction: IDBTransaction): Promise<void> {
   const { promise, resolve, reject } = promiseConstructor.withResolvers<void>();
   transaction.oncomplete = () => resolve(undefined);
-  transaction.onerror = () => reject(transaction.error ?? new Error('无法保存导出目录'));
-  transaction.onabort = () => reject(transaction.error ?? new Error('导出目录保存已取消'));
+  transaction.onerror = () => reject(transaction.error ?? new Error('Could not save the export folder'));
+  transaction.onabort = () => reject(transaction.error ?? new Error('Saving the export folder was cancelled'));
   return promise;
 }
 
@@ -43,7 +43,7 @@ async function readBrowserDirectory(): Promise<BrowserExportDirectoryHandle | nu
     const request = transaction.objectStore(STORE_NAME).get(LAST_BROWSER_DIRECTORY_KEY);
     const { promise, resolve, reject } = promiseConstructor.withResolvers<unknown>();
     request.onsuccess = () => resolve(request.result as unknown);
-    request.onerror = () => reject(request.error ?? new Error('无法读取导出目录'));
+    request.onerror = () => reject(request.error ?? new Error('Could not read the export folder'));
     const value = await promise;
     return isBrowserDirectoryHandle(value) ? value : null;
   } catch {

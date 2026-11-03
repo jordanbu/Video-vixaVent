@@ -15,7 +15,9 @@ import { newManualCaptions } from './manualCaptions';
 import { captionTemplatePatch } from './captionTemplatePatch';
 import { MenuDrillHeader } from '../components/timeline/MenuDrillHeader';
 
-const CAPTION_LANGS = ['English', '日本語', '한국어', 'Español', 'Français', 'Deutsch', 'Português'];
+// Translation targets: the name handed to the translator and stored as translationLang. Japanese and
+// Korean use their English names (specs/11) and are shown translated; the rest show their own name.
+const CAPTION_LANGS = ['English', 'Japanese', 'Korean', 'Español', 'Français', 'Deutsch', 'Português'];
 
 interface CaptionStyleMenuProps {
   state: TimelineState;
@@ -115,7 +117,7 @@ export function CaptionStyleMenu({ state, commands, trackId, pos, error, onError
     <div className="vx-caption-style-menu" style={{ position: 'fixed', left: pos.left, top: pos.top }} onPointerDown={(e) => e.stopPropagation()}>
       <MenuDrillHeader title={t('translation')} onBack={() => initialTranslateOpen ? backToParent() : setTranslateOpen(false)} />
       <div className="vx-caption-language-menu is-drill">
-        {CAPTION_LANGS.map((lang) => <button type="button" key={lang} disabled={busy} onClick={() => void translate(lang)}>{lang}</button>)}
+        {CAPTION_LANGS.map((lang) => <button type="button" key={lang} disabled={busy} onClick={() => void translate(lang)}>{lang === 'Japanese' ? t('Japanese') : lang === 'Korean' ? t('Korean') : lang}</button>)}
       </div>
       {busy && <div className="vx-caption-style-status">{t('Translating...')}</div>}
       {error && <div className="vx-caption-style-error">{error}</div>}
@@ -173,7 +175,7 @@ export function CaptionStyleMenu({ state, commands, trackId, pos, error, onError
           className="vx-caption-style-save"
           disabled={!current}
           title={current ? t('Save the current template/style override as a user preset') : t('Enable captions first')}
-          onClick={() => setNameDraft(`我的样式 ${new Date().toLocaleDateString()}`)}
+          onClick={() => setNameDraft(t('My style {date}', { date: new Date().toLocaleDateString() }))}
         >
           {t('+ Save current style...')}
         </button>

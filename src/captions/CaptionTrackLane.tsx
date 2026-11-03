@@ -331,16 +331,16 @@ export function CaptionTrackLane({
       {menu && <div className="vx-caption-cue-menu" data-caption-selection-owner="cue-menu" role="menu"
         style={{ left: menu.x, top: menu.y }} onPointerDown={(event) => event.stopPropagation()}>
         {translationOpen ? <>
-          <button type="button" role="menuitem" onClick={() => setTranslationOpen(false)}>{t('translation')}</button>
+          <button type="button" role="menuitem" onClick={() => setTranslationOpen(false)}>{t('Translate')}</button>
           {CAPTION_CUE_TRANSLATION_LANGS.map((language) => <button key={language.label} type="button" role="menuitem"
             disabled={menuBusy} onClick={() => void translateCue(menu.target, language.label)}>
-            {language.flag} {language.label}
+            {language.flag} {t(language.label)}
           </button>)}
         </> : <>
-          <button type="button" role="menuitem" onClick={() => void copyCue(menu.selection)}>{t('Duplicate')}</button>
+          <button type="button" role="menuitem" onClick={() => void copyCue(menu.selection)}>{t('Copy')}</button>
           <button type="button" role="menuitem" onClick={pasteCue}>{t('Paste')}</button>
           {onTranslateCue && <button type="button" role="menuitem" aria-haspopup="menu"
-            onClick={() => setTranslationOpen(true)}>{t('translation')} ›</button>}
+            onClick={() => setTranslationOpen(true)}>{t('Translate')} ›</button>}
           {(onAddSelectionToChat || onSeedChat) && <button type="button" role="menuitem" onClick={() => {
             if (onAddSelectionToChat) {
               const selected = selectedCaptions.some((selection) => captionSelectionKey(selection) === captionSelectionKey(menu.selection));

@@ -27,7 +27,7 @@ export function InspectorSlipControl({ item, plan, onSlip }: InspectorSlipContro
       return;
     }
     setNotice(result.clamped
-      ? t(result.sourceDomain === 'edited-stream' ? '已到达编辑词流边界' : 'Reached the source media boundary')
+      ? t(result.sourceDomain === 'edited-stream' ? 'Reached the edited word-stream boundary' : 'Reached the source media boundary')
       : null);
   };
 
@@ -43,7 +43,7 @@ export function InspectorSlipControl({ item, plan, onSlip }: InspectorSlipContro
   return (
     <div className="vx-insp-stack">
       <div className="vx-insp-row">
-        <span className="vx-insp-label">{t(plan.sourceDomain === 'edited-stream' ? '编辑词流区间' : '源区间')}</span>
+        <span className="vx-insp-label">{t(plan.sourceDomain === 'edited-stream' ? 'Edited word-stream range' : 'Source range')}</span>
         <span className="vx-insp-muted" style={{ fontVariantNumeric: 'tabular-nums' }}>
           {sourceFrame(plan.sourceWindow.startFrame)}–{sourceFrame(sourceOutFrame)}f
         </span>

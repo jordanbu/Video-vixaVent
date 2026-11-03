@@ -28,6 +28,6 @@ function clip(text: string): string {
 /** One line in the interface language; empty when there is nothing to report. */
 export function toolFailureNoteText(failures: readonly PersistedToolFailure[]): string {
   if (failures.length === 0) return '';
-  const details = failures.map((failure) => `${failure.name}: ${clip(failure.reason)}`).join('；');
+  const details = failures.map((failure) => `${failure.name}: ${clip(failure.reason)}`).join('; ');
   return t('In this run {n} tool call(s) failed and the model answered with that in mind: {details}', { n: failures.length, details });
 }

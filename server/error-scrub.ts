@@ -1,6 +1,6 @@
 import { homedir } from 'node:os';
 
-// Server errors are surfaced to the user (the editor shows "共享工程库只读…"
+// Server errors are surfaced to the user (the editor shows "the shared project library is read-only…"
 // and upload failures verbatim), so the text itself is worth keeping. What is
 // NOT worth sending is the filesystem layout: fs errors embed absolute paths
 // like /Users/<name>/… or C:\Users\<name>\…, which leaks the account name and

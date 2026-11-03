@@ -33,12 +33,12 @@ for (const path of FORMS) {
   const options = versionOptions(path);
   const [latest] = options;
   assert.ok(
-    latest === current || latest?.startsWith(`${current} `) || latest?.startsWith(`${current}（`),
+    latest === current || latest?.startsWith(`${current} `) || latest?.startsWith(`${current}\uff08`),
     `${path}: the first (latest Release) option must be ${current}, found ${latest}`,
   );
   assert.equal(
     options.filter((option) => option === current || option.startsWith(`${current} `)
-      || option.startsWith(`${current}（`)).length,
+      || option.startsWith(`${current}\uff08`)).length,
     1,
     `${path}: ${current} is listed exactly once`,
   );

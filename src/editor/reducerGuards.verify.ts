@@ -22,7 +22,7 @@ const seamState = (): TimelineState => ({
   transitions: [transition],
 });
 
-// ── no-op reference stability(有转场在场时被拒/被夹为 0 的 action 不得产生新 state) ──
+// ── no-op reference stability (an action rejected or clamped to 0 with a transition present must not produce a new state) ──
 {
   const s = seamState();
   assert.equal(reduce(s, { type: 'move', id: 'b', startFrame: 50 }), s,
@@ -36,7 +36,7 @@ const seamState = (): TimelineState => ({
   console.log('no-op reference stability: OK');
 }
 
-// ── move:小数帧取整入档 ──────────────────────────────────────────────────
+// ── move: fractional frames are rounded ──────────────────────────────────────
 {
   const out = reduce(seamState(), { type: 'move', id: 'b', startFrame: 100.6 });
   assert.equal(out.items.find((it) => it.id === 'b')?.startFrame, 101,
@@ -44,7 +44,7 @@ const seamState = (): TimelineState => ({
   console.log('move rounding: OK');
 }
 
-// ── split:小数切点取整,边界仍拒绝 ────────────────────────────────────────
+// ── split: fractional cut points are rounded, edges still rejected ──────────
 {
   const out = reduce(seamState(), { type: 'split', id: 'a', atFrame: 30.4, newId: 'a2' });
   const left = out.items.find((it) => it.id === 'a');
@@ -59,7 +59,7 @@ const seamState = (): TimelineState => ({
   console.log('split rounding: OK');
 }
 
-// ── retime:小数 startFrame/durationInFrames 取整 ─────────────────────────
+// ── retime: fractional startFrame/durationInFrames are rounded ──────────────
 {
   const out = reduce(seamState(), { type: 'retime', id: 'b', startFrame: 70.4, durationInFrames: 50.6 });
   const b = out.items.find((it) => it.id === 'b');
@@ -68,7 +68,7 @@ const seamState = (): TimelineState => ({
   console.log('retime rounding: OK');
 }
 
-// ── reorderTrackItems.starts:LLM 通道,非法整体拒绝、小数取整 ──────────────
+// ── reorderTrackItems.starts: LLM channel, invalid input rejected as a whole, fractions rounded ──
 {
   const s = seamState();
   assert.equal(reduce(s, {
@@ -85,7 +85,7 @@ const seamState = (): TimelineState => ({
   console.log('reorderTrackItems starts guard: OK');
 }
 
-// ── setVolume / setFade / setSpeed:NaN 拒绝 ─────────────────────────────
+// ── setVolume / setFade / setSpeed: NaN rejected ────────────────────────────
 {
   const s = seamState();
   assert.equal(reduce(s, { type: 'setVolume', id: 'a', volume: Number.NaN }), s, 'NaN volume rejected');
@@ -117,13 +117,13 @@ const seamState = (): TimelineState => ({
   console.log('setCanvas/updateMarker guards: OK');
 }
 
-// ── tl.retarget(projectReduce 层) ────────────────────────────────────────
+// ── tl.retarget (projectReduce layer) ───────────────────────────────────────
 {
   const p: ProjectDoc = {
     version: 3,
     assets: [],
     mediaFolders: [],
-    timelines: [{ ...seamState(), id: 'tl1', name: '序列 1', order: 0 }],
+    timelines: [{ ...seamState(), id: 'tl1', name: 'Sequence 1', order: 0 }],
     activeTimelineId: 'tl1',
   } as unknown as ProjectDoc;
   assert.equal(projectReduce(p, { type: 'tl.retarget', id: 'tl1', width: 0, height: 1080 }), p,

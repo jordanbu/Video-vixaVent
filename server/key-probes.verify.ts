@@ -39,9 +39,9 @@ const EXPECTED_PAGES = [
   'storage/r2', 'storage/local',
 ];
 for (const page of EXPECTED_PAGES) assert.ok(PROBES[page], `probe missing for ${page}`);
-assert.equal(Object.keys(PROBES).length, EXPECTED_PAGES.length, 'PROBES 有清单外的多余页');
+assert.equal(Object.keys(PROBES).length, EXPECTED_PAGES.length, 'PROBES has extra pages that are not in the list');
 
-// 2. Override whitelist: items outside the whitelist will be discarded, empty values ​​will not be covered, and values ​​will be trimmed.
+// 2. Override whitelist: items outside the whitelist will be discarded, empty values will not be covered, and values will be trimmed.
 {
   const get = makeGetter({ ELEVENLABS_API_KEY: '  k1  ', NOT_A_KEY: 'x', LLM_API_KEY: '   ' });
   assert.equal(get('ELEVENLABS_API_KEY'), 'k1');
@@ -60,7 +60,7 @@ assert.match(classifyStatus(429, '').message, /límite de solicitudes/);
   const r = classifyStatus(500, 'boom\n  line2\ttail');
   assert.equal(r.ok, false);
   assert.match(r.message, /HTTP 500 · boom line2 tail/); // flatten whitespace
-  assert.ok(classifyStatus(500, 'x'.repeat(500)).message.length < 200, '厂商长报错要截断');
+  assert.ok(classifyStatus(500, 'x'.repeat(500)).message.length < 200, 'long vendor errors must be truncated');
 }
 
 // 4. MiniMax base_resp:0 = success; non-0 means provider-level failure (HTTP 200 is also considered a failure); non-JSON is released.

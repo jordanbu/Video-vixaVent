@@ -80,13 +80,13 @@ try {
   assert.equal(renamed?.sourceFilename, 'Camera Original.MOV', 'display renames preserve the imported basename');
 
   const pushed = await execStockTool('push_asset', {
-    filePath: 'https://cdn.example.test/fallback/private%2F%E6%B5%B7%E6%8A%A5%2001.png?token=secret',
-    name: '宣传图显示名',
+    filePath: 'https://cdn.example.test/fallback/private%2Fp%C3%B3ster%2001.png?token=secret',
+    name: 'Nombre visible del póster',
   }, context) as { succeeded: number; results: Array<{ assetId: string }> };
   assert.equal(pushed.succeeded, 1);
   const pushedAsset = draft.getDoc().assets.find((asset) => asset.id === pushed.results[0]?.assetId);
-  assert.equal(pushedAsset?.sourceFilename, '海报 01.png', 'remote fallback keeps only the decoded URL basename');
-  assert.equal(pushedAsset?.name, '宣传图显示名');
+  assert.equal(pushedAsset?.sourceFilename, 'póster 01.png', 'remote fallback keeps only the decoded URL basename');
+  assert.equal(pushedAsset?.name, 'Nombre visible del póster');
   assert.equal(pushedAsset?.originalFilePath, undefined);
 
   // An origin that answers 403 is a failed row: registering it as a remote source used to

@@ -27,17 +27,17 @@ const cssSource = readFileSync(new URL('../index.css', import.meta.url), 'utf8')
 assert.match(
   cardSource,
   /const aspectLabel = mediaRatioLabel\(asset\.width, asset\.height\);[\s\S]*?className="vx-asset-ratio"/,
-  '素材卡片应根据自身宽高渲染比例角标',
+  'an asset card should render an aspect badge from its own width and height',
 );
 assert.match(
   cssSource,
   /\.vx-asset-ratio\s*\{[^}]*position:\s*absolute;[^}]*left:\s*4px;[^}]*bottom:\s*4px;/s,
-  '素材比例应固定在缩略图左下角',
+  'the asset aspect badge should sit in the bottom-left corner of the thumbnail',
 );
 assert.match(
   cssSource,
   /\.vx-media-grid\.list[\s\S]*?\.vx-asset-ratio[\s\S]*?display:\s*none;/,
-  '列表模式应隐藏缩略图比例角标',
+  'list mode should hide the thumbnail aspect badge',
 );
 
 console.log('media-aspect-badge.verify: valid visual media ratios render at thumbnail bottom-left');

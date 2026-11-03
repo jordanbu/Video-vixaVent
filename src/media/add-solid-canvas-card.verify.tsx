@@ -9,9 +9,9 @@ const markup = renderToStaticMarkup(
 assert.match(
   markup,
   /class="vx-add-solid-canvas-card"/,
-  'My Media网格第一格应提供Add solid background/canvas快捷卡片',
+  'the first cell of the My Media grid should offer the Add solid background/canvas shortcut card',
 );
-assert.match(markup, />Add solid background\/canvas</, '快捷卡片应Show明确ActionName');
-assert.match(markup, /aria-label="Add solid background\/canvas"/, '整张卡片应是可访问的添加Action');
+assert.match(markup, />Add solid background\/canvas</, 'the shortcut card should show a clear action name');
+assert.match(markup, /aria-label="Add solid background\/canvas"/, 'the whole card should be an accessible add action');
 
 console.log('add-solid-canvas-card.verify: first-grid action card OK');

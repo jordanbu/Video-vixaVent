@@ -70,13 +70,13 @@ selector y seguían costando mantenimiento en cada rama `locale === 'zh' | 'it' 
 
 Resultados del 2026-10-25:
 
-- `node scripts/check-i18n.mjs` → `152 个 UI 文件，2536 个英文词条，3957 个西班牙语词条`
-  (toda entrada en inglés tiene su español).
+- `node scripts/check-i18n.mjs` → `152 archivos de UI, 2536 entradas en inglés, 3957 entradas en español`
+  (salida traducida; el script imprimía en chino) (toda entrada en inglés tiene su español).
 - `tsx src/i18n/dictRegistry.verify.ts`, `locale.verify.ts`,
   `design-style-localization.verify.ts`, `sound-localization.verify.ts`,
   `src/agent/tool-routing.verify.ts` → OK.
 - Revisión visual con capturas (Electron, 1440×900) del panel principal, el editor, Ajustes,
-  menús (＋ Nueva pista, modo del agente, selector de modelo, menú contextual de clip),
+  menús (+ Nueva pista, modo del agente, selector de modelo, menú contextual de clip),
   inspector y panel MCP: sin textos en chino, sin textos cortados en las pantallas
   revisadas y sin menús encimados.
 
@@ -84,14 +84,14 @@ Resultados del 2026-11-01 (borrado de chino, italiano y ruso), con Node 24.22.1:
 
 - `npx tsc -b` → sin errores (el tipo `Locale = 'es' | 'en'` marcó las únicas ramas
   sobrantes: tres verify).
-- `node scripts/check-i18n.mjs` → `154 个 UI 文件，2546 个英文词条，3967 个西班牙语词条`
-  (con los textos que se agregaron después en el mismo día —nombre de versión y aviso de
+- `node scripts/check-i18n.mjs` → `154 archivos de UI, 2546 entradas en inglés, 3967 entradas en español`
+  (salida traducida; el script imprimía en chino) (con los textos que se agregaron después en el mismo día —nombre de versión y aviso de
   ejecución local (specs/08)— queda en `2549 / 3970`).
 - `src/i18n/locale.verify.ts` → una elección guardada `zh`, `it` o `ru` vuelve a español.
   `server/plugins/import-url-errors.verify.ts` y `server/plugins/mobile-upload.verify.ts` →
   lo mismo en el servidor y en la página del celular.
 - `src/shortcuts/versionName.verify.ts` → `Versión 1/11, 10:35 · Version 11/1, 10:35 AM`
-  (antes el atajo de guardar versión nombraba `版本 11/1 10:35` en cualquier idioma).
+  (antes el atajo de guardar versión nombraba la versión en chino, «Versión 11/1 10:35», en cualquier idioma).
 - `npm run lint` → 0 errores. `npm test` → 196/197; falla
   `server/plugins/sound-sonilo-job.verify.ts`, que busca ffmpeg en el PATH y ya fallaba antes
   (se corrigió el mismo día: ahora usa `ffmpegBin()`). `npm run posttest` aparte → OK.

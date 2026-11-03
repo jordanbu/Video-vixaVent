@@ -18,8 +18,8 @@ assert.ok(hasMutationRoutingIntent('recorta el segundo clip de la línea de tiem
 // Stems match at the start of a word, never in the middle of one.
 assert.equal(routed('reimportar').has('import_media'), false, 'a stem never matches mid-word');
 
-// English and Chinese routing are unchanged.
+// English routing is unchanged.
 assert.ok(routed('Remove the silence').has('remove_silence'));
-assert.ok(routed('删除静音停顿').has('remove_silence'));
+assert.ok(routed('Quita los silencios y las pausas').has('remove_silence'));
 
-console.log('tool-routing.verify: Spanish, English and Chinese requests preload the matching tools');
+console.log('tool-routing.verify: Spanish and English requests preload the matching tools');

@@ -2,7 +2,7 @@
 name: beat-sync-montage
 description: |
   Plan and build a finished beat-synced montage where cut placement serves the content, not just the metronome.
-  Use for 卡点混剪, 卡点剪辑, 踩点视频, beat-sync montage, rhythm edit, 节奏剪辑, 音乐驱动剪辑, or when the user wants cuts that land on the beat.
+  Use for beat-cut montages, beat-sync cuts, on-the-beat videos, beat-sync montage, rhythm edit, rhythm cuts, music-driven edits, or when the user wants cuts that land on the beat.
 ---
 
 # Beat Sync Montage

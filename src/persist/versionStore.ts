@@ -1,5 +1,6 @@
 // Version history (/api/versions): List of named snapshots saved by project, reused during recovery
 // migrateProjectDoc verification. Share native server KV with projectStore.
+import { t } from '../i18n/locale';
 import { migrateProjectDoc } from './projectStore';
 import { kvGet as idbGet, kvSet as idbSet } from './sharedKv';
 import { partitionRecords, withPreservedRecords } from './recordPartition';
@@ -90,7 +91,7 @@ async function persistVersion(
 ): Promise<ProjectVersion> {
   const version: ProjectVersion = {
     id: newId(),
-    name: name.trim() || (automatic ? '自动保存' : '未命名版本'),
+    name: name.trim() || (automatic ? t('Autosave') : t('Untitled version')),
     createdAt: Date.now(),
     automatic,
     doc,

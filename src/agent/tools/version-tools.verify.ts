@@ -56,11 +56,11 @@ assert.equal(empty.count, 0);
 
 const saved = await execVersionTool(
   'manage_versions',
-  { action: 'save', name: '粗剪完成' },
+  { action: 'save', name: 'Primer corte listo' },
   ctx,
 ) as { ok?: boolean; saved?: { id: string; name: string } };
 assert.equal(saved.ok, true, JSON.stringify(saved));
-assert.equal(saved.saved?.name, '粗剪完成');
+assert.equal(saved.saved?.name, 'Primer corte listo');
 assert.ok(saved.saved?.id);
 
 // Mutate project after checkpoint.

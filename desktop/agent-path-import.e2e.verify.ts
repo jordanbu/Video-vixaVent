@@ -36,13 +36,14 @@ function silentWavBytes(seconds = 1): Uint8Array {
   return new Uint8Array(buffer);
 }
 
+// Folder and file names are Chinese, written as \u escapes (specs/11): user media paths are often non-ASCII.
 const workRoot = await mkdtemp(join(tmpdir(), 'occ84-e2e-'));
-await mkdir(join(workRoot, '素材盘'), { recursive: true });
-const importRoot = await realpath(join(workRoot, '素材盘'));
-const sourceName = '访谈素材.wav';
+await mkdir(join(workRoot, '\u7D20\u6750\u76D8'), { recursive: true });
+const importRoot = await realpath(join(workRoot, '\u7D20\u6750\u76D8'));
+const sourceName = '\u8BBF\u8C08\u7D20\u6750.wav';
 const sourcePath = join(importRoot, sourceName);
 await writeFile(sourcePath, silentWavBytes());
-await writeFile(join(importRoot, '剪辑说明.md'), '# 文稿');
+await writeFile(join(importRoot, '\u526A\u8F91\u8BF4\u660E.md'), '# \u6587\u7A3F');
 
 const uploadDir = await canonicalCurrentUploadDirectory();
 const cleanup = new Set<string>();
@@ -80,7 +81,7 @@ try {
   assert.ok(imported.durationSeconds != null && imported.durationSeconds > 0, 'probe reports a duration');
 
   if (process.platform !== 'win32') {
-    const rootAlias = join(workRoot, '素材盘-link');
+    const rootAlias = join(workRoot, '\u7D20\u6750\u76D8-link');
     await symlink(importRoot, rootAlias, 'dir');
     seedKeystore({ AGENT_IMPORT_ROOTS: rootAlias });
     const throughAlias = await importAgentPaths({
@@ -114,7 +115,7 @@ try {
     projectId: 'verify-project',
     knownHashes: [imported.contentHash],
   });
-  assert.deepEqual(folder.unsupportedFiles, ['剪辑说明.md'], 'unsupported document name is reported');
+  assert.deepEqual(folder.unsupportedFiles, ['\u526A\u8F91\u8BF4\u660E.md'], 'unsupported document name is reported');
 
   // ── Path outside the roots is rejected with a clear error ──
   const outside = join(workRoot, 'outside.wav');

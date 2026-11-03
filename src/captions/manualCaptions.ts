@@ -1,4 +1,5 @@
 import type { TimelineItem } from '../editor/types';
+import { t } from '../i18n/locale';
 import type { TranscriptWord } from '../transcript/types';
 import { hasOperationalTranscript } from '../transcript/types';
 import { isStableIdentity, newManualCueIdentity } from '../transcript/identity';
@@ -40,7 +41,7 @@ export function newManualEntry(number: number): CaptionSourceEntry {
   return {
     id: laneId,
     itemId: `manual:${laneId}`,
-    label: `手动字幕 ${number}`,
+    label: t('Manual captions {n}', { n: number }),
     words: [],
   };
 }

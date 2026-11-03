@@ -5,11 +5,11 @@ const toolbar = await readFile(new URL('./MediaPoolToolbar.tsx', import.meta.url
 const semantic = await readFile(new URL('./semantic-search/SemanticSearchControls.tsx', import.meta.url), 'utf8');
 
 for (const label of ['Upload media', 'Sort', 'Filter', 'More actions']) {
-  assert.match(toolbar, new RegExp(`data-tip=\\{t\\('${label}'\\)\\}`), `媒体Tools栏应即时提示“${label}”`);
+  assert.match(toolbar, new RegExp(`data-tip=\\{t\\('${label}'\\)\\}`), `the media toolbar should show an instant tooltip "${label}"`);
 }
-assert.match(toolbar, /data-tip=\{t\(mediaViewToggleLabel\(props\.view\)\)\}/, '网格/列表切换应即时提示当前Action');
-assert.match(semantic, /data-tip=\{t\('Local semantic search'\)\}/, 'Local semantic search应使用即时提示');
-assert.doesNotMatch(toolbar, /className=\{?`?[^\n]*vx-media-icon[^\n]*\stitle=/, '媒体Tools栏图标不应依赖延迟出现的原生 title');
-assert.doesNotMatch(semantic, /className=\{?`?[^\n]*vx-media-icon[^\n]*\stitle=/, 'Semantic search图标不应依赖延迟出现的原生 title');
+assert.match(toolbar, /data-tip=\{t\(mediaViewToggleLabel\(props\.view\)\)\}/, 'the grid/list toggle should show an instant tooltip for its current action');
+assert.match(semantic, /data-tip=\{t\('Local semantic search'\)\}/, 'Local semantic search should use an instant tooltip');
+assert.doesNotMatch(toolbar, /className=\{?`?[^\n]*vx-media-icon[^\n]*\stitle=/, 'media toolbar icons must not rely on the delayed native title');
+assert.doesNotMatch(semantic, /className=\{?`?[^\n]*vx-media-icon[^\n]*\stitle=/, 'the semantic search icon must not rely on the delayed native title');
 
 console.log('media toolbar immediate tooltips verified');

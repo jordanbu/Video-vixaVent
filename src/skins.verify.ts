@@ -32,18 +32,18 @@ function mixHex(foreground: string, background: string, foregroundWeight: number
 }
 
 // ── Registry integrity ──
-assert.ok(SKINS.length >= 2, '至少默认 + 1 套');
-assert.equal(new Set(SKINS.map((s) => s.id)).size, SKINS.length, '皮肤 id 唯一');
-assert.ok(SKINS.some((s) => s.id === DEFAULT_SKIN), '默认皮肤必须在注册表里');
+assert.ok(SKINS.length >= 2, 'at least the default + 1 skin');
+assert.equal(new Set(SKINS.map((s) => s.id)).size, SKINS.length, 'skin ids are unique');
+assert.ok(SKINS.some((s) => s.id === DEFAULT_SKIN), 'the default skin must be in the registry');
 for (const s of SKINS) {
-  assert.ok(/^[a-z]+$/.test(s.id), `${s.id}: id 小写字母`);
-  assert.ok(s.nameZh.trim().length > 0, `${s.id}: 有中文名`);
-  assert.match(s.tokens.accentRgb, /^\d{1,3},\d{1,3},\d{1,3}$/, `${s.id}: accentRgb 三元组`);
-  assert.match(s.tokens.inkRgb, /^\d{1,3},\d{1,3},\d{1,3}$/, `${s.id}: inkRgb 三元组`);
-  assert.match(s.tokens.shadowRgb, /^\d{1,3},\d{1,3},\d{1,3}$/, `${s.id}: shadowRgb 三元组`);
+  assert.ok(/^[a-z]+$/.test(s.id), `${s.id}: id is lowercase letters`);
+  assert.ok(s.nameZh.trim().length > 0, `${s.id}: has a display name`);
+  assert.match(s.tokens.accentRgb, /^\d{1,3},\d{1,3},\d{1,3}$/, `${s.id}: accentRgb triple`);
+  assert.match(s.tokens.inkRgb, /^\d{1,3},\d{1,3},\d{1,3}$/, `${s.id}: inkRgb triple`);
+  assert.match(s.tokens.shadowRgb, /^\d{1,3},\d{1,3},\d{1,3}$/, `${s.id}: shadowRgb triple`);
   for (const [name, value] of Object.entries(s.tokens)) {
     if (name === 'accentRgb' || name === 'inkRgb' || name === 'shadowRgb' || name === 'colorScheme') continue;
-    assert.match(value, /^#[0-9a-f]{6}$/, `${s.id}.${name}: 6 位小写 hex(得进对比度计算)`);
+    assert.match(value, /^#[0-9a-f]{6}$/, `${s.id}.${name}: 6-digit lowercase hex (it feeds the contrast calculation)`);
   }
 }
 
@@ -65,14 +65,14 @@ for (const s of SKINS) {
 
 // ── CSS generation: The default skin enters:root, the rest have overlay blocks, and body follows ──
 const css = buildSkinsCss();
-assert.ok(css.includes(':root {'), ':root 块');
+assert.ok(css.includes(':root {'), ':root block');
 for (const s of SKINS) {
   if (s.id === DEFAULT_SKIN) continue;
-  assert.ok(css.includes(`html[data-vx-skin='${s.id}']`), `${s.id} 覆盖块`);
+  assert.ok(css.includes(`html[data-vx-skin='${s.id}']`), `${s.id} override block`);
 }
-assert.ok(css.includes('--vx-on-accent:'), 'on-accent 变量输出');
-assert.ok(css.includes('--vx-shadow-rgb:'), 'shadow-rgb 变量输出');
-assert.ok(css.includes('body { background: var(--vx-bg)'), 'body 跟随皮肤');
+assert.ok(css.includes('--vx-on-accent:'), 'on-accent variable emitted');
+assert.ok(css.includes('--vx-shadow-rgb:'), 'shadow-rgb variable emitted');
+assert.ok(css.includes('body { background: var(--vx-bg)'), 'body follows the skin');
 
 // ── Brand skin is the default (specs/09) and reads as well as any skin ──
 assert.equal(DEFAULT_SKIN, 'vixaventora');
@@ -108,4 +108,4 @@ assert.equal(DEFAULT_SKIN, 'vixaventora');
   assert.equal(chosen.map.get('vx.skin'), 'mocha', 'any other saved skin is a real choice');
 }
 
-process.stdout.write(`skins.verify: ok (${SKINS.length} skins, 对比度门全过)\n`);
+process.stdout.write(`skins.verify: ok (${SKINS.length} skins, all contrast gates pass)\n`);

@@ -56,7 +56,8 @@ for (const font of LOCAL_CJK_FONTS) {
 }
 
 // search_fonts tool surfaces bundled fonts with source marker
-const douyin = await execFontTool('search_fonts', { query: '抖音美好体' }, ctx) as {
+// The bundled CJK fonts are catalogued under their Chinese names; written as escapes (specs/11).
+const douyin = await execFontTool('search_fonts', { query: '\u6296\u97f3\u7f8e\u597d\u4f53' }, ctx) as {
   ok: boolean; results: Array<{ family: string; loadable: boolean; source: string }>;
 };
 assert.ok(douyin.results.some((r) => r.family === 'Douyin Meihao Ti' && r.loadable && r.source === 'bundled'));
@@ -71,10 +72,11 @@ for (const font of LOCAL_CJK_FONTS) {
 }
 
 // alias resolution + ensureLocalFont promise cache (node path: no FontFace, still cached)
-assert.strictEqual(findLocalFont('轻松手写体一')?.family, 'Qingsong Shouxie Ti Yi');
-assert.strictEqual(findLocalFont('新青年'), undefined);
-assert.strictEqual(findLocalFont('思源黑体')?.family, 'Noto Sans SC');
-assert.strictEqual(findLocalFont('鸿蒙'), undefined);
+// Chinese font names, written as escapes (specs/11).
+assert.strictEqual(findLocalFont('\u8f7b\u677e\u624b\u5199\u4f53\u4e00')?.family, 'Qingsong Shouxie Ti Yi');
+assert.strictEqual(findLocalFont('\u65b0\u9752\u5e74'), undefined);
+assert.strictEqual(findLocalFont('\u601d\u6e90\u9ed1\u4f53')?.family, 'Noto Sans SC');
+assert.strictEqual(findLocalFont('\u9e3f\u8499'), undefined);
 assert.strictEqual(findLocalFont('Comic Sans MS'), undefined);
 assert.strictEqual(ensureLocalFont('Smiley Sans'), ensureLocalFont('Smiley Sans'));
 await ensureLocalFont('Smiley Sans');
@@ -83,7 +85,7 @@ await ensureLocalFont('not-a-local-font'); // non-local resolves, never throws
 // loadable check — bundled CJK now export-safe
 assert.strictEqual(isLoadableFontFamily('Inter'), true);
 assert.strictEqual(isLoadableFontFamily('Smiley Sans'), true);
-assert.strictEqual(isLoadableFontFamily('抖音美好体'), true);
+assert.strictEqual(isLoadableFontFamily('\u6296\u97f3\u7f8e\u597d\u4f53'), true);
 assert.strictEqual(isLoadableFontFamily('Comic Sans MS'), false);
 assert.strictEqual(isLoadableFontFamily('system-ui, sans-serif'), true);
 
@@ -101,7 +103,7 @@ const blockedState: TimelineState = {
     durationInFrames: 90,
     name: 'Title',
     kind: 'motion-graphic',
-    props: { fontFamily: 'Comic Sans MS', title: '你好' },
+    props: { fontFamily: 'Comic Sans MS', title: 'Hola' },
   }],
 };
 const refs = collectReferencedFonts(blockedState);

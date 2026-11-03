@@ -135,9 +135,10 @@ function standardWords(result: TranscriptionResult): NormalizedTranscriptWord[] 
 }
 
 function joinedText(words: NormalizedTranscriptWord[]): string {
+  // The punctuation sets include full-width CJK marks, written as escapes (specs/11).
   return words.map((word) => word.text).join(' ')
-    .replace(/\s+([,.;:!?，。；：！？])/gu, '$1')
-    .replace(/([（(])\s+/gu, '$1');
+    .replace(/\s+([,.;:!?\uff0c\u3002\uff1b\uff1a\uff01\uff1f])/gu, '$1')
+    .replace(/([\uff08(])\s+/gu, '$1');
 }
 
 function groupUtterances(words: NormalizedTranscriptWord[]): NormalizedTranscriptUtterance[] {

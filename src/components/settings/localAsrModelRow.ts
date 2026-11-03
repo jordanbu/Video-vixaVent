@@ -4,7 +4,7 @@ import {
 } from '../../transcript/local-asr-readiness';
 
 export interface LocalAsrModelRowState {
-  /** The engine this client runs first can load the model ("已下载"). */
+  /** The engine this client runs first can load the model ("Downloaded"). */
   readonly ready: boolean;
   /** Files this client can use are missing; a download fetches only those. */
   readonly canDownload: boolean;

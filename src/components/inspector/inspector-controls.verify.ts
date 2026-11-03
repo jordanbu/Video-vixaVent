@@ -29,10 +29,10 @@ assert.deepEqual(group.actions.at(-1), {
 });
 
 const transformSource = readFileSync(new URL('./InspectorKeyframeControls.tsx', import.meta.url), 'utf8');
-assert.match(transformSource, /label: 'Crop Left'/, 'Transform 分组在Corner RadiusDown应有Crop Left');
-assert.match(transformSource, /label: 'Crop Right'/, 'Transform 分组应有Crop Right');
-assert.match(transformSource, /label: 'Crop Top'/, 'Transform 分组应有Crop Top');
-assert.match(transformSource, /label: 'Crop Bottom'/, 'Transform 分组应有Crop Bottom');
-assert.match(transformSource, /CROP_ROWS\.map/, '四边Crop应排在Keyframes行After');
+assert.match(transformSource, /label: 'Crop Left'/, 'the Transform group should have Crop Left below Corner Radius');
+assert.match(transformSource, /label: 'Crop Right'/, 'the Transform group should have Crop Right');
+assert.match(transformSource, /label: 'Crop Top'/, 'the Transform group should have Crop Top');
+assert.match(transformSource, /label: 'Crop Bottom'/, 'the Transform group should have Crop Bottom');
+assert.match(transformSource, /CROP_ROWS\.map/, 'the four crop rows should come after the Keyframes row');
 
 console.log('inspector-controls.verify: ok');

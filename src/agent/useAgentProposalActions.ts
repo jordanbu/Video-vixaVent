@@ -1,3 +1,4 @@
+import { t } from '../i18n/locale';
 import { useCallback, useRef } from 'react';
 import { replayActions } from '../editor/store';
 import type { ProjectDoc } from '../editor/types';
@@ -78,7 +79,7 @@ function commitAppliedUi(
   state.setMessages((current) => appendRunSummary(current, currentDoc, result));
   state.llmRef.current.push({
     role: 'user',
-    content: `（已应用提案：${chosen.length}/${proposal.options[0].operations.length} 项操作。）`,
+    content: `(Proposal applied: ${chosen.length}/${proposal.options[0].operations.length} operations.)`,
   });
   state.refreshEstimatedContextUsage();
   state.setProposalStale(false);
@@ -102,13 +103,13 @@ async function cleanupAppliedProposal(
       clearStoredServerRun(projectId, proposal.agentRunId);
     }
   } catch {
-    return '提案已应用，但运行记录尚未完成；重新打开工程时会继续恢复。';
+    return t('The proposal was applied, but the run record is not finished yet; it will resume when the project is reopened.');
   }
   try {
     await persistence.clear(projectId, proposal.id);
     return null;
   } catch {
-    return '提案已应用，但恢复记录暂未清理；它已标记为不可重放。';
+    return t('The proposal was applied, but the recovery record was not cleaned up yet; it is marked as not replayable.');
   }
 }
 class CommittedProposalRecoveryError extends Error {}
@@ -123,7 +124,7 @@ async function persistSelectedProposal(
   persistence: ProposalPersistence,
 ): Promise<boolean> {
   const committed = await commitProposalDocument({
-    projectId, before: currentDoc, result, versionLabel: 'Agent 修改前',
+    projectId, before: currentDoc, result, versionLabel: t('Before Agent edit'),
   }, {
     saveVersion: persistence.saveVersion,
     saveDoc: persistence.saveDoc,
@@ -166,7 +167,7 @@ export async function applySelectedProposal(
     result = replayActions(currentDoc, chosen.flatMap((operation) => operation.actions));
   } catch {
     state.applyingProposalRef.current = false;
-    showProposalError(state, '所选操作无法应用（可能取消勾选了前置步骤），提案未改动工程。');
+    showProposalError(state, t('The selected operations cannot be applied (a prerequisite step may be unchecked); the proposal did not change the project.'));
     return;
   }
   try {
@@ -182,9 +183,9 @@ export async function applySelectedProposal(
   } catch (error) {
     if (error instanceof CommittedProposalRecoveryError) {
       commitAppliedUi(state, proposal, chosen, currentDoc, result);
-      showProposalError(state, '提案已保存到工程，但恢复记录尚未完成；请重新打开工程确认。');
+      showProposalError(state, t('The proposal was saved to the project, but the recovery record is not finished; reopen the project to check it.'));
     } else {
-      showProposalError(state, '无法取得提案运行权限、保存工程或创建修改前版本，提案未应用。请重试。');
+      showProposalError(state, t('Could not get permission to run the proposal, save the project, or create the pre-edit version; the proposal was not applied. Try again.'));
     }
   } finally {
     state.applyingProposalRef.current = false;
@@ -201,7 +202,7 @@ function applyUnlessStale(
   if (isProposalStale(proposal, state.ctxRef.current.getDoc())) {
     state.setProposalStale(true);
     void settleAndRecord(projectId, proposal, 'stale', DEFAULT_PROPOSAL_PERSISTENCE)
-      .catch(() => showProposalError(state, '无法持久化过期提案状态；提案不会被应用。'));
+      .catch(() => showProposalError(state, t('Could not save the expired-proposal state; the proposal will not be applied.')));
     return;
   }
   void applySelectedProposal(state, projectId, selected);
@@ -218,13 +219,13 @@ async function replaceStaleProposal(
     await settleAndRecord(projectId, previous, 'reproposed', DEFAULT_PROPOSAL_PERSISTENCE);
     await DEFAULT_PROPOSAL_PERSISTENCE.clear(projectId, previous.id);
   } catch {
-    showProposalError(state, '无法持久化提案替换状态，请重试。');
+    showProposalError(state, t('Could not save the proposal replacement state. Try again.'));
     return;
   }
   state.setProposalStale(false);
   state.setProposal(null);
   state.proposalRef.current = null;
-  await send('（工程在上一提案生成后发生了变化。请基于当前 <editor_state> 重新提出与上一提案等价的修改方案。）');
+  await send('(The project changed after the previous proposal was generated. Based on the current <editor_state>, propose an edit equivalent to the previous proposal again.)');
 }
 
 export async function rejectPendingProposal(
@@ -237,7 +238,7 @@ export async function rejectPendingProposal(
   try {
     await persistence.settle(projectId, previous, 'rejected');
   } catch {
-    showProposalError(state, '无法持久化提案拒绝状态，提案未拒绝。请重试。');
+    showProposalError(state, t('Could not save the proposal rejection state; the proposal was not rejected. Try again.'));
     return;
   }
   let warning: string | null = null;
@@ -246,7 +247,7 @@ export async function rejectPendingProposal(
     await recordProposalOutcome(projectId, previous, status.runtime, status.final, status.summary);
     await persistence.clear(projectId, previous.id);
   } catch {
-    warning = '提案已拒绝，但运行记录尚未完成；重新打开工程时会继续清理。';
+    warning = t('The proposal was rejected, but the run record is not finished; cleanup will continue when the project is reopened.');
   }
   state.setProposalStale(false);
   state.llmRef.current = appendRejectedProposal(state.llmRef.current);

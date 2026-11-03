@@ -99,28 +99,29 @@ assert.deepEqual(
 );
 
 // Korean is written with spaces, yet whisper.cpp still splits eojeol
-// (회의는 = 회 + 의), so Hangul must not be treated as a space-less script.
+// (one word arrives as two or three tokens), so Hangul must not be treated as a space-less script.
+// The Korean and Chinese fixtures below are written as \u escapes (specs/11).
 const korean = [
   {
-    text: ' "안녕하세요?"',
+    text: ' "\uC548\uB155\uD558\uC138\uC694?"',
     tokens: [
       { text: ' "', offsets: { from: 150, to: 150 } },
-      { text: '안녕', offsets: { from: 220, to: 770 } },
-      { text: '하세요', offsets: { from: 770, to: 990 } },
+      { text: '\uC548\uB155', offsets: { from: 220, to: 770 } },
+      { text: '\uD558\uC138\uC694', offsets: { from: 770, to: 990 } },
       { text: '?"', offsets: { from: 1880, to: 1880 } },
     ],
   },
   {
-    text: ' 오늘 회의는 3시에 시작합니다.',
+    text: ' \uC624\uB298 \uD68C\uC758\uB294 3\uC2DC\uC5D0 \uC2DC\uC791\uD569\uB2C8\uB2E4.',
     tokens: [
-      { text: ' 오늘', offsets: { from: 2100, to: 2230 } },
-      { text: ' 회', offsets: { from: 2230, to: 2400 } },
-      { text: '의', offsets: { from: 2400, to: 2520 } },
-      { text: '는', offsets: { from: 2600, to: 2740 } },
+      { text: ' \uC624\uB298', offsets: { from: 2100, to: 2230 } },
+      { text: ' \uD68C', offsets: { from: 2230, to: 2400 } },
+      { text: '\uC758', offsets: { from: 2400, to: 2520 } },
+      { text: '\uB294', offsets: { from: 2600, to: 2740 } },
       { text: ' 3', offsets: { from: 2740, to: 2870 } },
-      { text: '시에', offsets: { from: 3260, to: 3610 } },
-      { text: ' 시작', offsets: { from: 3870, to: 3960 } },
-      { text: '합니다', offsets: { from: 3960, to: 4480 } },
+      { text: '\uC2DC\uC5D0', offsets: { from: 3260, to: 3610 } },
+      { text: ' \uC2DC\uC791', offsets: { from: 3870, to: 3960 } },
+      { text: '\uD569\uB2C8\uB2E4', offsets: { from: 3960, to: 4480 } },
       { text: '.', offsets: { from: 4480, to: 5040 } },
     ],
   },
@@ -128,7 +129,7 @@ const korean = [
 const koreanChunks = whisperTokensToChunks(korean as never).chunks;
 assert.deepEqual(
   koreanChunks.map((chunk) => chunk.text),
-  ['"안녕하세요?"', '오늘', '회의는', '3시에', '시작합니다.'],
+  ['"\uC548\uB155\uD558\uC138\uC694?"', '\uC624\uB298', '\uD68C\uC758\uB294', '3\uC2DC\uC5D0', '\uC2DC\uC791\uD569\uB2C8\uB2E4.'],
   'Korean words rejoin across BPE splits instead of fragmenting',
 );
 assert.deepEqual(
@@ -150,15 +151,15 @@ console.log('native-asr-worker.verify: whisper token projection OK');
 // whisper-server verbose_json words projection (seconds -> ms): the same BPE
 // tokens, punctuation attached, space-less scripts stay split per token.
 const serverWords = whisperWordsToChunks([
-  { word: '大家好', start: 0.01, end: 0.73 },
+  { word: '\u5927\u5BB6\u597D', start: 0.01, end: 0.73 },
   { word: ',', start: 1.13, end: 1.22 },
-  { word: '歡迎', start: 1.22, end: 1.64 },
+  { word: '\u6B61\u8FCE', start: 1.22, end: 1.64 },
 ] as never);
 assert.deepEqual(
   serverWords,
   [
-    { text: '大家好,', start: 10, end: 1220 },
-    { text: '歡迎', start: 1220, end: 1640 },
+    { text: '\u5927\u5BB6\u597D,', start: 10, end: 1220 },
+    { text: '\u6B61\u8FCE', start: 1220, end: 1640 },
   ],
   'server words project to ms chunks; punctuation attaches, space-less scripts stay split',
 );

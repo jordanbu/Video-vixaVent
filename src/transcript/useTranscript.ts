@@ -108,12 +108,12 @@ export function useTranscript() {
     setActiveItemId(null);
     setProgressNote(null);
     if (failures.length && !ok) {
-      setError(failures.join('；'));
+      setError(failures.join('; '));
       setStatus('error');
       throw new Error(failures[0]);
     }
     if (failures.length) {
-      setError(t('Completed {ok}/{total} clips; failed: {fails}', { ok, total: jobs.length, fails: failures.join('；') }));
+      setError(t('Completed {ok}/{total} clips; failed: {fails}', { ok, total: jobs.length, fails: failures.join('; ') }));
       setStatus('done');
     } else {
       setStatus('done');

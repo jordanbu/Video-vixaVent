@@ -31,7 +31,7 @@ const videoOnlyDoc = (): ProjectDoc => ({
   assets: [],
   mediaFolders: [],
   timelines: [{
-    id: 'tl1', name: '序列 1', fps: 30, width: 1920, height: 1080,
+    id: 'tl1', name: 'Sequence 1', fps: 30, width: 1920, height: 1080,
     selectedId: null, items: [],
     trackOrder: ['track_v1'],
     tracks: { track_v1: { kind: 'video' } },
@@ -44,7 +44,7 @@ const audioAsset: MediaAsset = {
   durationInFrames: 300,
 } as MediaAsset;
 
-// ── 需要新建音轨:一次 dispatch(batch),撤销一次即干净 ──────────────────────
+// ── A new audio track is needed: one dispatch (batch), a single undo cleans it up ──
 {
   const { commands, dispatched, doc } = harness(videoOnlyDoc());
   commands.addMediaItem(audioAsset, {});
@@ -60,7 +60,7 @@ const audioAsset: MediaAsset = {
     'the audio track was created');
 }
 
-// ── 目标轨已存在:仍是单条 add,不产生多余 batch ─────────────────────────────
+// ── The target track exists: still a single add, no extra batch ─────────────
 {
   const withAudio = videoOnlyDoc();
   const timeline = withAudio.timelines[0]! as unknown as {
@@ -76,7 +76,7 @@ const audioAsset: MediaAsset = {
     'no track needed → a plain add, unchanged from before');
 }
 
-// ── 纯色片段:已有视频轨时不触发建轨 ────────────────────────────────────────
+// ── Solid clip: no track is created when a video track exists ───────────────
 {
   const { commands, dispatched } = harness(videoOnlyDoc());
   commands.addSolidItem({});

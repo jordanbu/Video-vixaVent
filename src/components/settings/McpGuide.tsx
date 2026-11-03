@@ -127,7 +127,7 @@ function ConnectButton({ client, onStatus }: { client: ClientSnippet['client']; 
             const result = data as { ok?: boolean; paths?: string[]; error?: string; notice?: string } | null;
             if (response.ok && result?.ok) {
               setState('done');
-              const paths = (result.paths ?? []).join('、');
+              const paths = (result.paths ?? []).join(', ');
               // Only processes started after a Windows user variable is saved see it.
               const message = result.notice === 'restart-codex'
                 ? t('Wrote {paths}. Fully quit and reopen Codex so it picks up the token.', { paths })

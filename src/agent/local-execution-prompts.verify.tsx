@@ -46,7 +46,8 @@ assert.match(scriptCard, /bash scripts\/render\.sh/);
 assert.match(scriptCard, />No permitir</);
 assert.match(scriptCard, />Permitir siempre esta skill en esta sesión</);
 assert.match(scriptCard, />Permitir</);
-assert.doesNotMatch(scriptCard, /[㐀-鿿]/, 'no Chinese on the card');
+// CJK ideograph range, written as escapes (specs/11).
+assert.doesNotMatch(scriptCard, /[\u3400-\u9fff]/, 'no Chinese on the card');
 
 answerLocalExecutionPrompt(shown!.id, 'allow');
 assert.equal(await first, true, '"Permitir" lets the script run');

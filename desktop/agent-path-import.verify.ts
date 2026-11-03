@@ -8,36 +8,36 @@ import type { AgentPathImportResult } from '../shared/directory-import.ts';
 
 // AGENT_IMPORT_ROOTS whitelist semantics: only explicit roots authorize a
 // path; prefix look-alikes and siblings must stay outside.
-const roots = ['/Volumes/素材盘', '/Users/qinpx/Movies'];
+const roots = ['/Volumes/Material', '/Users/qinpx/Movies'];
 
-assert.equal(pathAllowedByRoots(roots, '/Volumes/素材盘/20260101/A001.mp4'), true, 'direct child file is allowed');
-assert.equal(pathAllowedByRoots(roots, '/Volumes/素材盘/20260101/sub/A002.mp4'), true, 'deep child is allowed');
-assert.equal(pathAllowedByRoots(roots, '/Volumes/素材盘'), true, 'the root itself is allowed');
-assert.equal(pathAllowedByRoots(roots, '/Users/qinpx/Movies/短片'), true, 'second root child is allowed');
-assert.equal(pathAllowedByRoots(roots, '/Volumes/素材盘2/20260101/A001.mp4'), false, 'prefix look-alike sibling is rejected');
-assert.equal(pathAllowedByRoots(roots, '/Volumes/其他盘/A.mp4'), false, 'unrelated path is rejected');
+assert.equal(pathAllowedByRoots(roots, '/Volumes/Material/20260101/A001.mp4'), true, 'direct child file is allowed');
+assert.equal(pathAllowedByRoots(roots, '/Volumes/Material/20260101/sub/A002.mp4'), true, 'deep child is allowed');
+assert.equal(pathAllowedByRoots(roots, '/Volumes/Material'), true, 'the root itself is allowed');
+assert.equal(pathAllowedByRoots(roots, '/Users/qinpx/Movies/Cortos'), true, 'second root child is allowed');
+assert.equal(pathAllowedByRoots(roots, '/Volumes/Material2/20260101/A001.mp4'), false, 'prefix look-alike sibling is rejected');
+assert.equal(pathAllowedByRoots(roots, '/Volumes/Otro/A.mp4'), false, 'unrelated path is rejected');
 assert.equal(pathAllowedByRoots(roots, '/Users/qinpx/Desktop/A.mp4'), false, 'path outside both roots is rejected');
-assert.equal(pathAllowedByRoots([], '/Volumes/素材盘/A.mp4'), false, 'empty root list authorizes nothing');
-assert.equal(pathAllowedByRoots(roots, '/Volumes/素材盘'), true, 'root boundary itself allowed');
+assert.equal(pathAllowedByRoots([], '/Volumes/Material/A.mp4'), false, 'empty root list authorizes nothing');
+assert.equal(pathAllowedByRoots(roots, '/Volumes/Material'), true, 'root boundary itself allowed');
 
 assert.equal(
-  appendAgentImportRoot('/Volumes/素材盘', '/Users/qinpx/Movies'),
-  '/Volumes/素材盘,/Users/qinpx/Movies',
+  appendAgentImportRoot('/Volumes/Material', '/Users/qinpx/Movies'),
+  '/Volumes/Material,/Users/qinpx/Movies',
   'new grants preserve existing roots',
 );
 assert.equal(
-  appendAgentImportRoot('/Volumes/素材盘', '/Volumes/素材盘'),
-  '/Volumes/素材盘',
+  appendAgentImportRoot('/Volumes/Material', '/Volumes/Material'),
+  '/Volumes/Material',
   'granting the same root is idempotent',
 );
-assert.throws(() => appendAgentImportRoot('', '/Volumes/素材,盘'), /comas/);
+assert.throws(() => appendAgentImportRoot('', '/Volumes/Mate,rial'), /comas/);
 
 const blocked: AgentPathImportResult = {
   imported: [], unsupportedFiles: [], duplicateCount: 0,
   errors: [{
-    path: '/Volumes/素材盘',
+    path: '/Volumes/Material',
     code: 'IMPORT_ROOTS_NOT_CONFIGURED',
-    error: '尚未添加本地素材目录',
+    error: 'No local media folder has been added yet',
   }],
 };
 const imported: AgentPathImportResult = {
@@ -46,20 +46,20 @@ const imported: AgentPathImportResult = {
 let runs = 0;
 let written = '';
 const granted = await importAgentPathsWithGrant({
-  paths: ['/Volumes/素材盘'], projectId: 'verify-project', knownHashes: [],
+  paths: ['/Volumes/Material'], projectId: 'verify-project', knownHashes: [],
 }, {
   runImport: async () => (++runs === 1 ? blocked : imported),
-  chooseRoot: async () => '/Volumes/素材盘',
+  chooseRoot: async () => '/Volumes/Material',
   readRoots: () => '',
   writeRoots: async (value) => { written = value; },
 });
 assert.equal(runs, 2, 'successful folder selection retries the original import once');
-assert.equal(written, '/Volumes/素材盘', 'selected folder is persisted as an import grant');
+assert.equal(written, '/Volumes/Material', 'selected folder is persisted as an import grant');
 assert.equal(granted, imported);
 
 runs = 0;
 const cancelled = await importAgentPathsWithGrant({
-  paths: ['/Volumes/素材盘'], projectId: 'verify-project', knownHashes: [],
+  paths: ['/Volumes/Material'], projectId: 'verify-project', knownHashes: [],
 }, {
   runImport: async () => { runs += 1; return blocked; },
   chooseRoot: async () => null,

@@ -72,8 +72,8 @@ await assert.rejects(saveChat('p-fail', chat), /forced chat write failure/,
   'saveChat exposes persistence failures to awaited callers');
 resetSharedKvMemory();
 
-// ── load 三态:"读不出来" 必须与 "没有聊天" 区分开 ─────────────────────────
-// 混淆两者会让 hydration 以空会话进入,随后一次常规持久化覆盖掉真实对话。
+// ── load has three states: "cannot be read" must be told apart from "no chat" ──
+// Mixing them up would hydrate an empty session, and the next regular save would overwrite the real chat.
 assert.strictEqual((await loadChatResult('p-absent')).status, 'missing',
   'no stored chat reads as missing (an empty chat is legitimate)');
 

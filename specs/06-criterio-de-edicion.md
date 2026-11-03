@@ -47,7 +47,7 @@ Resultados del 2026-10-26:
 
 - `tsx src/agent/systemPromptOrder.verify.ts` → `ok`, con las cuatro aserciones nuevas
   sobre las trampas.
-- `plugin-skills.verify.ts` → `ok (30 技能 / frontmatter 三形态 / references 齐)`: la
+- `plugin-skills.verify.ts` → `ok (30 skills / 3 forms of frontmatter / references complete)` (salida traducida del chino): la
   referencia nueva existe y está enlazada. `skill-loading`, `skills-catalog` y
   `skill-deps` → `ok`.
 - El caso real, editado a mano siguiendo esta referencia (2026-10-26): 5 tomas cortadas

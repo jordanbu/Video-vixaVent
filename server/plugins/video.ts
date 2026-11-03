@@ -190,9 +190,10 @@ function seedanceConfig(model: 'seedance2' | 'byteplus', options: VideoOptions):
 
 /** Map agent @ImageN / @VideoN (and image/video) to Kling Omni <<<image_n>>> / <<<video_n>>> tokens.*/
 export function klingPrompt(prompt: string): string {
+  // Kling reference tags in English or Chinese ("image" / "video"); the Chinese form is written as escapes (specs/11).
   return prompt
-    .replace(/@(Image|图片)(\d+)/gi, '<<<image_$2>>>')
-    .replace(/@(Video|视频)(\d+)/gi, '<<<video_$2>>>');
+    .replace(/@(Image|\u56fe\u7247)(\d+)/gi, '<<<image_$2>>>')
+    .replace(/@(Video|\u89c6\u9891)(\d+)/gi, '<<<video_$2>>>');
 }
 
 async function generateKling(

@@ -1,5 +1,5 @@
-// Versions saved with the shortcut used to be named "版本 11/1 10:35" (Chinese word,
-// zh-CN date) whatever the interface language. The name now follows the interface.
+// Versions saved with the shortcut used to be named with the Chinese word for "version" and a
+// zh-CN date ("... 11/1 10:35") whatever the interface language. The name now follows the interface.
 // npx tsx src/shortcuts/versionName.verify.ts
 import assert from 'node:assert/strict';
 
@@ -12,7 +12,7 @@ Object.defineProperty(globalThis, 'localStorage', {
 const { ensureLocaleDict, setLocale } = await import('../i18n/locale');
 const { shortcutVersionName } = await import('./versionName');
 const when = new Date(2026, 10, 1, 10, 35);
-const CJK = /[㐀-鿿]/;
+const CJK = /[\u3400-\u9fff]/;
 
 await ensureLocaleDict('es');
 const spanish = shortcutVersionName(when);

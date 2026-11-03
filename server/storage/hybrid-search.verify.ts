@@ -26,18 +26,18 @@ async function main(): Promise<void> {
     const { indexStoreKey, resetSearchForTests } = await import('./fulltext-search.ts');
     const { upsertSemanticVectors, resetSemanticVectorsForTests } = await import('./semantic-vectors.ts');
     const { hybridSearch } = await import('./hybrid-search.ts');
-    assert.deepEqual(hybridSearch('黄昏的海边', vector(1), { projectId: 'project-a' }), [],
+    assert.deepEqual(hybridSearch('atardecer en la playa', vector(1), { projectId: 'project-a' }), [],
       'hybrid search cannot read an uninitialized database');
     await initializeSqliteProjectStore();
 
     // ── text lane: chat mentioning the visual topic ──
     indexStoreKey('chat:project-a', {
       messages: [
-        { role: 'user', text: '这段素材有黄昏的海边，帮我剪进去' },
-        { role: 'user', text: '字幕样式改成金色' },
+        { role: 'user', text: 'este material tiene un atardecer en la playa, metelo en el corte' },
+        { role: 'user', text: 'cambia el estilo de subtitulos a dorado' },
       ],
     });
-    // ── visual lane: a vector close to "黄昏的海边" (seed 1) ──
+    // ── visual lane: a vector close to "atardecer en la playa" (seed 1) ──
     upsertSemanticVectors('project-a', 'asset-sunset', [
       { assetId: 'asset-sunset', sampleTime: 0, sourceRevision: 'rev-1', vector: vector(1) },
     ]);
@@ -46,7 +46,7 @@ async function main(): Promise<void> {
     ]);
 
     // ── hybrid: both lanes match the query ──
-    const hits = hybridSearch('黄昏的海边', vector(1), { projectId: 'project-a', limit: 10 });
+    const hits = hybridSearch('atardecer en la playa', vector(1), { projectId: 'project-a', limit: 10 });
     assert.ok(hits.some((hit) => hit.kind === 'chat'), 'the text lane must contribute');
     assert.ok(hits.some((hit) => hit.kind === 'visual' && hit.assetId === 'asset-sunset'),
       'the visual lane must contribute the closest asset');
@@ -60,19 +60,19 @@ async function main(): Promise<void> {
     }
 
     // ── without a project scope the visual lane is skipped ──
-    const textOnly = hybridSearch('金色', undefined, { limit: 10 });
+    const textOnly = hybridSearch('dorado', undefined, { limit: 10 });
     assert.ok(textOnly.every((hit) => hit.kind !== 'visual'), 'no vector → text only');
     assert.ok(textOnly.some((hit) => hit.kind === 'chat'), 'text lane must still work');
 
     // Both lanes persist through restart; env=0 can no longer disable them.
     process.env.VIXAVENTORA_SQLITE_STORE = '0';
     resetSqliteStoreForTests();
-    assert.equal(hybridSearch('黄昏的海边', vector(1), { projectId: 'project-a' }).length, 0,
+    assert.equal(hybridSearch('atardecer en la playa', vector(1), { projectId: 'project-a' }).length, 0,
       'cached search lanes must respect readiness');
     resetSearchForTests();
     resetSemanticVectorsForTests();
     await initializeSqliteProjectStore();
-    const reopened = hybridSearch('黄昏的海边', vector(1), { projectId: 'project-a' });
+    const reopened = hybridSearch('atardecer en la playa', vector(1), { projectId: 'project-a' });
     assert.ok(reopened.some((hit) => hit.kind === 'chat'));
     assert.ok(reopened.some((hit) => hit.kind === 'visual' && hit.assetId === 'asset-sunset'));
     resetSearchForTests();

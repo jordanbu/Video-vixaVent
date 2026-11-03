@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 import { PARALLEL_TOOL_NAMES, toolExecutionMode } from './tools/execution-modes';
 import { generationTimeoutMs } from './client';
 
-// ── detect_beats:按参数分类 ──────────────────────────────────────────────
+// ── detect_beats: classified by its arguments ──────────────────────────────────────────────
 {
   assert.equal(toolExecutionMode('detect_beats'), 'parallel',
     'analysis-only detect_beats stays parallel');
@@ -21,25 +21,25 @@ import { generationTimeoutMs } from './client';
   assert.equal(toolExecutionMode('read_timeline', {}), 'parallel', 'pure reads stay parallel');
 }
 
-// ── 回归闸门:会写状态的工具不得出现在无条件并行集里 ────────────────────────
+// ── regression gate: tools that write state never join the unconditional parallel set ────────────────────────
 {
   assert.equal(PARALLEL_TOOL_NAMES.has('detect_beats'), false,
     'detect_beats mutates when markers are requested — it must be classified per-invocation, '
     + 'not listed as unconditionally parallel');
-  // 名字里带写语义的工具一律不得进并行集(命名约定级的粗筛,便宜且能挡住多数误加)。
+  // Tools whose name implies a write never join the parallel set (a cheap naming-convention filter that stops most mistakes).
   const writeLike = [...PARALLEL_TOOL_NAMES].filter((name) => (
     /^(edit_|set_|add_|delete_|remove_|apply_|create_|submit_|clear_|move_|split_|update_|import_)/.test(name)
   ));
   assert.deepEqual(writeLike, [],
     `write-shaped tool names must not be parallel: ${writeLike.join(', ')}`);
-  // detect_beats 的实现确实会经 ctx.commands 写入 —— 这正是它被移出集合的原因。
+  // detect_beats really does write through ctx.commands — that is exactly why it left the set.
   const beatSource = readFileSync('src/agent/tools/beat-tools.ts', 'utf8');
   assert.ok(/ctx\.commands/.test(beatSource),
     'beat-tools still mutates via ctx.commands; if that ever changes, revisit the '
     + 'CONDITIONALLY_PARALLEL entry instead of silently leaving it');
 }
 
-// ── 生成超时随输出预算伸缩 ───────────────────────────────────────────────
+// ── generation timeout scales with the output budget ───────────────────────────────────────────────
 {
   assert.equal(generationTimeoutMs(1000), 60_000, 'small asks keep the 60s floor');
   assert.equal(generationTimeoutMs(0), 60_000, 'zero budget falls back to the floor');

@@ -50,7 +50,7 @@ When a distinct-cut pair misses the agreed targets, revise the plan or report th
 Pick one dimension to carry the batch and let the others support it:
 
 - **Hook testing**: only the opening changes; body, order after the hook, duration, rhythm, music and packaging stay fixed. Do not apply distinct-cut overlap, order, rhythm or duration thresholds. Report `controlled-hook-test` and identify the intentional shared body.
-- **Matrix accounts / 多账号分发**: hook, order, and rhythm all change. Packaging may stay consistent as a brand signature.
+- **Matrix accounts / multi-account distribution**: hook, order, and rhythm all change. Packaging may stay consistent as a brand signature.
 - **Platform variants**: content structure stays fixed; duration, aspect ratio, caption placement, and safe-area treatment adapt to each platform. Shared openings and bodies are allowed. Report `platform-adaptation`; do not apply distinct-cut separation thresholds.
 
 A batch with no dominant variable reads as noise. State which mode you are in

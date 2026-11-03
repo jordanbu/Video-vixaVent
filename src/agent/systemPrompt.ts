@@ -49,7 +49,7 @@ export function editorStatePrompt(ctx: AgentContext): string {
     .join(' ');
   const sorted = [...s.items].sort((a, b) => a.startFrame - b.startFrame || a.track.localeCompare(b.track));
   const lines = sorted.slice(0, EDITOR_STATE_MAX_ITEMS).map((it) => (
-    `[${it.id.slice(0, 8)}] ${trackAlias(s, it.track)} ${it.kind}「${it.name}」@${it.startFrame} +${it.durationInFrames}`
+    `[${it.id.slice(0, 8)}] ${trackAlias(s, it.track)} ${it.kind} "${it.name}" @${it.startFrame} +${it.durationInFrames}`
   ));
   const more = sorted.length > EDITOR_STATE_MAX_ITEMS
     ? `\n…${sorted.length - EDITOR_STATE_MAX_ITEMS} more clips (use read_timeline for the full list)`

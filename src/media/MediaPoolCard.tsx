@@ -259,7 +259,7 @@ function AssetBadges(props: MediaAssetCardProps) {
         type="button"
         className="vx-asset-favorite"
         aria-pressed={!!asset.favorite}
-        aria-label={`${asset.favorite ? t('Unfavorite') : t('Favorite')}：${asset.name}`}
+        aria-label={`${asset.favorite ? t('Unfavorite') : t('Favorite')}: ${asset.name}`}
         title={asset.favorite ? t('Unfavorite') : t('Favorite')}
         onClick={(event) => {
           event.stopPropagation();

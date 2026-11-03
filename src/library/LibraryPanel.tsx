@@ -108,7 +108,7 @@ interface LibraryPanelProps {
   creativeMode: string | null;
   onCreativeModeChange: (id: string | null) => void;
   onAddSolid?: () => void;
-  /** ⋮ menu「Generated with AI」: seed the chat with this template as a reference */
+  /** ⋮ menu "Generated with AI": seed the chat with this template as a reference */
   onUseTemplateAI: (tpl: Tpl) => void;
   /** currently-selected clip — resource-library tabs apply to it */
   selectedItem: TimelineItem | null;
@@ -122,7 +122,9 @@ interface LibraryPanelProps {
 const MAIN_TABS = ['My Media', 'Sequences', 'Library', 'Transcript', 'Captions', 'Skills'] as const;
 const SUB_TABS = ['Motion Graphics', 'Sound Effects', 'Transitions', 'Effects', 'Zoom', 'LUT'] as const;
 function localizeDefaultSequenceName(name: string, t: ReturnType<typeof useT>): string {
-  const match = /^序列 (\d+)$/.exec(name);
+  // Projects saved before specs/11 named default sequences with the Chinese word for "sequence"
+  // (escaped here, specs/11); show those in the interface language.
+  const match = /^\u5e8f\u5217 (\d+)$/.exec(name);
   return match ? t('Sequence {n}', { n: match[1]! }) : name;
 }
 export function LibraryPanel({ semanticScopeId, templates, onAddTemplate, onAddAudio, playerRef, fps, items, getSequenceOptions, onAddSequence, trackOptions, captionTracks, onSetCaptions, onCreateCaptionTrack, onUpdateCaptions, onSetItemTranscript, onToggleWord, onCleanScript, onSetGapCap, onSetTranscriptPlayOrder, onReorderTrackItems, onClearEdits, assets, mediaFolders, usedAssetIds, offlineAssetIds, onAssetLoadError, onImportMedia, onImportMobileMedia, onIngestDirectoryAsset, onTranscribeAsset, onAddMediaItem, onAddMediaAssetsToTimeline, onUseMediaAI, onCreateMediaFolder, onRenameMediaFolder, onDeleteMediaFolder, onMoveMediaAssets, onRenameMediaAsset, onRenameMediaAssets, onSetMediaAssetFavorite, onSetMediaAssetsFavorite, onRemoveMediaAsset, onRemoveMediaAssets, onPasteMediaAssets, onRelinkMediaAsset, creativeMode, onCreativeModeChange, onAddSolid, onUseTemplateAI, selectedItem, onApplyTransition, onApplyFx, onApplyZoom }: LibraryPanelProps) {
@@ -183,7 +185,7 @@ export function LibraryPanel({ semanticScopeId, templates, onAddTemplate, onAddA
       setMainTab('Captions');
     } catch (error) {
       const detail = error instanceof Error ? error.message : String(error);
-      window.alert(`${t('SRT import failed')}：${t(detail)}`);
+      window.alert(`${t('SRT import failed')}: ${t(detail)}`);
     }
   };
 

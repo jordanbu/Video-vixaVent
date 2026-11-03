@@ -153,13 +153,14 @@ assert.deepEqual(
   buildPagedSkillResult(pagedSource, 'references/huge.md', 0, 1),
   { error: 'limit must not split the first UTF-16 surrogate pair in a page.' },
 );
-const cjkRoot = '中文工作流🙂'.repeat(18_000);
+// "Chinese workflow" plus an emoji, written as escapes (specs/11).
+const cjkRoot = '\u4e2d\u6587\u5de5\u4f5c\u6d41🙂'.repeat(18_000);
 const cjkSkill = {
   skill: 'large-cjk',
   contents: { 'SKILL.md': cjkRoot },
 };
 const roundHarness = harnessContextForModelRound({
-  messages: [message('user', '请加载完整工作流。')],
+  messages: [message('user', 'Carga el flujo de trabajo completo.')],
   system: 'S'.repeat(4_000),
   toolSchemas: [{
     name: 'load_skill',

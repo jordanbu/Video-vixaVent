@@ -30,7 +30,7 @@ export async function execLoudnessTool(name: string, args: Args, ctx: AgentConte
   if (items.length === 0) {
     return args.itemId
       ? { error: `no audio clip ${args.itemId}` }
-      : { ok: true, normalized: [], target, note: 'timeline 上没有音频 clip' };
+      : { ok: true, normalized: [], target, note: 'no audio clips on the timeline' };
   }
 
   const normalized: { itemId: string; measuredLufs: number; gain: number }[] = [];
@@ -48,7 +48,7 @@ export async function execLoudnessTool(name: string, args: Args, ctx: AgentConte
       if (analysis.status === 'rejected') throw analysis.reason;
       const current = ctx.getState().items.find((item) => item.id === snapshot.itemId);
       if (ctx.getDoc().activeTimelineId !== doc.activeTimelineId || validateTimelineItemSourceResult(snapshot, current, ctx.getDoc().assets, snapshot.sourceRevision).status === 'stale') {
-        skipped.push({ itemId: snapshot.itemId, note: '源素材已变化，请重试' });
+        skipped.push({ itemId: snapshot.itemId, note: 'source media changed, retry' });
         continue;
       }
       const measuredLufs = analysis.value;
@@ -56,7 +56,7 @@ export async function execLoudnessTool(name: string, args: Args, ctx: AgentConte
       ctx.commands.setItemVolume(snapshot.itemId, gain);
       normalized.push({ itemId: snapshot.itemId, measuredLufs, gain });
     } catch (e) {
-      skipped.push({ itemId: snapshot.itemId, note: `解码失败: ${e instanceof Error ? e.message : String(e)}` });
+      skipped.push({ itemId: snapshot.itemId, note: `decode failed: ${e instanceof Error ? e.message : String(e)}` });
     }
   }
 

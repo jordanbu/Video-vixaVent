@@ -28,7 +28,7 @@ assert.ok(publishSchema?.input_schema.properties?.previewId, 'previewId is part 
 assert.equal(policyForTool('publish_to_social').effect, 'irreversible_external', 'a public post is never auto-replayed');
 assert.equal(policyForTool('track_social_publish').effect, 'read');
 assert.ok(routedToolNames('publish this to TikTok and YouTube', false).has('publish_to_social'));
-assert.ok(routedToolNames('把成片发布到抖音', false).has('publish_to_social'));
+assert.ok(routedToolNames('Publica el video final en TikTok', false).has('publish_to_social'));
 
 // ── preview: confirm defaults to false and the result tells the agent to stop, ask, and bind the confirm ──
 responses = [json(200, { phase: 'preview', needsConfirm: true, requestId: 'ocut-1', missingPlatforms: [] })];

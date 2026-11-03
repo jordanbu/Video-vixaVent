@@ -156,7 +156,7 @@ export function captionTrackEntries(s: TimelineState): Array<{ id: TrackId; capt
 /**
  * Is the caption/text overlay showing?
  *
- * `captionsHidden` is the explicit toolbar toggle (字幕显示). When it has never
+ * `captionsHidden` is the explicit toolbar toggle (show captions). When it has never
  * been set, fall back to "is there anything overlay-ish in this project" —
  * an enabled caption track OR any text/motion-graphic clip. The renderer and
  * the toolbar MUST agree on this: they used to derive it separately, and the

@@ -81,7 +81,7 @@ try {
   // ── Resolver: upload read order, derived working copies, and nothing outside the uploads ──
   const writable = join(root, 'writable');
   const legacy = join(root, 'legacy');
-  const folder = join(root, 'Footage 素材');
+  const folder = join(root, 'Footage cámara');
   await Promise.all([writable, legacy, folder].map((directory) => mkdir(directory, { recursive: true })));
   const [clip, other, legacyClip, mxf] = ['clip.mov', 'other.mov', 'legacy.wav', 'clip.mxf'].map((name) => join(folder, name));
   await Promise.all([clip, other, legacyClip, mxf].map((file) => writeFile(file, 'media')));
@@ -192,7 +192,7 @@ try {
   // ── End to end: ffmpeg-tagged clips export on their own timecode; untagged media stays at 0s ──
   {
     const uploads = join(root, 'e2e-uploads');
-    const card = join(root, '素材 Card #2');
+    const card = join(root, 'Tarjeta cámara #2');
     await Promise.all([uploads, card].map((directory) => mkdir(directory, { recursive: true })));
     const make = async (name: string, fps: string, tail: string[]) => {
       const file = join(card, name);

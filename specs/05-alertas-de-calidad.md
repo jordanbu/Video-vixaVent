@@ -136,8 +136,8 @@ Resultados del 2026-10-26, con Node 24.22.1:
 - `scripts/verify-registration.verify.mjs` exige que todo verify registrado esté en git:
   falla mientras `qualityAlerts.verify.ts` no está agregado. Con `git add -N` (o al
   commitear) → `all 632 tracked verify files are registered`.
-- `node scripts/check-i18n.mjs` → `153 个 UI 文件，2543 个英文词条，3964 个西班牙语词条`
-  (7 claves nuevas, todas con español).
+- `node scripts/check-i18n.mjs` → `153 archivos de UI, 2543 entradas en inglés, 3964 entradas en español`
+  (salida traducida; el script imprimía en chino) (7 claves nuevas, todas con español).
 - `npx tsc -b` → sin errores. `npx vite build --config config/vite.config.ts` →
   `✓ built in 2.12s`.
 - Revisión visual (servidor de desarrollo aislado en `localhost:5299`, Chrome sin interfaz

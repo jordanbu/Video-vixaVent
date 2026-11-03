@@ -1,8 +1,8 @@
 // Probe a file the import route just wrote, with the ffprobe that ships with the app.
 //
 // download_media used to register whatever bytes came back — an HTML error page saved
-// as .mp4, a truncated file — and the agent only found out later ("服务器拦截，拿到的是
-// 坏文件"). Probing at import time turns that into an immediate not_media failure, and
+// as .mp4, a truncated file — and the agent only found out later ("the server blocked it and we got a
+// broken file"). Probing at import time turns that into an immediate not_media failure, and
 // a readable file comes back with the measurements the agent would otherwise spend a
 // second tool call (probe_media) and, for a URL, a second download to obtain.
 import { extname } from 'node:path';

@@ -9,7 +9,7 @@ import { effectivePreset } from './renderStyles';
 import { captionTimingFingerprint, isTranslationStale } from './translate';
 import { timelineToFcpxml } from '../export/fcpxml';
 
-// ── 未知模板 id 兜底(旧版打开新版工程时不得崩掉预览/导出) ──────────────────
+// ── Unknown template id fallback (an older build opening a newer project must not break preview/export) ──
 {
   assert.equal(captionStyleFor('plain').id, 'plain', 'known template resolves');
   assert.equal(captionStyleFor('a-template-from-the-future').id, FALLBACK_CAPTION_TEMPLATE,
@@ -26,7 +26,7 @@ import { timelineToFcpxml } from '../export/fcpxml';
   assert.equal(overridden.color, '#f00', 'style override still layers over the fallback');
 }
 
-// ── 翻译过期判定 ──────────────────────────────────────────────────────────
+// ── Translation staleness ───────────────────────────────────────────────────
 {
   const words = [
     { text: 'a', start: 0, end: 500 },
@@ -57,7 +57,7 @@ import { timelineToFcpxml } from '../export/fcpxml';
     'older translations without a fingerprint are never reported stale');
 }
 
-// ── FCPXML:变速写入 timeMap;同 src 的 video/audio 取视觉 kind ──────────────
+// ── FCPXML: speed changes write a timeMap; video/audio sharing a src take the visual kind ──
 {
   const item = (over: Partial<TimelineItem>): TimelineItem => ({
     id: 'a', track: 'V1', startFrame: 0, durationInFrames: 90,

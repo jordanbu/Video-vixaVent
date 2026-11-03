@@ -1,3 +1,4 @@
+import { t } from '../i18n/locale';
 import { useCallback, useRef } from 'react';
 import {
   bindServerRunEvents,
@@ -87,19 +88,21 @@ async function settleStaleRecovery(
     releaseServerRunOwnership(projectId, runId);
     resetAbandonedRun(state);
     const friendlyDetail = /^server run metadata failed: HTTP 404$/.test(detail)
-      ? '服务端任务记录已不存在（编辑器服务可能已重启）'
+      ? t('The server task record no longer exists (the editor service may have restarted).')
       : detail;
     state.appendMessage({
       role: 'error',
-      text: `之前的服务端任务已安全中断并清除恢复状态。${friendlyDetail
-        ? ` ${friendlyDetail}` : ''}${transportWarning ? ` 传输清理警告：${transportWarning}` : ''}`,
+      text: `${t('The previous server task was safely interrupted and its recovery state was cleared.')}${friendlyDetail
+        ? ` ${friendlyDetail}` : ''}${transportWarning
+        ? ` ${t('Transport cleanup warning: {warning}', { warning: transportWarning })}` : ''}`,
     });
   } catch (error) {
     state.refs.staleRecoveryRun.current = null;
     state.appendMessage({
       role: 'error',
-      text: `服务端任务无法安全恢复，恢复凭据已保留：${error instanceof Error
-        ? error.message : String(error)}`,
+      text: t('The server task cannot be recovered safely; its recovery credentials were kept: {error}', {
+        error: error instanceof Error ? error.message : String(error),
+      }),
     });
   } finally {
     state.refs.running.current = false;
@@ -242,7 +245,7 @@ async function openSubscription(
     || !state.refs.enabled.current || !state.refs.ready.current) return;
   const cursor = state.refs.cursor.current;
   if (typeof metadata.firstEventId === 'number' && cursor < metadata.firstEventId - 1) {
-    throw permanentServerRunRecoveryError('服务端任务事件已超出可恢复窗口。');
+    throw permanentServerRunRecoveryError(t('The server task events are past the recoverable window.'));
   }
   const terminalStatus = recoveredServerRunTerminal(metadata, cursor);
   if (terminalStatus) {

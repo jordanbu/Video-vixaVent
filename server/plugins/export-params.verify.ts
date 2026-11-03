@@ -22,7 +22,7 @@ assert.equal(exportScale({ width: 1080, height: 1920 }, '720p'), 720 / 1080);
 assert.equal(exportScale({ width: 1920, height: 1080 }, '1080p'), 1);
 assert.equal(exportScale({ width: 1920, height: 1080 }, '4k'), 2);
 assert.equal(exportScale({ width: 1080, height: 1920 }, '4k'), 2);
-assert.equal(exportScale({ width: 1920, height: 1080 }, undefined), 1, '省略=不缩放');
+assert.equal(exportScale({ width: 1920, height: 1080 }, undefined), 1, 'omitted = no scaling');
 // Presets target their exact short edge even for unusually small timelines,
 // up to the scale both Remotion renderers accept (16): a 100 px canvas asked
 // for 4k renders at 1600 px instead of throwing "scale must be <= 16".

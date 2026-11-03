@@ -161,7 +161,7 @@ function ProjectGrid({ props, model }: { props: DashboardProps; model: Dashboard
     <>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(232px, 1fr))', alignItems: 'start', gap: 16 }}>
         <button onClick={props.onNew} style={newCard} title={t('New Project')}>
-          <span style={{ fontSize: 30, color: theme.textDim, lineHeight: 1 }}>＋</span>
+          <span style={{ fontSize: 30, color: theme.textDim, lineHeight: 1 }}>+</span>
           <span style={{ fontSize: 13, color: theme.textDim }}>{t('New Project')}</span>
         </button>
         {model.visibleProjects.map((project) => <ProjectCard key={project.id} project={project} props={props} model={model} />)}

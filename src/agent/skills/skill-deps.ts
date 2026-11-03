@@ -26,53 +26,53 @@ interface Rule {
 const RULES: Rule[] = [
   {
     kind: 'image',
-    service: 'image generation (still keyframes / 图片生成)',
+    service: 'image generation (still keyframes)',
     keywords: [
       'dall-e', 'dalle', 'midjourney', 'stable diffusion', 'sdxl', 'flux',
-      'image generation', 'imagegen', 'text-to-image', '文生图', 'Image', 'Image generation', 'Image generation',
-      'keyframe', 'keyframes', '关键帧画面',
+      'image generation', 'imagegen', 'text-to-image', 'generación de imágenes', 'generacion de imagenes',
+      'keyframe', 'keyframes', 'fotogramas clave',
     ],
   },
   {
     kind: 'video',
-    service: 'video generation (视频生成)',
+    service: 'video generation',
     keywords: [
-      'sora', 'kling', 'Kling', 'seedance', 'runway', 'hailuo', '海螺', 'veo',
-      'gemini omni', 'text-to-video', '文生视频', 'Video generation',
+      'sora', 'kling', 'seedance', 'runway', 'hailuo', 'veo',
+      'gemini omni', 'text-to-video', 'video generation', 'generación de video', 'generacion de video',
     ],
   },
   {
     kind: 'voice',
-    service: 'voice / TTS (配音/语音合成)',
+    service: 'voice / TTS (voiceover / speech synthesis)',
     keywords: [
       'elevenlabs', 'doubao tts', 'minimax tts', 'inworld tts', 'fish audio tts',
       'speechify tts', 'openai tts', 'gemini tts', 'mistral tts', 'cartesia tts',
-      'text-to-speech', 'tts ', '配音', 'Voice', 'voiceover', 'voice clone',
-      '语音克隆', 'indextts', 'narration voice',
+      'text-to-speech', 'tts ', 'speech synthesis', 'voiceover', 'voice clone',
+      'voice cloning', 'texto a voz', 'síntesis de voz', 'clonación de voz', 'indextts', 'narration voice',
     ],
   },
   {
     kind: 'music',
-    service: 'music generation (音乐生成)',
-    keywords: ['suno', 'music generation', '作曲', 'Music', 'bgm generation'],
+    service: 'music generation',
+    keywords: ['suno', 'music generation', 'generación de música', 'generacion de musica', 'bgm generation'],
   },
   {
     kind: 'sound',
-    service: 'sound effects (音效)',
-    keywords: ['sound effects', 'sfx', 'Sound Effects'],
+    service: 'sound effects',
+    keywords: ['sound effects', 'sfx', 'efectos de sonido'],
   },
   {
     kind: 'transcription',
-    service: 'transcription via the configured provider (语音转写)',
+    service: 'transcription via the configured provider',
     keywords: [
       'assemblyai', 'whisper', 'openai transcription', 'deepgram', 'groq transcription',
-      'elevenlabs scribe', 'cartesia ink', 'transcription', 'Transcript',
+      'elevenlabs scribe', 'cartesia ink', 'transcription', 'transcripción', 'transcripcion',
     ],
   },
   {
     kind: 'web',
-    service: 'web extraction (网页抓取/搜索)',
-    keywords: ['firecrawl', 'web search', '网页搜索', 'web scraper', '爬取', 'web_browser'],
+    service: 'web extraction (scraping / search)',
+    keywords: ['firecrawl', 'web search', 'búsqueda web', 'busqueda web', 'web scraper', 'web scraping', 'web_browser'],
   },
   {
     kind: 'sandbox',

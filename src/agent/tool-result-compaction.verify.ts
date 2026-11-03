@@ -42,7 +42,8 @@ const imageResult = compactToolResultForTransport({
   __images: [{ frame: 1, base64 }],
 }, true) as { __images: Array<{ base64: string }> };
 assert.equal(imageResult.__images[0]?.base64, base64, 'Codex image bytes must remain unchanged');
-const exactSkillPage = '中文🙂'.repeat(8_000);
+// Two CJK characters plus an emoji, written as escapes (specs/11).
+const exactSkillPage = '\u4e2d\u6587🙂'.repeat(8_000);
 const skillHistory = codexToolHistoryEntry(
   { name: 'load_skill', args: { name: 'fixture' } },
   { success: true, result: { contents: { 'SKILL.md': exactSkillPage }, nextOffset: 32_000 } },

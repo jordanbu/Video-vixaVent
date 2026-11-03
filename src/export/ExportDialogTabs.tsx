@@ -322,7 +322,7 @@ function JianyingTab({ project, base }: { project: ProjectDoc; base: string }) {
               <br />
               {outcome.draftPath}
               {outcome.warnings.length > 0 && (
-                <><br />{outcome.warnings.join('；')}</>
+                <><br />{outcome.warnings.join('; ')}</>
               )}
             </p>
           </div>

@@ -65,16 +65,16 @@ assert.equal(llmOperationPath('cheaperinference'), '/chat/completions');
   assert.equal(llmProviderForRequest(), 'anthropic');
   assert.equal(llmProviderForRequest(reqFor('')), 'anthropic');
   assert.equal(normalizeLlmProvider('retired-provider'), 'anthropic', 'settings fallback stays compatible');
-  assert.deepEqual(llmHeaders(reqFor('gemini')), { 'x-goog-api-key': 'gk-1' }, 'gemini 原生协议注入 x-goog-api-key');
-  assert.deepEqual(llmHeaders(reqFor('minimax')), { authorization: 'Bearer mk-1' }, 'openai-compatible 厂商 Bearer');
+  assert.deepEqual(llmHeaders(reqFor('gemini')), { 'x-goog-api-key': 'gk-1' }, 'gemini native protocol injects x-goog-api-key');
+  assert.deepEqual(llmHeaders(reqFor('minimax')), { authorization: 'Bearer mk-1' }, 'openai-compatible vendors use Bearer');
   assert.deepEqual(llmHeaders(reqFor('orcarouter')), { authorization: 'Bearer ork-1' },
-    'OrcaRouter 使用独立厂商 Key 和 OpenAI-compatible Bearer');
+    'OrcaRouter uses its own vendor key and an OpenAI-compatible Bearer');
   assert.deepEqual(llmHeaders(reqFor('requesty')), { authorization: 'Bearer rqsty-1' },
     'Requesty uses its own provider key as an OpenAI-compatible Bearer');
   assert.deepEqual(llmHeaders(reqFor('cheaperinference')), { authorization: 'Bearer ci_live_1' },
     'Cheaper Inference uses its own provider key as an OpenAI-compatible Bearer');
-  assert.deepEqual(llmHeaders(reqFor('anthropic')), { 'x-api-key': 'ak-1', 'anthropic-version': '2023-06-01' }, 'anthropic x-api-key(经遗留迁移)');
-  assert.deepEqual(llmHeaders(reqFor('xai-oauth')), {}, 'xAI OAuth 不回退到可能失效的持久化 token');
+  assert.deepEqual(llmHeaders(reqFor('anthropic')), { 'x-api-key': 'ak-1', 'anthropic-version': '2023-06-01' }, 'anthropic x-api-key (via the legacy migration)');
+  assert.deepEqual(llmHeaders(reqFor('xai-oauth')), {}, 'xAI OAuth does not fall back to a possibly stale persisted token');
   assert.match(llmErrorMessage(401, reqFor('gemini')), /Gemini.*API key.*Ajustes/, 'auth errors point to Settings');
   assert.match(llmErrorMessage(429, reqFor('openai')), /saldo insuficiente.*más tarde/, 'rate limits point to the account balance');
 }

@@ -1,4 +1,4 @@
-// ES data dictionary (template field labels, part 1): key = original display text, value = Spanish. Read through tData().
+// ES data dictionary (template field labels, part 1): key = English display text, value = Spanish. Read through tData().
 export default {
   "Title Text": "Texto del título",
   "Background Color": "Color de fondo",
@@ -299,7 +299,7 @@ export default {
   "Paper Color": "Color del papel",
   "Ink Color": "Color de la tinta",
   "Font Size (px)": "Tamaño de fuente (px)",
-  "抖动速度 (帧/次)": "Velocidad de vibración (fotogramas por paso)",
+  "Jitter Speed (frames/step)": "Velocidad de vibración (fotogramas por paso)",
   "Role / Title": "Rol / Cargo",
   "Silhouette Color": "Color de la silueta",
   "Bottom Spacing": "Espaciado inferior",

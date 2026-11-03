@@ -23,7 +23,7 @@ for (const name of ['import_asset', 'import_folder']) {
 
 // ── No host at all (Node, no window and no bridge): a clear error ──
 // A browser tab resolves the server routes instead; that path is covered below.
-const hostless = await execAgentPathImportTool('import_asset', { path: '/Volumes/素材盘/A.mp4' }, {} as AgentContext);
+const hostless = await execAgentPathImportTool('import_asset', { path: '/Volumes/Material/A.mp4' }, {} as AgentContext);
 assert.match(String(hostless.error), /not available on this host/, 'a hostless runtime gets a clear error');
 assert.equal('ok' in hostless, false, 'a hostless runtime never reports success');
 const hostlessBrowse = await execAgentPathImportTool('browse_local_media', { path: '/media' }, {} as AgentContext);
@@ -76,7 +76,7 @@ const projectCtx = {
   },
 };
 try {
-  const result = await execAgentPathImportTool('import_asset', { path: '/Volumes/素材盘/A001.mp4' }, projectCtx);
+  const result = await execAgentPathImportTool('import_asset', { path: '/Volumes/Material/A001.mp4' }, projectCtx);
   assert.equal(result.ok, true, 'desktop import reports ok');
   assert.equal(addedAssets.length, 1, 'the imported asset lands in the pool');
   assert.equal(addedAssets[0]!.name, 'A001.mp4', 'asset name preserved');
@@ -93,18 +93,18 @@ try {
       return {
         imported: [], unsupportedFiles: [], duplicateCount: 0,
         errors: [{
-          path: '/Volumes/素材盘',
+          path: '/Volumes/Material',
           code: 'IMPORT_ROOTS_NOT_CONFIGURED' as const,
-          error: '尚未添加本地素材目录。请在“设置 → 本地素材目录”中添加。',
+          error: 'Todavía no agregaste una carpeta de medios local. Agrégala en "Ajustes → Carpetas de medios locales".',
         }],
       };
     },
   },
 };
 try {
-  const result = await execAgentPathImportTool('import_folder', { path: '/Volumes/素材盘' }, projectCtx);
+  const result = await execAgentPathImportTool('import_folder', { path: '/Volumes/Material' }, projectCtx);
   assert.equal(result.code, 'IMPORT_ROOTS_NOT_CONFIGURED');
-  assert.match(String(result.error), /设置.*本地素材目录/);
+  assert.match(String(result.error), /Ajustes.*Carpetas de medios locales/);
   assert.equal('ok' in result, false, 'configuration failure is not a successful tool result');
 } finally {
   delete (globalThis as unknown as { window?: unknown }).window;
@@ -114,13 +114,13 @@ try {
 (globalThis as unknown as { window?: unknown }).window = {
   vixaventoraDesktop: {
     async importAgentPaths() {
-      return { imported: [], errors: [], unsupportedFiles: ['说明.md'], duplicateCount: 2 };
+      return { imported: [], errors: [], unsupportedFiles: ['notas.md'], duplicateCount: 2 };
     },
   },
 };
 try {
-  const result = await execAgentPathImportTool('import_folder', { path: '/Volumes/素材盘' }, projectCtx);
-  assert.deepEqual(result.unsupportedFiles, ['说明.md']);
+  const result = await execAgentPathImportTool('import_folder', { path: '/Volumes/Material' }, projectCtx);
+  assert.deepEqual(result.unsupportedFiles, ['notas.md']);
   assert.equal(result.duplicateCount, 2);
   assert.equal(result.skippedDuplicates, false, 'mixed skipped reasons are not mislabeled');
 } finally {
@@ -130,7 +130,7 @@ try {
 // ── Desktop without an open project ──
 (globalThis as unknown as { window?: unknown }).window = { vixaventoraDesktop: desktopBridge };
 try {
-  const noProject = await execAgentPathImportTool('import_folder', { path: '/Volumes/素材盘' }, { getProjectId: () => undefined } as unknown as AgentContext);
+  const noProject = await execAgentPathImportTool('import_folder', { path: '/Volumes/Material' }, { getProjectId: () => undefined } as unknown as AgentContext);
   assert.match(String(noProject.error), /no open project/, 'missing project rejected');
 } finally {
   delete (globalThis as unknown as { window?: unknown }).window;
@@ -143,7 +143,7 @@ try {
   },
 };
 try {
-  const failed = await execAgentPathImportTool('import_asset', { path: '/Volumes/素材盘/A.mp4' }, projectCtx);
+  const failed = await execAgentPathImportTool('import_asset', { path: '/Volumes/Material/A.mp4' }, projectCtx);
   assert.match(String(failed.error), /scan failed/, 'bridge error message surfaced');
 } finally {
   delete (globalThis as unknown as { window?: unknown }).window;
@@ -251,10 +251,10 @@ globalThis.fetch = async () => Response.json(
   { status: 403 },
 );
 try {
-  const blocked = await execAgentPathImportTool('import_folder', { path: '/Volumes/素材盘' }, projectCtx);
+  const blocked = await execAgentPathImportTool('import_folder', { path: '/Volumes/Material' }, projectCtx);
   assert.equal(blocked.code, 'IMPORT_ROOTS_NOT_CONFIGURED', 'the server code survives the tool envelope');
   assert.equal('ok' in blocked, false, 'a refusal is not a successful tool result');
-  const blockedBrowse = await execAgentPathImportTool('browse_local_media', { path: '/Volumes/素材盘' }, projectCtx);
+  const blockedBrowse = await execAgentPathImportTool('browse_local_media', { path: '/Volumes/Material' }, projectCtx);
   assert.equal(blockedBrowse.code, 'IMPORT_ROOTS_NOT_CONFIGURED');
 } finally {
   globalThis.fetch = codeFetch;

@@ -1,3 +1,4 @@
+import { t } from '../i18n/locale';
 import { useCallback, useRef } from 'react';
 import { makeDraft, replayActions } from '../editor/store';
 import type { ProjectDoc } from '../editor/types';
@@ -135,7 +136,7 @@ function applyToolActions(
     const observed = turn.state.ctxRef.current.getDoc();
     if (!turn.persistentBeforeDoc) {
       turn.persistentBeforeDoc = turn.baseDoc;
-      turn.persistentSnapshot = saveAutomaticVersion(projectId, 'Agent 修改前', turn.baseDoc).then(
+      turn.persistentSnapshot = saveAutomaticVersion(projectId, t('Before Agent edit'), turn.baseDoc).then(
         () => undefined,
         (error) => { turn.persistentSaveError = error; },
       );
@@ -328,7 +329,7 @@ async function finalizeCompletedTurn(
     const summary = error instanceof Error ? error.message : String(error);
     turn.state.setMessages((messages) => [
       ...messages,
-      { role: 'error', text: `Agent 已停止，但素材池改动提交失败：${summary}` },
+      { role: 'error', text: t('The Agent stopped, but the media pool changes could not be committed: {summary}', { summary }) },
     ]);
     await settleServerRun(turn.projectId, input.runId, {
       status: 'failed',
@@ -362,7 +363,7 @@ async function finalizeCompletedTurn(
         ...messages,
         {
           role: 'error',
-          text: 'Agent 已完成运行，但本次编辑未被记录为可应用的操作（提案为空），时间线未改动。请重试，或打开运行检查器查看详情。',
+          text: t('The Agent finished, but this edit was not recorded as operations to apply (empty proposal), so the timeline did not change. Try again, or open the run inspector for details.'),
         },
       ]);
       await settleServerRun(turn.projectId, input.runId, {
@@ -384,7 +385,7 @@ async function finalizeCompletedTurn(
     const summary = error instanceof Error ? error.message : String(error);
     turn.state.setMessages((messages) => [
       ...messages,
-      { role: 'error', text: `Agent 已停止，但提案生成失败，编辑未应用：${summary}` },
+      { role: 'error', text: t('The Agent stopped, but the proposal could not be generated and the edit was not applied: {summary}', { summary }) },
     ]);
     await settleServerRun(turn.projectId, input.runId, {
       status: 'failed',

@@ -91,7 +91,7 @@ function SelectField({ spec, value, onChange }: PropSchemaFieldProps) {
   return (
     <select value={String(value ?? '')} onChange={(event) => onChange(event.target.value)} style={FIELD_STYLE}>
       {options.length === 0 && <option value={String(value ?? '')}>{String(value ?? '—')}</option>}
-      {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+      {options.map((option) => <option key={option.value} value={option.value}>{tData(option.label)}</option>)}
     </select>
   );
 }

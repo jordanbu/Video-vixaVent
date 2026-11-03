@@ -16,9 +16,10 @@ import {
 import { uploadedMediaRelinkPatch } from './mediaAssetRelink';
 import { createImportContentIdentityHooks } from './importContentIdentity';
 
-assert.equal(normalizeMediaName('  旅行封面.PNG  '), '旅行封面.png');
-assert.equal(normalizeMediaName('ＡＢＣ.mp4'), 'abc.mp4');
-assert.equal(findMediaNameConflict([{ id: 'a', name: '旅行封面.PNG' }], '旅行封面.png')?.id, 'a');
+assert.equal(normalizeMediaName('  Portada del viaje.PNG  '), 'portada del viaje.png');
+// Full-width letters (\u escapes, specs/11) normalize to ASCII.
+assert.equal(normalizeMediaName('\uff21\uff22\uff23.mp4'), 'abc.mp4');
+assert.equal(findMediaNameConflict([{ id: 'a', name: 'Portada del viaje.PNG' }], 'portada del viaje.png')?.id, 'a');
 assert.equal(isMediaImportCancelled(new MediaImportCancelledError()), true);
 assert.equal(
   mediaImportErrorMessage(new Error('part 3 failed (503)')),

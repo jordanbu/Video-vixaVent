@@ -1,3 +1,4 @@
+import { t } from '../i18n/locale';
 import { useCallback, useEffect, useRef } from 'react';
 import type { ProjectDoc } from '../editor/types';
 import { saveAutomaticVersion } from './versionStore';
@@ -20,7 +21,7 @@ function captureAutomaticVersion(state: CaptureState): Promise<void> {
   const snapshotProject = state.project.current;
   const snapshot = state.latestDoc.current;
   state.dirty.current = false;
-  const run = saveAutomaticVersion(snapshotProject, '自动保存', snapshot).then(
+  const run = saveAutomaticVersion(snapshotProject, t('Autosave'), snapshot).then(
     () => {
       if (state.project.current === snapshotProject && state.latestDoc.current !== snapshot) {
         state.dirty.current = true;
@@ -65,7 +66,7 @@ export function useAutomaticVersions(projectId: string, doc: ProjectDoc): void {
       clearTimeout(idleTimer.current ?? undefined);
       idleTimer.current = null;
       if (shouldCapture) {
-        void saveAutomaticVersion(previousProject, '自动保存', pendingDoc).catch(() => undefined);
+        void saveAutomaticVersion(previousProject, t('Autosave'), pendingDoc).catch(() => undefined);
       }
       return;
     }

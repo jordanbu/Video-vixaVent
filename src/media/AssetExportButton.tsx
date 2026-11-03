@@ -27,7 +27,7 @@ export function AssetExportButton({ asset, fps, onError, onComplete }: AssetExpo
     }
   };
   return (
-    <button type="button" disabled={busy} title={label} aria-label={`${label}：${asset.name}`}
+    <button type="button" disabled={busy} title={label} aria-label={`${label}: ${asset.name}`}
       onClick={(event) => { event.stopPropagation(); void run(); }}>
       {busy ? t('Exporting…') : label}
     </button>

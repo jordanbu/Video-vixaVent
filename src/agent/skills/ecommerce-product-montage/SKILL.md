@@ -2,7 +2,7 @@
 name: ecommerce-product-montage
 description: |
   Assemble product footage, UGC, and b-roll into a conversion-oriented montage with a hook → pain → demo → proof → CTA rhythm.
-  Use for 带货混剪, 产品混剪, 商品短视频, 种草视频, ecommerce montage, product reel, UGC cutdown, or when the user wants selling footage cut into a short that converts.
+  Use for sales montages, product montages, product short videos, product-recommendation videos, ecommerce montage, product reel, UGC cutdown, or when the user wants selling footage cut into a short that converts.
 ---
 
 # Ecommerce Product Montage

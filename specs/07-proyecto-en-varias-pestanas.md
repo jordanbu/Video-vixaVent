@@ -91,7 +91,7 @@ Flujo con dos pestañas, A (vieja) y B (nueva):
 | La pestaña desplazada pregunta cada 3 s y retoma si el otro editor se fue hace más de 15 s | No retomar nunca sin clic | El caso más común es cerrar la pestaña duplicada; sin retomar, la que queda mostraría "abierta en otra pestaña" sin que exista. Los 15 s evitan robarle el proyecto a una pestaña que solo se está reconectando (tarda ~1 s) |
 | Señal del servidor (`409 displaced`) | `BroadcastChannel` entre pestañas | `BroadcastChannel` no cruza navegadores. La pestaña desplazada ya se entera en menos de un segundo por su long-poll, así que tampoco se agregó como extra |
 | Aviso fijo arriba al centro, sin cerrar | Mostrarlo dentro de la lista de mensajes del chat, como los errores del puente | Con el chat cerrado o con mucho historial no se vería, y el usuario que trabaja desde Claude Code tiene que enterarse de que los cambios no llegan a esta pestaña |
-| Textos nuevos para el aviso | Reusar "工程已在其他窗口编辑或版本已变化，请关闭其他窗口后手动刷新页面。" | Ese texto pide cerrar la otra ventana y recargar "a mano"; ahora no hace falta cerrar nada y el botón hace la acción |
+| Textos nuevos para el aviso | Reusar el aviso que ya existía (en chino: «el proyecto se está editando en otra ventana o su versión cambió; cerrar las otras ventanas y recargar la página a mano») | Ese texto pide cerrar la otra ventana y recargar "a mano"; ahora no hace falta cerrar nada y el botón hace la acción |
 | Si el documento quedó viejo, pedir recargar con un botón | Recargar solo al tocar "Usar en esta pestaña" | El editor evita navegar por su cuenta (el aviso de `beforeunload` con un guardado pendiente); que el usuario apriete "Recargar" deja la decisión de su lado |
 | "Recarga" tras 5 `stale` seguidos (2026-11-01) | Reintentar en silencio para siempre | Si el store avanzó sin esta pestaña (un MCP sin navegador guardó mientras dormía), la pestaña nunca vuelve a registrarse y los cambios del agente no llegan; el usuario no veía nada. Cinco intentos (~5 s) dejan de sobra el margen de un autosave propio |
 | **Cambio al implementar:** el 409 `displaced` dice si la pestaña quedó vieja (`reloadRequired`, comparando con el `baseRevision` de la fila) | Que el clic en "Usar en esta pestaña" lo descubra con un `stale` | En la prueba e2e, después de una edición del agente el botón llevaba a "recarga" y a los 3 s el chequeo volvía a mostrar el botón. La fila ya trae la revisión del dueño, así que no hace falta leer el proyecto en cada chequeo |
@@ -125,8 +125,8 @@ Resultados del 2026-10-26, con Node 24.22.1:
   config/vite.config.ts` → `✓ built`. `npm test` → `pretest` completo OK (incluye
   `verify:mcp` con los dos verify nuevos) y `✗ 1/197 segments FAILED`: solo
   `server/plugins/sound-sonilo-job.verify.ts`, que necesita ffmpeg del sistema y ya fallaba
-  antes. `npm run posttest` aparte → OK. `node scripts/check-i18n.mjs` → `2546 个英文词条，
-  3967 个西班牙语词条`.
+  antes. `npm run posttest` aparte → OK. `node scripts/check-i18n.mjs` → `2546 entradas en inglés,
+  3967 entradas en español` (salida traducida del chino).
 - E2E con un servidor aislado en `:5399` (perfil y carpeta de datos propios) y Playwright:
   pestañas A y B en el mismo Chromium, C en Google Chrome aparte.
   - B abre el proyecto → A muestra "Este proyecto está abierto en otra pestaña…";

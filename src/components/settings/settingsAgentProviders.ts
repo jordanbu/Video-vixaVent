@@ -13,8 +13,8 @@ const llmPage = (preset: (typeof LLM_PROVIDER_PRESETS)[number]): SettingsVendorP
     vendor: preset.id as VendorId,
     title: preset.label,
     note: preset.id === 'anthropic'
-      ? '内置 Agent 可使用 Anthropic API Key，也可以在下方「Anthropic · Claude Code」页用 Claude 订阅登录（无需 API Key）。'
-        + '独立运行的 Claude Code 会话也可以通过「外部 Agent 接入 (MCP)」驱动 Vixaventora。'
+      ? 'The built-in Agent can use an Anthropic API key, or sign in with a Claude subscription on the “Anthropic · Claude Code” page below (no API key needed). '
+        + 'A standalone Claude Code session can also drive Vixaventora through “External agents (MCP)”.'
       : 'Each provider keeps its own endpoint, key, and model. Test the connection, then choose from the models returned by that API.',
     ...(preset.id === 'anthropic'
       ? { noteAction: { label: 'External agents (MCP)', action: 'open-mcp-guide' } }
@@ -74,9 +74,10 @@ const COPILOT_PAGE: SettingsVendorPage = {
   vendor: 'copilot',
   title: 'GitHub Copilot',
   connection: 'copilot',
-  note: '使用 GitHub Copilot 订阅：官方 Copilot CLI 管理登录与凭据（终端运行 copilot login），'
-    + 'Vixaventora 通过 Copilot SDK 直接驱动编辑工具，不会读取或显示凭据。'
-    + '会话状态隔离在 ~/.vixaventora/copilot，不影响你自己的 ~/.copilot。',
+  note: 'Use a GitHub Copilot subscription: '
+    + 'the official Copilot CLI manages sign-in and credentials (run `copilot login` in a terminal). '
+    + 'Vixaventora drives the editing tools directly through the Copilot SDK and never reads or displays credentials. '
+    + 'Session state is isolated in ~/.vixaventora/copilot and does not affect your own ~/.copilot.',
   fields: [
     {
       name: 'COPILOT_MODEL', label: 'Copilot model', kind: 'text',
@@ -96,8 +97,10 @@ const CLAUDE_CODE_PAGE: SettingsVendorPage = {
   vendor: 'anthropic',
   title: 'Anthropic · Claude Code',
   connection: 'claude-code',
-  note: '使用 Claude 订阅登录，由官方 Claude Code CLI 管理凭据、续期与退出，Vixaventora 不会读取或显示 OAuth 凭据。'
-    + '在终端运行 claude auth login（或 claude setup-token 获取长期令牌）完成登录后，点击“重新检测”。',
+  note: 'Sign in with a Claude subscription. '
+    + 'The official Claude Code CLI manages credentials, renewal, and logout; '
+    + 'Vixaventora never reads or displays OAuth credentials. '
+    + 'Run claude auth login (or claude setup-token for a long-lived token) in a terminal, then click “Recheck”.',
   fields: [
     {
       name: 'CLAUDE_CODE_MODEL', label: 'Claude Code model', kind: 'text',
@@ -119,7 +122,7 @@ const XAI_OAUTH_PAGE: SettingsVendorPage = {
   }],
 };
 
-// Sponsored placement: OFox sits 4th in Agent 大脑 (Anthropic, OpenAI,
+// Sponsored placement: OFox sits 4th in the Agent brain list (Anthropic, OpenAI,
 // OpenAI · Codex, OFox), independent of its position in LLM_PROVIDER_PRESETS.
 const OFOX_PRESET = LLM_PROVIDER_PRESETS.find((preset) => preset.id === 'ofox');
 const AGENT_VENDOR_PAGES: readonly SettingsVendorPage[] = LLM_PROVIDER_PRESETS.flatMap((preset) => {
@@ -139,10 +142,10 @@ const VISION_PAGE: SettingsVendorPage = {
 
 export const PROXY_PAGE: SettingsVendorPage = {
   key: 'agent/proxy', vendor: 'proxy', title: 'Network proxy', kind: 'settings',
-  note: '国内网络访问海外模型（Gemini / OpenAI / Anthropic / Mistral 等）失败时，'
-    + '可在此填写本地代理地址（如 http://127.0.0.1:7890）。'
-    + '留空则使用系统环境变量（HTTPS_PROXY / HTTP_PROXY）。'
-    + '生效范围：Agent 模型、AI 生成、模型下载、R2 云同步。',
+  note: 'If your network cannot reach overseas model APIs (Gemini / OpenAI / Anthropic / Mistral, etc.'
+    + '), enter a local proxy URL here, such as http://127.0.0.1:7890. '
+    + 'Leave empty to use system environment variables (HTTPS_PROXY / HTTP_PROXY). '
+    + 'Applies to Agent models, AI generation, model downloads, and R2 cloud sync.',
   fields: [text('PROXY_URL', 'Proxy URL', 'Example: http://127.0.0.1:7890')],
 };
 

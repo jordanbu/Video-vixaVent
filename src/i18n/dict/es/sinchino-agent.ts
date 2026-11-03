@@ -1,3 +1,96 @@
 // ES dictionary (phase 2 of specs/11, agent group): key = English source text, value = Spanish.
 export default {
+  // Proposal card: operations, impact and title (src/agent/proposal.ts)
+  "Add animation": "Agregar animación",
+  "Generate animation": "Generar animación",
+  "Add audio": "Agregar audio",
+  "Change properties": "Cambiar propiedades",
+  "Move clip": "Mover clip",
+  "Change duration/position": "Cambiar duración/posición",
+  "Delete clip": "Eliminar clip",
+  "Split clip": "Dividir clip",
+  "Clear timeline": "Vaciar línea de tiempo",
+  "Change aspect ratio": "Cambiar relación de aspecto",
+  "Attach transcript": "Adjuntar transcripción",
+  "Delete text = delete video": "Borrar texto = borrar video",
+  "Clean up voiceover": "Limpiar locución",
+  "Edit captions": "Editar subtítulos",
+  "Manage sequences": "Gestionar secuencias",
+  "Manage tracks": "Gestionar pistas",
+  "Organize media pool": "Organizar el panel de media",
+  "Apply script edits": "Aplicar cambios del guion",
+  "Edit clip": "Editar clip",
+  "Browse library": "Explorar biblioteca",
+  "+1 sequence": "+1 secuencia",
+  "+{n} sequences": "+{n} secuencias",
+  "−1 sequence": "−1 secuencia",
+  "−{n} sequences": "−{n} secuencias",
+  "+1 clip": "+1 clip",
+  "+{n} clips": "+{n} clips",
+  "−1 clip": "−1 clip",
+  "−{n} clips": "−{n} clips",
+  "1 change": "1 cambio",
+  "{n} changes": "{n} cambios",
+  "1 edit": "1 edición",
+  "{n} edits": "{n} ediciones",
+  "Agent edit proposal": "Propuesta de edición del agente",
+  "Apply all": "Aplicar todo",
+  "Track": "Pista",
+
+  // Change log and automatic versions
+  "Agent edit": "Edición del agente",
+  "Agent edit (in progress)": "Edición del agente (en curso)",
+  "Before Agent edit": "Antes de la edición del agente",
+  "Before external Agent edit": "Antes de la edición del agente externo",
+
+  // Selection references (chips in the chat input)
+  "Time point {time}": "Punto de tiempo {time}",
+  "Canvas region": "Región del lienzo",
+  "Canvas region (1 clip)": "Región del lienzo (1 clip)",
+  "Canvas region ({n} clips)": "Región del lienzo ({n} clips)",
+  "“{text}” (1 word)": "“{text}” (1 palabra)",
+  "“{text}” ({n} words)": "“{text}” ({n} palabras)",
+
+  // Server runs
+  "Could not stop the server task: {error}": "No se pudo detener la tarea del servidor: {error}",
+  "The server task could not start: {error}": "La tarea del servidor no pudo iniciarse: {error}",
+  "Another page took over the server task; this page will not run it again.": "Otra página tomó el control de la tarea del servidor; esta página no la volverá a ejecutar.",
+  "The server task events are past the recoverable window.": "Los eventos de la tarea del servidor ya están fuera del margen recuperable.",
+  "The server task record no longer exists (the editor service may have restarted).": "El registro de la tarea del servidor ya no existe (es posible que el servicio del editor se haya reiniciado).",
+  "The previous server task was safely interrupted and its recovery state was cleared.": "La tarea anterior del servidor se interrumpió de forma segura y se borró su estado de recuperación.",
+  "Transport cleanup warning: {warning}": "Aviso al limpiar la conexión: {warning}",
+  "The server task cannot be recovered safely; its recovery credentials were kept: {error}": "La tarea del servidor no se puede recuperar de forma segura; se conservaron sus credenciales de recuperación: {error}",
+  "The Agent stopped, but the media pool changes could not be committed: {summary}": "El agente se detuvo, pero no se pudieron guardar los cambios del panel de media: {summary}",
+  "The Agent finished, but this edit was not recorded as operations to apply (empty proposal), so the timeline did not change. Try again, or open the run inspector for details.": "El agente terminó, pero esta edición no quedó registrada como operaciones para aplicar (propuesta vacía), así que la línea de tiempo no cambió. Vuelve a intentarlo o abre el inspector de ejecuciones para ver los detalles.",
+  "The Agent stopped, but the proposal could not be generated and the edit was not applied: {summary}": "El agente se detuvo, pero no se pudo generar la propuesta y la edición no se aplicó: {summary}",
+
+  // Chat history
+  "The chat history cannot be read right now; loading stopped so the saved conversation is not overwritten. Refresh the page to try again.": "No se puede leer el historial del chat en este momento; la carga se detuvo para no sobrescribir la conversación guardada. Recarga la página para volver a intentarlo.",
+  "Could not save the chat history; this conversation may not be kept. Check storage and try again.": "No se pudo guardar el historial del chat; es posible que esta conversación no se conserve. Revisa el almacenamiento y vuelve a intentarlo.",
+
+  // Proposal actions
+  "The proposal was applied, but the run record is not finished yet; it will resume when the project is reopened.": "La propuesta se aplicó, pero el registro de la ejecución aún no termina; se reanudará al volver a abrir el proyecto.",
+  "The proposal was applied, but the recovery record was not cleaned up yet; it is marked as not replayable.": "La propuesta se aplicó, pero el registro de recuperación aún no se limpió; quedó marcado como no reproducible.",
+  "The selected operations cannot be applied (a prerequisite step may be unchecked); the proposal did not change the project.": "Las operaciones seleccionadas no se pueden aplicar (quizá desmarcaste un paso previo); la propuesta no cambió el proyecto.",
+  "The proposal was saved to the project, but the recovery record is not finished; reopen the project to check it.": "La propuesta se guardó en el proyecto, pero el registro de recuperación no terminó; vuelve a abrir el proyecto para revisarlo.",
+  "Could not get permission to run the proposal, save the project, or create the pre-edit version; the proposal was not applied. Try again.": "No se pudo obtener permiso para ejecutar la propuesta, guardar el proyecto o crear la versión previa a la edición; la propuesta no se aplicó. Vuelve a intentarlo.",
+  "Could not save the expired-proposal state; the proposal will not be applied.": "No se pudo guardar el estado de propuesta vencida; la propuesta no se aplicará.",
+  "Could not save the proposal replacement state. Try again.": "No se pudo guardar el estado de reemplazo de la propuesta. Vuelve a intentarlo.",
+  "Could not save the proposal rejection state; the proposal was not rejected. Try again.": "No se pudo guardar el rechazo de la propuesta; la propuesta no se rechazó. Vuelve a intentarlo.",
+  "The proposal was rejected, but the run record is not finished; cleanup will continue when the project is reopened.": "La propuesta se rechazó, pero el registro de la ejecución no terminó; la limpieza continuará al volver a abrir el proyecto.",
+
+  // Agent runs
+  "Could not create the pre-edit version; the Agent changes were not applied. Check local storage and try again.": "No se pudo crear la versión previa a la edición; los cambios del agente no se aplicaron. Revisa el almacenamiento local y vuelve a intentarlo.",
+  "Could not save the project; the Agent changes were not applied. Check local storage and try again.": "No se pudo guardar el proyecto; los cambios del agente no se aplicaron. Revisa el almacenamiento local y vuelve a intentarlo.",
+  "The Agent stopped, but the project storage could not be restored. Reopen the project and check its contents.": "El agente se detuvo, pero no se pudo restaurar el almacenamiento del proyecto. Vuelve a abrir el proyecto y revisa su contenido.",
+  "The project kept changing while saving; the Agent changes were not applied yet. Try again in a moment.": "El proyecto siguió cambiando mientras se guardaba; los cambios del agente aún no se aplicaron. Vuelve a intentarlo en un momento.",
+  "The project changed during generation; the media was saved to the media pool. Send the request to place it on the timeline again.": "El proyecto cambió durante la generación; el material se guardó en el panel de media. Vuelve a enviar el pedido para colocarlo en la línea de tiempo.",
+
+  // Default names created by agent tools
+  "Highlight {n}": "Momento destacado {n}",
+  "Clip {n}": "Clip {n}",
+  "New project": "Proyecto nuevo",
+  "Custom shader": "Shader personalizado",
+  "Custom transition": "Transición personalizada",
+  "Custom effect from submit_shader: {name}": "Efecto personalizado de submit_shader: {name}",
 } as Record<string, string>;

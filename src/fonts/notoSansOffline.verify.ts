@@ -11,7 +11,7 @@ const localFace = findLocalFont('Noto Sans SC');
 assert.ok(localFace, 'Noto Sans SC must resolve to an offline bundled face');
 assert.equal(localFace.family, 'Noto Sans SC');
 assert.equal(findLocalFont('Noto Sans CJK SC'), localFace, 'the historical English alias must stay compatible');
-assert.equal(findLocalFont('思源黑体'), localFace, 'the historical Chinese alias must stay compatible');
+assert.equal(findLocalFont('\u601d\u6e90\u9ed1\u4f53' /* Source Han Sans, Chinese name */), localFace, 'the historical Chinese alias must stay compatible');
 assert.equal(localFace.stylesheet, '/fonts/noto-sans-sc/noto-sans-sc.css');
 assert.deepEqual(localFace.weightRange, [100, 900], 'the variable face must preserve the 100–900 project weight range');
 
@@ -19,10 +19,11 @@ const catalogEntries = FONT_CATALOG.filter((entry) => entry.family === 'Noto San
 assert.equal(catalogEntries.length, 1, 'the font catalog must not expose duplicate remote and local entries');
 assert.equal(catalogEntries[0]?.source, 'bundled', 'the font picker must report the offline source truthfully');
 
+// The sample text is Chinese for "offline font rendering" (\u escapes, specs/11).
 const fontRoot = resolve(fileURLToPath(new URL('../../assets/fonts/noto-sans-sc/', import.meta.url)));
 const html = `<!doctype html>
 <html><head><link rel="stylesheet" href="/fonts/noto-sans-sc/noto-sans-sc.css"></head>
-<body><p style="font: 400 32px 'Noto Sans SC'">离线字体渲染 Vixaventora 123</p></body></html>`;
+<body><p style="font: 400 32px 'Noto Sans SC'">\u79bb\u7ebf\u5b57\u4f53\u6e32\u67d3 Vixaventora 123</p></body></html>`;
 const server = createServer((request, response) => {
   const pathname = new URL(request.url ?? '/', 'http://127.0.0.1').pathname;
   if (pathname === '/') {
@@ -91,7 +92,7 @@ try {
       if (!context) throw new Error('2D canvas unavailable');
       context.fillStyle = '#000';
       context.font = weight + ' 56px "Noto Sans SC"';
-      context.fillText('离线字体渲染 Vixaventora 123', 8, 72);
+      context.fillText('\u79bb\u7ebf\u5b57\u4f53\u6e32\u67d3 Vixaventora 123', 8, 72);
       rasters.push(canvas.toDataURL('image/png'));
     }
     return {
@@ -100,7 +101,7 @@ try {
       weights: [...new Set(faces.map((face) => face.weight))],
       styles: [...new Set(faces.map((face) => face.style))],
       checks: [100, 400, 900].map((weight) =>
-        document.fonts.check(weight + ' 32px "Noto Sans SC"', '离线字体渲染 Vixaventora 123')),
+        document.fonts.check(weight + ' 32px "Noto Sans SC"', '\u79bb\u7ebf\u5b57\u4f53\u6e32\u67d3 Vixaventora 123')),
       rasters,
     };
   })()`;

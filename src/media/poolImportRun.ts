@@ -82,7 +82,7 @@ export interface PoolImportContext {
 export async function importAssetToPool(file: File, onProgress: ((ratio: number) => void) | undefined, lifecycle: ImportLifecycle | undefined, context: PoolImportContext, startAssetTranscription: StartAssetTranscription): Promise<MediaAsset> {
   const existing = findMediaNameConflict(context.stateRef.current.assets ?? [], file.name);
   if (existing && !window.confirm(context.t(
-    '素材「{name}」已存在。覆盖会同步替换已在时间线中使用的该素材。',
+    'The media "{name}" already exists. Replacing it also replaces it everywhere it is used on the timeline.',
     { name: existing.name },
   ))) throw new MediaImportCancelledError();
   const run: PoolImportRun = {

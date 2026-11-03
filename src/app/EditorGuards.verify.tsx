@@ -15,7 +15,7 @@ import { EditorErrorBoundary, SecureContextRequiredView } from './EditorGuards';
 
 type Params = Record<string, string | number>;
 const LAN_ORIGIN = 'http://192.168.1.20:5199';
-const CJK = /[㐀-鿿]/;
+const CJK = /[\u3400-\u9fff]/;
 const fill = (text: string, params?: Params) =>
   text.replace(/\{(\w+)\}/g, (match, key: string) => (params && key in params ? String(params[key]) : match));
 
@@ -25,14 +25,15 @@ for (const origin of ['http://localhost:5199', 'http://127.0.0.1:5199', 'https:/
   assert.deepEqual(editorAccess(true, origin), { kind: 'allowed' }, `${origin} must open the editor`);
 }
 
-// The requirement screen names the remedy and the refused origin, in Chinese and in English.
+// The requirement screen names the remedy and the refused origin, in English and in Spanish.
+// Keys are the English source text (specs/11): English shows the key unless EN carries a context entry.
 const usedKeys = new Set<string>();
-const chinese = (key: string, params?: Params) => {
+const english = (key: string, params?: Params) => {
   usedKeys.add(key);
-  return fill(key, params);
+  return fill(EN[key] ?? key, params);
 };
-const english = (key: string, params?: Params) => fill(EN[key] ?? key, params);
-for (const translate of [chinese, english]) {
+const spanish = (key: string, params?: Params) => fill(ES[key] ?? key, params);
+for (const translate of [english, spanish]) {
   const html = renderToStaticMarkup(
     <SecureContextRequiredView origin={LAN_ORIGIN} translate={translate} onHome={() => undefined} />,
   );
@@ -40,12 +41,12 @@ for (const translate of [chinese, english]) {
   assert.match(html, /http:\/\/localhost/, 'the screen must point to localhost on the host machine');
   assert.match(html, /HTTPS/, 'the screen must offer HTTPS for access from other devices');
   assert.match(html, /<button[^>]*>[^<]+<\/button>/, 'the project list must stay one click away');
-  if (translate === english) assert.doesNotMatch(html, CJK, 'the English screen must be fully translated');
+  assert.doesNotMatch(html, CJK, 'the screen must not show Chinese text');
 }
 
 // A load or render failure inside the editor shows an error with a reload action, not a blank page.
 const failure = new Error('crypto.randomUUID is not a function');
-const boundaryProps = { translate: chinese, onHome: () => undefined, children: <i>editor</i> };
+const boundaryProps = { translate: english, onHome: () => undefined, children: <i>editor</i> };
 assert.equal(renderToStaticMarkup(<EditorErrorBoundary {...boundaryProps} />), '<i>editor</i>');
 const boundary = new EditorErrorBoundary(boundaryProps);
 boundary.state = EditorErrorBoundary.getDerivedStateFromError(failure);
@@ -65,11 +66,10 @@ try {
 }
 assert.ok(reported.some((args) => args.includes(failure)), 'the boundary must still report the error');
 
-// Every string both screens render is translated in each interface language.
-for (const [locale, dict] of [['en', EN], ['es', ES]] as const) {
-  for (const key of usedKeys) {
-    assert.ok(dict[key] && !CJK.test(dict[key]), `${locale} translation missing for ${JSON.stringify(key)}`);
-  }
+// Every string both screens render is translated to Spanish; English shows the key itself.
+for (const key of usedKeys) {
+  assert.ok(!CJK.test(EN[key] ?? key), `en text must not contain Chinese: ${JSON.stringify(key)}`);
+  assert.ok(ES[key] && !CJK.test(ES[key]), `es translation missing for ${JSON.stringify(key)}`);
 }
 
 // EditorRoute decides before the lazy editor chunk is requested, and that chunk sits inside the boundary.

@@ -1,3 +1,4 @@
+import { t as translate } from '../i18n/locale';
 import { copyTranscriptIdentity } from '../transcript/identity';
 import type { AtomicAction, ProjectDispatch } from './reduce';
 import { maxOrder, projectReduce } from './reduce';
@@ -111,7 +112,7 @@ export function buildCommands(dispatch: ProjectDispatch, getDoc: () => ProjectDo
           fit: opts?.fit ?? base.fit,
           items: [], selectedId: null, trackOrder,
           tracks: { [trackOrder[0]]: { kind: 'video' } },
-          id: uid('tl'), name: opts?.name ?? `序列 ${d.timelines.length + 1}`, order: maxOrder(d) + 1,
+          id: uid('tl'), name: opts?.name ?? translate('Sequence {n}', { n: d.timelines.length + 1 }), order: maxOrder(d) + 1,
         };
         dispatch({ type: 'tl.create', timeline: t, activate: opts?.activate });
         return t.id;
@@ -120,7 +121,7 @@ export function buildCommands(dispatch: ProjectDispatch, getDoc: () => ProjectDo
       duplicateTimeline: (id, opts) => {
         const src = getDoc().timelines.find((t) => t.id === id);
         const newId = uid('tl');
-        dispatch({ type: 'tl.duplicate', id, newId, name: opts?.name ?? `${src?.name ?? 'Sequences'} 副本`, retarget: opts?.retarget, activate: opts?.activate });
+        dispatch({ type: 'tl.duplicate', id, newId, name: opts?.name ?? translate('{name} copy', { name: src?.name ?? translate('Sequence') }), retarget: opts?.retarget, activate: opts?.activate });
         return newId;
       },
       deleteTimeline: (id) => dispatch({ type: 'tl.delete', id }),
@@ -181,7 +182,7 @@ export function buildCommands(dispatch: ProjectDispatch, getDoc: () => ProjectDo
             track: pickTrack(at?.track, 'video'),
             durationInFrames: at?.durationInFrames ?? Math.round(5 * 30),
             kind: 'solid',
-            name: at?.name ?? 'Solid',
+            name: at?.name ?? translate('Solid'),
             width: 1920,
             height: 1080,
             props: { color: at?.color ?? '#1a1a1a' },
@@ -248,11 +249,11 @@ export function buildCommands(dispatch: ProjectDispatch, getDoc: () => ProjectDo
             track: pickTrack(at?.track ?? 'V2', 'video'), // titles default to the top video track
             durationInFrames: at?.durationInFrames ?? 90,
             kind: 'text',
-            name: at?.name?.trim() || 'Text',
+            name: at?.name?.trim() || translate('Text'),
             width: 1920,
             height: 1080,
             props: {
-              text: at?.text?.trim() || '双击编辑文字',
+              text: at?.text?.trim() || translate('Double-click to edit text'),
               fontSize: typeof at?.fontSize === 'number' && Number.isFinite(at.fontSize) ? at.fontSize : 96,
               color: at?.color?.trim() || '#ffffff',
               fontWeight: typeof at?.fontWeight === 'number' && Number.isFinite(at.fontWeight) ? at.fontWeight : 700,

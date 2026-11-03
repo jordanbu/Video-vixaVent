@@ -14,21 +14,7 @@ const isTestFile = (relative) => /\.(verify|check)\.(tsx?|mjs)$/.test(relative);
 const SKIPPED_UI_FILES = new Set([
   'src/captions/CaptionsLayer.tsx',
 ]);
-const ALLOWED_DATA_LITERALS = new Set([
-  'src/App.tsx::示例工程',
-  'src/captions/CaptionStyleMenu.tsx::日本語',
-  'src/captions/CaptionsControls.tsx::日本語',
-  'src/components/timeline/TimelineTabs.tsx::竖屏',
-  // VisionModelPane MODES data constants: Chinese originals translated at
-  // render time via t(mode.label) / t(mode.hint) — see the component.
-  'src/components/settings/VisionModelPane.tsx::跟随主模型',
-  'src/components/settings/VisionModelPane.tsx::主模型不支持图片时维持现状（图片剥离为文本）。',
-  'src/components/settings/VisionModelPane.tsx::指定视觉模型',
-  'src/components/settings/VisionModelPane.tsx::图片与时间线帧由所选视觉模型理解后以文本注入。',
-  'src/components/settings/VisionModelPane.tsx::禁用',
-  'src/components/settings/VisionModelPane.tsx::不描述图片，一律剥离。',
-  'src/components/settings/VisionModelPane.tsx::xAI (订阅登录)',
-]);
+const ALLOWED_DATA_LITERALS = new Set([]);
 const ALLOWED_RAW_RENDER_LITERALS = new Set([]);
 const USER_FACING_ATTRIBUTES = new Set(['alt', 'aria-label', 'placeholder', 'title']);
 

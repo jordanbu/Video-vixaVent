@@ -48,7 +48,7 @@ async function importProject(t: Translate, file: File, refresh: () => Promise<vo
       ? t('Imported "{name}"; {n} asset(s) missing ({list})', {
         name: result.meta.name,
         n: result.mediaMissing.length,
-        list: result.mediaMissing.map((source: string) => source.split('/').pop()).join('、'),
+        list: result.mediaMissing.map((source: string) => source.split('/').pop()).join(', '),
       })
       : t('Imported "{name}" (assets {a}/{b})', {
         name: result.meta.name,

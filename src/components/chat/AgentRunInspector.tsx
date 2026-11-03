@@ -170,8 +170,9 @@ function Section({ title, hint, children }: { title: string; hint?: string; chil
 
 function ContextSection({ run, t }: { run: AgentRunRecord; t: Translate }) {
   const context = run.context;
-  // 缓存写仅对支持「显式写缓存」的 provider（如 Anthropic）有意义；DeepSeek 等
-  // 只有服务器端 prompt 缓存，从不回报缓存写。无值时隐藏，避免显示无意义的 —。
+  // Cache writes only mean something for providers with explicit cache writes (such as Anthropic);
+  // DeepSeek and others only have server-side prompt caching and never report cache writes.
+  // Hidden when there is no value, so a meaningless dash is not shown.
   const cacheWriteTokens = numberText(contextMetric(context, 'cacheWriteTokens'));
   return <Section title={t('Context and tools')} hint={t('Token usage, cache and tool-surface info for this run and the latest model request.')}>
     <div style={subheadInSection}>{t('Latest model request')}</div>
@@ -280,7 +281,7 @@ function ApprovalSection({ approvals, t }: { approvals: readonly AgentApprovalRe
 }
 
 function ArtifactSection({ artifacts, t }: { artifacts: readonly AgentArtifactIndexEntry[]; t: Translate }) {
-  // Hide the section entirely when there is nothing archived: the "归档结果"
+  // Hide the section entirely when there is nothing archived: the "archived results"
   // block is an internal token-optimization diagnostic that is empty for most
   // runs and confusing as an always-visible empty block.
   if (artifacts.length === 0) return null;
@@ -309,7 +310,7 @@ function InspectorContent({ sidecar, loading, failed, t }: {
   const approvals = sidecar.approvals.filter((item) => item.runId === run.runId);
   const artifacts = sidecar.artifacts.filter((item) => item.runId === run.runId);
   // Cumulative totals across every run in this project: the inspector shows the
-  // latest run's details, but "几步对话/多少次模型请求" is a project-wide figure.
+  // latest run's details, but "how many turns / model requests" is a project-wide figure.
   const runCount = sidecar.runs.length;
   const totalModelRequests = sidecar.runs.reduce((sum, item) => {
     const value = contextMetric(item.context, 'modelRequestCount');

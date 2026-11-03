@@ -6,7 +6,7 @@ import type { VoiceOptions } from './voice-types.ts';
 
 const mm = validateVoiceRequest({
   provider: 'minimax',
-  text: '你好',
+  text: 'Hola',
   voiceId: '',
   speed: 1.1,
   pitch: -2,
@@ -98,7 +98,7 @@ assert.throws(
 
 const doubao = validateVoiceRequest({
   provider: 'doubao',
-  text: '你好',
+  text: 'Hola',
   voiceId: 'vivi',
   pitch: 1,
   speedRatio: 1.1,
@@ -106,7 +106,7 @@ const doubao = validateVoiceRequest({
 });
 assert.equal(doubao.provider, 'doubao');
 assert.throws(
-  () => validateVoiceRequest({ provider: 'doubao', text: '你好', voiceId: 'vivi', emotion: 'happy' }),
+  () => validateVoiceRequest({ provider: 'doubao', text: 'Hola', voiceId: 'vivi', emotion: 'happy' }),
   /Doubao \(seed-audio-1\.0\) accepts only/,
 );
 
@@ -173,11 +173,11 @@ const doubaoOptions: VoiceOptions = {
     return Response.json({ audio: Buffer.from('doubao').toString('base64') });
   };
   try {
-    const custom = validateVoiceRequest({ provider: 'doubao', text: '你好', voiceId: 'S_5wulnA7i2' });
+    const custom = validateVoiceRequest({ provider: 'doubao', text: 'Hola', voiceId: 'S_5wulnA7i2' });
     assert.equal((await doubaoVoice(doubaoOptions, custom)).toString(), 'doubao');
-    const alias = validateVoiceRequest({ provider: 'doubao', text: '你好', voiceId: 'vivi' });
+    const alias = validateVoiceRequest({ provider: 'doubao', text: 'Hola', voiceId: 'vivi' });
     await doubaoVoice(doubaoOptions, alias);
-    const fallback = validateVoiceRequest({ provider: 'doubao', text: '你好', voiceId: '' });
+    const fallback = validateVoiceRequest({ provider: 'doubao', text: 'Hola', voiceId: '' });
     await doubaoVoice(doubaoOptions, fallback);
     assert.deepEqual(speakers, ['S_5wulnA7i2', 'zh_female_vv_uranus_bigtts', 'S_DefaultSpeaker'],
       'raw speaker passes through, aliases resolve, and the Settings default fills an omitted voiceId');

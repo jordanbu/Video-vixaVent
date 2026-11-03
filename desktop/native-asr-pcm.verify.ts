@@ -35,7 +35,7 @@ try {
   // incompressible (~5 MB), far beyond the ~32 KiB FFmpeg keeps buffered for a
   // non-seekable input, so this fixture yields zero samples through stdin. The path
   // also carries spaces and non-ASCII characters, as user media often does.
-  const tailMoov = join(dir, '测 试 clip.mp4');
+  const tailMoov = join(dir, '\u6D4B \u8BD5 clip.mp4');
   generate(tailMoov, [
     '-f', 'lavfi', '-i', 'color=size=320x180:rate=30:duration=2,noise=alls=100:allf=t',
     '-f', 'lavfi', '-i', 'sine=frequency=440:duration=2',

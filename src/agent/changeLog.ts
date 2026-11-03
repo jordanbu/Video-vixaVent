@@ -1,3 +1,4 @@
+import { t } from '../i18n/locale';
 import type { ProjectDoc } from '../editor/types';
 import { migrateProjectDoc } from '../persist/projectStore';
 import { revisionOf } from './external-edit-session';
@@ -31,7 +32,7 @@ export function createAgentChangeSession(
   return {
     id: crypto.randomUUID(),
     createdAt: Date.now(),
-    summary: summary.trim() || 'Agent 修改',
+    summary: summary.trim() || t('Agent edit'),
     operations: operations.map(({ action, target, impact }) => ({ action, target, impact })),
     beforeDoc,
     afterRevision: revisionOf(afterDoc),

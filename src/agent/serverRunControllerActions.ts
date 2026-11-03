@@ -1,3 +1,4 @@
+import { t } from '../i18n/locale';
 import { useCallback, useRef } from 'react';
 import type { AgentSend } from './useAgentRun';
 import { sendServerRun } from './serverRunSend';
@@ -61,7 +62,7 @@ export function useServerRunControllerActions(
       if (admissionPending) return;
       current.appendMessage({
         role: 'error',
-        text: `服务端任务停止失败：${error instanceof Error ? error.message : String(error)}`,
+        text: t('Could not stop the server task: {error}', { error: error instanceof Error ? error.message : String(error) }),
       });
       lifecycle.scheduleRecovery(runId);
     });

@@ -94,7 +94,7 @@ export function appendRejectedProposal(messages: readonly LLMMessage[]): LLMMess
     role: 'user',
     content: [
       'User clicked Deny and rejected this generation task. They may want adjustments; do not retry automatically.',
-      '（用户拒绝了上述提案，未应用任何改动。不要自动重试生成。）',
+      '(The proposal above was not applied; nothing changed.)',
     ].join('\n'),
   }];
 }

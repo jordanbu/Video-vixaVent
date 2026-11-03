@@ -241,7 +241,7 @@ async function writeBrowserResponse(
       }
     }
     signal?.throwIfAborted();
-    if (bytesWritten === 0) throw new ExportDestinationError('导出文件为空');
+    if (bytesWritten === 0) throw new ExportDestinationError('The export file is empty');
     await writable.close();
   } catch (error) {
     await abortWrite(error);
@@ -256,7 +256,7 @@ async function writeBrowserResponse(
 function destinationWriteFailure(error: unknown, targetPath: string): ExportFailureError {
   const existing = exportFailureFrom(error);
   if (existing) return new ExportFailureError(existing);
-  const empty = error instanceof ExportDestinationError && error.key === '导出文件为空';
+  const empty = error instanceof ExportDestinationError && error.key === 'The export file is empty';
   return new ExportFailureError(createExportFailure({
     stage: 'destination',
     code: empty ? 'export_output_empty' : 'export_destination_write_failed',
@@ -280,7 +280,7 @@ export async function writeBlobToDestination(
   try {
     signal?.throwIfAborted();
     if (!(blob instanceof Blob)) throw new ExportDestinationError('The exported file content is invalid.');
-    if (blob.size === 0) throw new ExportDestinationError('导出文件为空');
+    if (blob.size === 0) throw new ExportDestinationError('The export file is empty');
     if (target.type === 'downloads') {
       signal?.throwIfAborted();
       downloadBlob(blob, outputFilename);
@@ -343,7 +343,7 @@ export async function writeUrlToDestination(
       code: 'export_source_read_failed',
       retryable: response.status >= 500,
       targetPath,
-      message: `读取导出文件失败（HTTP ${response.status}）`,
+      message: `Failed to read the export file (HTTP ${response.status})`,
     }));
   }
   try {
@@ -358,7 +358,7 @@ export async function writeUrlToDestination(
     }
     const blob = await response.blob();
     signal?.throwIfAborted();
-    if (blob.size === 0) throw new ExportDestinationError('导出文件为空');
+    if (blob.size === 0) throw new ExportDestinationError('The export file is empty');
     downloadBlob(blob, outputFilename);
   } catch (error) {
     await response.body?.cancel().catch(() => undefined);

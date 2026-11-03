@@ -4,31 +4,31 @@ import { renderToStaticMarkup } from 'react-dom/server';
 const moduleUrl = new URL('./SettingsVersionControl.tsx', import.meta.url);
 const versionModule = await import(moduleUrl.href).catch(() => null);
 
-assert.ok(versionModule, 'Settings标题栏应提供独立的版本与Check for updates控件');
+assert.ok(versionModule, 'the settings title bar should provide a separate version and check-for-updates control');
 
 const { SettingsVersionControl } = versionModule;
 let requested = false;
 const markup = renderToStaticMarkup(
   <SettingsVersionControl
-    versionLabel="当前版本号：V0.1.9"
+    versionLabel="Current version: V0.1.9"
     actionLabel="Download update"
     disabled={false}
     onAction={() => { requested = true; }}
   />,
 );
 
-assert.match(markup, /当前版本号：V0\.1\.9/, 'Settings标题栏必须展示 package.json 对应版本');
-assert.match(markup, />Download update<\/button>/, '桌面版Discover新版后必须提供直接Download入口');
-assert.doesNotMatch(markup, /AutoUpdate/, 'Download必须保留用户Confirm，不得变成静默AutoUpdate');
+assert.match(markup, /Current version: V0\.1\.9/, 'the settings title bar must show the package.json version');
+assert.match(markup, />Download update<\/button>/, 'after finding a new version the desktop app must offer a direct download entry');
+assert.doesNotMatch(markup, /AutoUpdate/, 'download must keep the user confirmation and never become a silent auto-update');
 
 const element = SettingsVersionControl({
-  versionLabel: '当前版本号：V0.1.9',
+  versionLabel: 'Current version: V0.1.9',
   actionLabel: 'Download update',
   disabled: false,
   onAction: () => { requested = true; },
 });
 const button = element.props.children[1];
 button.props.onClick();
-assert.equal(requested, true, '点击Download update必须触发受控Update动作');
+assert.equal(requested, true, 'clicking Download update must trigger the controlled update action');
 
 console.log('settings-version.verify: current version and manual check control OK');
